@@ -1,0 +1,114 @@
+<img src="图片地址" alt="图片名">
+alt：
+  1 图片的替代文本（图显示不出来时）
+	如果图像包含信息，使用 alt 描述图像
+	如果图像在 <a> 元素中，使用 alt 描述目标链接
+	如果图像仅供装饰，请使用 alt=""
+  2 搜索引擎抓取时显示
+title：
+	1 规定关于元素的额外信息。这些信息通常会在鼠标移到元素上时显示一段工具提示文本（tooltip text）。
+	2 在 HTML5 中, title 属性可用于任何的 HTML 元素 (它会验证任何HTML元素。但不一定是有用)。
+
+---------------------------
+	*a标签*
+1 网页链接/锚点/下载/javascript语句
+2 target 链接打开方式 
+	_blank  新窗口
+	_self     当前窗口
+  <base target="_blank"> 定义页面链接默认打开方式
+3 href="#"与href="javascript:void(0)"的区别：
+	# 包含了一个位置信息，默认的锚是网页的上端。
+	而javascript:void(0), 仅仅表示一个死链接。
+	如果你要定义一个死链接请使用 javascript:void(0) 。
+  （这两种都有curser:pointer效果）
+4 a标签中可以套img
+
+---------------------------
+	*SEO ：搜索引擎优化*
+1 html标签语义化；
+2 使用对SEO有利的标签：h1/h2/h3/strong/em……
+
+---------------------------
+	*题：请挑毛病*
+<P>&nbsp;&nbsp;哥写的不是HTML，是寂寞。<br><br>&nbsp;&nbsp;我说：<br>不要迷恋哥，哥只是一个传说
+&nbsp; 空格符
+
+及格答案：
+<p>哥写的不是HTML，是寂寞。</p>
+<p>我说：<br/>不要迷恋哥，哥只是一个传说</p>
+
+满分答案： 
+<p>哥写的不是<abbr title="Hypertext Markup Language">HTML</abbr>，是寂寞。</p>
+<p><cite>我</cite>说：<br/><q>不要迷恋哥，哥只是一个传说</q></p>
+
+
+---------------------------
+	*列表*
+有序、无序、自定义列表
+1 有序 ol>li     
+	ol: 
+		list-style-type: decimal(数字)
+		display: block		
+		上下margin:1em
+		左padding：40px
+	li: 
+		display: list-item;
+
+2 无序 ul>li
+	ul: 
+		list-style-type: disc(实心圆)
+		display: block		
+		上下margin:1em
+		左padding：40px
+	li: 
+		display: list-item;
+3 自定义列表
+  <dl> ：定义一个描述列表。有上下margin：1em
+  <dt> ：定义项目/名字。无默认样式
+  <dd> : 描述每一个项目/名字。有左margin：40px
+  dl dt dd都是display: block
+  例子：
+	<dl>
+	  <dt>Coffee</dt>
+	    <dd>Black hot drink</dd>
+	  <dt>Milk</dt>
+	    <dd>White cold drink</dd>
+	</dl>
+
+---------------------------
+	*前端规范*
+1 id，class必须以字母开头；
+2 属性值必须带引号；
+3 ul,li/ol,li/dl,dt,dd拥有父子级关系的标签；（html css里都行，js里会出问题）
+4 p,dt,h标签  里面不能嵌套块属性标签；（套不住）
+5 a标签不能嵌套a；（套不住）
+6 内联元素不能嵌套块；（w3c规定，非要这么写也行）
+
+---------------------------
+	*热区*
+<img src="bigptr.jpg"  usemap="#Map" />
+<map name="Map">
+  <area shape="circle" coords="378,132,56" href="http://www.baidu.com">
+  <area shape="rect" coords="462,157,566,217" href="http://www.qq.com">
+  <area shape="poly" coords="227,251,186,220,168,221,159,234,147,258,141,283,146,300,153,315,161,329,171,336,182,343,201,343,219,339,235,324,238,319,236,313,231,301,227,290,224,280,224,272,224,268,226,261" href="http://www.sina.com.cn">
+</map>
+说明：
+	map 热区
+	area 点击区域	
+		shape="circle" 圆型 coords="圆心点X,圆心点Y,圆的半径"
+		shape="rect" 矩形 coords="矩形左上角x,矩形左上角Y,矩形右下角X,矩形右下角Y"
+	    shape="poly" 多边形 coords="第一个点X，第一个点Y，第二个点X，第二个点Y,..."
+
+
+---------------------------
+	*短语元素*
+虽然这些标签定义的文本大多会呈现出特殊的样式，但实际上，这些标签都拥有确切的语义。
+使用时切记：要为了语义去使用，而不要仅仅为了样子去使用：
+	<em> 	强调	
+	<strong>	语气更强的强调
+	<dfn> 	定义一个定义项目。
+	<code> 	定义计算机代码文本。
+	<samp> 	定义样本文本。
+	<kbd> 	定义键盘文本。它表示文本是从键盘上键入的。它经常用在与计算机相关的文档或手册中。
+	<var> 	定义变量。您可以将此标签与 <pre> 及 <code> 标签配合使用。
+	<cite> 	定义引用。可使用该标签对参考文献的引用进行定义，比如书籍或杂志的标题。
