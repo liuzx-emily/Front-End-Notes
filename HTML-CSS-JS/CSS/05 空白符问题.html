@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <title>空白符问题</title>
+   <style>
+   div.default {
+      background-color: coral;
+   }
+   
+   div.large_size {
+      background-color: lightcoral;
+      font-size: 100px;
+   }
+   
+   div.zero_size {
+      background-color: coral;
+      font-size: 0;
+   }
+   
+   div p,
+   span {
+      font-size: 20px;
+   }
+   </style>
+</head>
+
+<body>
+   <a href="0 目录.html">返回目录</a>
+   <p>
+      对inline和inline-block元素存在空白符问题：
+      <br>“空白符”包括空格 (space)、制表符 (tab)、换行符 (CR/LF) 三种
+      <br> 在浏览器中，空白符是不会被浏览器忽略的，多个连续的空白符浏览器会自动将其合并成一个。
+      <br>我们编写代码时写的空格，换行都会产生空白符。所以自然而然的两个inline或inline-block元素之间会有空白符
+      <br> 要取出空白符产生的间隙，首先要理解空白符归根结底是个字符，通过设置font-size属性可以控制产生的间隙的大小。空白符的大小=文字大小的一半
+   </p>
+   <p style="font-size: 50px;font-family: '华文彩云'">解决方法:外层font-size设为0，内层文字再设置font-size</p>
+   <div class="default">
+      <p>font-size使用默认值:</p>
+      <span>a</span>
+      <span>a</span>
+      <p>代码中将两个a写成一行，空白符消失</p>
+      <span>a</span><span>a</span>
+   </div>
+   <div class="large_size">
+      <p>font-size改为50px(内层文字a的大小定为恒20px，来保证这个50px只对空白符起作用)</p>
+      <span>a</span>
+      <span>a</span>
+   </div>
+   <div class="zero_size">
+      <p>font-size改为0(内层文字a的大小定为恒20px，来保证这个0只对空白符起作用)</p>
+      <span>a</span>
+      <span>a</span>
+   </div>
+</body>
+
+</html>

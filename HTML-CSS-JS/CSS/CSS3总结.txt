@@ -1,0 +1,1153 @@
+兼容性问题：
+1 IE10-很多根本不支持
+2 浏览器前缀
+
+
+-----------------
+	*总体预告*
+CSS3新增了很多选择器：
+   1 属性选择器 如[lzx~='ab']
+   2 结构性选择器 如p:nth-child(3n) p:only-child
+   3 伪类选择器 如input:checked
+有的内容，比如[lzx='ab'] ::after不是css3新加的，不过就放到一起说了
+新增的CSS3选择器的兼容问题，和解决方法看“兼容性总结.txt”，简单来说就是下一个东西，引进来就好了，很简单。
+CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查，先不管了。
+
+讲了一些文本设置。
+1 颜色模式 rgba    IE9+
+2 文字阴影 text-shadow    IE10+
+3 文字描边 -webkit-text-stroke
+   只有webkit内核浏览器才支持，而且必须加前缀。FF和chrome支持，IE都不支持。
+4 文本功能 direction和text-overflow  全兼容
+5 自定义字体：ie8-部分支持：即只支持EOT字体。ie9+全支持
+
+1 box-sizing IE8+
+2 box-shadow IE9+
+3 倒影box-reflect 所有IE都不支持
+4 自由缩放resize 所有IE都不支持
+5 CSS3分栏布局 IE10+支持，FF和chrome需要前缀
+6 响应式布局@media IE9+支持（IE6-8通过引入js来兼容）
+7 弹性盒模型 兼容性不好，没学，以后没事再看
+
+1 border-radius IE9+
+2 linear-gradient IE10+
+3 radial-gradient IE10+
+4 background-size IE9+
+5 background-origin IE9+
+6 background-clip IE9+
+7 mask IE不支持，chrome要前缀且只支持Mask-image
+
+1 渐变transition IE10+
+2 2D变换transform IE10+
+  3D变换transform IE10+
+3 动画animation IE10+
+
+
+-----------------
+	*阶段预告*
+CSS3新增了很多选择器：
+	1 属性选择器 如[lzx~='ab']
+	2 结构性选择器 如p:nth-child(3n) p:only-child
+	3 伪类选择器 如input:checked
+有的内容，比如[lzx='ab'] ::after不是css3新加的，不过就放到一起说了
+新增的CSS3选择器的兼容问题，和解决方法看“兼容性总结.txt”，简单来说就是下一个东西，引进来就好了，很简单。
+CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查，先不管了。
+
+-----------------
+	*属性选择器*
+
+兼容性：
+1 IE7:支持大部分，一小部分有bug用不了
+2 IE6-:完全不支持
+
+（为了不混淆，使用自定义属性lzx）
+<span lzx='ab'  > 1 </span>
+<span lzx='abc' > 2 </span>
+<span lzx='ab c'> 3 </span>
+<span lzx='cab '> 4 </span>
+<span lzx='cab' > 5 </span>
+<span lzx='ab-c'> 6 </span>
+<span lzx=' ab-c'>7 </span>
+<span lzx='a b' > 8 </span>
+<span lzx=' ab '> 9 </span>
+<span lzx='c ab'> 10</span>
+
+1 [lzx]
+	选中所有
+2 [lzx='ab']必须是'ab'，不能多不能少
+	选中1
+3 [lzx~='ab']必须包含这个'ab'整体('abx'和'xab'不可以)
+	选中1 3 9 10
+4 [lzx^='ab']必须以'ab'开头('abx'可以,' ab'不行)
+	选中1 2 3 6
+5 [lzx$='ab']必须以'ab'结束('xab'可以,'ab '不行)
+	选中1 5 10
+6 [lzx*='ab']必须包含'ab'('abx'和'xab'都可以，'a b'不行)
+	选中1 2 3 4 5 6 7 9 10(除了8的所有)
+
+备注：属性值两边可以不写引号
+
+应用举例：根据href属性选择a标签
+	<a href="doc/1.txt">link1</a>
+	<a href="pdf/1.txt">link3</a>
+	<a href="exl/1.txt">link4</a>
+  选中link1：[href*='doc']
+  这样可以方便地根据路径、名字、后缀类型来分别选择a
+
+
+
+
+-----------------
+	*结构性(伪类)选择器*
+兼容性：IE8-不支持(针对CSS3新增的那些)	
+
+【重要：css是从1开始计数的，不是从0开始！】
+
+1 E:nth-child(n)  匹配同级元素中的第n个，且这个元素必须也是E类型
+  注意：
+	1 不是找E的子节点，是E的同级元素，也就是E的父元素的子节点。
+	2 找到的第n个元素必须也是E类型
+
+	<div>
+		<p>p1</p>
+		<p>p2</p>
+		<p>p3</p>
+		<p>p4</p>
+		<p>p5</p>
+	</div>
+
+	p:nth-child(1)	：p1
+	p:nth-child(odd)：p1 p3 p5
+	p:nth-child(even)：p2 p4
+	p:nth-child(2n)	： p2 p4	//等价与even，不能写成2*n
+	p:nth-child(3n)	：p3
+	p:nth-child(3n+1)：p1 p4	//不能写成3*n+1（可以选中p1，此时n=0）
+	
+  假如结构变为：
+	<div>
+		<p>p1</p>
+		<span>span2</span>
+		<p>p3</p>
+		<p>p4</p>
+		<p>p5</p>
+	</div>
+	p:nth-child(2n)：p4	//找不到span2，因为它不是<p>
+  想要无视标签类型，只靠DOM结构位置来选择：
+	div>*:nth-child(2n):找到span2 p4
+
+2 E:nth-last-child(n) 匹配同级元素中的第n个，从后向前计算。且这个元素必须也是E类型
+	<div>
+	   <span>span1</span>
+	   <span>span2</span>
+	   <p>p3</p>
+	   <p>p4</p>
+	</div>
+
+	div> *:nth-last-child(2n):找到p3 span1
+
+3 E:nth-of-type(n)  匹配同级元素中的第n个类型为E的元素
+	<div>
+      <p>p1</p>
+      <span>span1</span>
+      <p>p2</p>
+      <span>span2</span>
+   </div>
+
+   p:nth-of-type(2):选中p2	
+
+注意区分：
+	p:nth-child(2) 找p的父级下的第二个子元素，并且这个元素还得是p标签
+	p:nth-of-type(2) 找p的父级下的第二个p元素
+
+4 E:nth-last-of-type(n) 匹配同级元素中的第n个类型为E的元素，从后向前计算
+
+另外：
+	E:first-child	等价于 E:nth-child(1)
+	E:last-child 	等价于 E:nth-last-child(1)
+	E:first-of-type	等价于 E:nth-of-type(1)
+	E:last-of-type 	等价于 E:nth-last-of-type(1)
+
+
+5 :empty选择器选取空的元素。空元素指的是不包含子元素或文本的元素。
+	<p></p>是
+	<p> </p>不是
+
+6 E:only-child选择器匹配属于其父元素的唯一子元素的每个元素，文本不算
+	<p>你好<span></span></p>
+	p *:only-child会匹配到<span>，不会匹配到文本节点你好
+
+7 E:only-of-type选择器匹配同级元素中没有其它元素和自己类型相同的元素，
+	<p>你好<span></span></p>
+	p *:only-of-type会匹配到<span>，不会匹配到文本节点你好
+
+例子：
+	<ul>
+	   <li>
+	      <a href="#"></a>
+	      <a href="#"></a>
+	   </li>
+	   <li>
+	      <a href="#"></a>
+	      <a href="#">目标</a>
+	      <a href="#"></a>
+	   </li>
+	</ul>
+  取到目标a：li:nth-child(2) > a:nth-child(2)
+
+
+
+
+
+
+
+-----------------
+	*伪类选择器*
+兼容性：IE8-不支持(针对CSS3新增的那些)	
+（比如:before :after就是css2中的，IE7-不支持 IE8+支持）
+1 E:target：可用于选取当前活动的目标元素
+  例子1：#news:target	选择当前活动的 #news 元素。
+  例子2：
+	<style>
+	div {
+	   width: 100px;
+	   height: 100px;
+	   border: 1px solid red;
+	   display: none;
+	}
+	
+	div:target {
+	   display: block;
+	}
+
+	<a href="#div1">目标为div1</a>
+	<a href="#div2">目标为div2</a>
+	<div id="div1">div1</div>
+	<div id="div2">div2</div>
+  点哪个a标签，就显示哪个对应的div
+
+2 :enabled 选择器匹配每个已启用的元素（大多用在表单元素上）。
+  例子1：input:enabled	选择每个启用的 <input> 元素。
+   <input type="text" value="请输入" enabled>
+
+3 :disabled 选择器匹配每个被禁用的元素（大多用在表单元素上）。
+  例子1：input:disabled	选择每个禁用的 <input> 元素
+   <input type="text" value="禁止更改" disabled>
+
+4 :checked 选择器匹配每个已被选中的 input 元素（只用于单选按钮和复选框）。
+  例子1：input:checked	选择每个被选中的 <input> 元素。
+  小应用：配合element1~element2选择器，来模拟单选框效果
+  	（因为默认的单选框没法改样子，很丑）
+  	<style>
+  	label{ float:left;margin:0 5px; overflow:hidden; position:relative;}
+  	label input{ position:absolute;left:-50px;top:-50px;}
+  	span{float:left;width:50px;height:50px;border:3px solid #000;}
+  	input:checked~span {background:red;}
+  	</style>
+  	</head>
+  	<body>
+  	<label>
+  		<input type="radio" name="tab" />
+  	    <span>A</span>
+  	</label>
+  	<label>
+  		<input type="radio" name="tab" />
+  	    <span>B</span>
+  	</label>
+  	</body>
+
+5 E:first-line 表示E元素中的第一行
+	例子：p:first-line	选择每个 <p> 元素的首行。
+
+6 E:first-letter 表示E元素中的第一个字符
+	例子：p:first-letter	选择每个 <p> 元素的首字母。
+
+7 ::selection	选择被用户选取的元素部分。（双冒号）
+	例子：使被选中的文本成为红色：
+		::selection
+		{
+		color:#ff0000;
+		}
+	用处：默认设置是选中内容的背景变为蓝色，这样就可以改了
+  备注：火狐下要加前缀::-moz-selection，不用担心，插件autoprefix一键解决
+
+8 ::before 在被选元素的内容前面插入内容,使用content属性来指定要插入的内容。
+	例子：在每个 <p> 元素的内容之前插入新内容：
+		p::before
+		{ 
+		content:"台词：";
+		}
+
+9 ::after 在被选元素的内容后面插入内容,使用content属性来指定要插入的内容。
+	例子：在每个 <p> 元素后面插入内容
+		p::after
+		{ 
+			content:"台词：-";
+			color:red;
+		}
+注：selection before after前面都是双冒号，但其实写但冒号也能认
+
+10 :not(元素) 匹配非指定元素的每个元素。
+	例子1：设置非 <p> 元素的所有元素的背景色：
+		:not(p)
+		{ 
+			background-color: #ff0000;
+		}
+	例子2：选择所有不包含class big的div
+		<div class='big ha'>big ha</div>
+		<div class='big'>big</div>
+		<div class='ha'>ha</div>
+	div:not(.big)只选中了第三个div	
+
+11 element1~element2 选择器（好像不是伪类选择器？不管了。。）
+	匹配element1 之后出现的所有 element2。
+	两种元素必须拥有相同的父元素，但是 element2 不必直接紧随 element1。
+	例子：p~ul	选择前面有 <p> 元素的每个 <ul> 元素。
+
+-----------------
+	*阶段总结*
+CSS3新增了很多选择器：
+	1 属性选择器 如[lzx~='ab']
+	2 结构性选择器 如p:nth-child(3n) p:only-child
+	3 伪类选择器 如input:checked
+有的内容，比如[lzx='ab'] ::after不是css3新加的，不过就放到一起说了
+新增的CSS3选择器的兼容问题，和解决方法看“兼容性总结.txt”，简单来说就是下一个东西，引进来就好了，很简单。
+CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查，先不管了。
+
+	*阶段预告*
+讲完选择器，来讲一些文本的设置。
+1 颜色模式 rgba    IE9+
+2 文字阴影 text-shadow    IE10+
+3 文字描边 -webkit-text-stroke
+	只有webkit内核浏览器才支持，而且必须加前缀。FF和chrome支持，IE都不支持。
+4 文本功能 direction和text-overflow  全兼容
+5 自定义字体：ie8-部分支持：即只支持EOT字体。ie9+全支持
+
+
+-----------------
+	*新增颜色模式rgba*
+兼容：IE9+
+
+rgba：
+	r	Red			红		0-255
+	g	Green		绿		0-255
+	b	Blue		蓝		0-255
+	a	Alpha		透明	0-1
+
+1 可以设背景颜色：background-color
+	上面的所有元素、文字不会受影响
+	<div class="box">
+	   这里是文字~
+	   <div>内层div</div>
+	</div>
+	给.box设置background-color: rgba(0, 0, 0, 0.1);
+	里面的文本节点“这里是文字~”和内层元素<div>内层div</div>不会受透明度影响
+	用处：背景半透明，里面内容不透明，很好看
+
+2 可以设文字颜色：color
+	<div class="box">
+	   这里是文字~
+	   <div>内层div</div>
+	</div>
+	给.box设置color: rgba(255, 255, 255, 0.5);
+	里面的文字“这里是文字~”和“内层div”会变半透明
+	（注意color会继承，内层div会从div.box继承color样式）
+
+3 问题：注意边框颜色透明有问题
+
+
+-----------------
+	*文字阴影text-shadow*
+兼容：IE10+
+
+text-shadow：x y blur color, …
+	参数:
+		x		横向偏移 >0右 <0左
+		y		纵向偏移 >0下 <0上
+		blur	模糊距离
+		color	阴影颜色
+
+1 阴影可以叠加，用逗号隔开
+	text-shadow:2px 2px 0px red, 2px 2px 4px green;
+	先渲染后面的，再渲染前面的
+	阴影叠加适可而止，不要加很多层，会卡。
+
+2 几个小例子：
+  1 浮雕：
+	color: white; 
+  	text-shadow:2px 2px 4px #000;
+  2 光晕：
+  	color: white;
+  	text-shadow: 0 0 2px #fff, 0 0 4px #fff, 0 0 10px coral, 0 0 20px coral;
+  3 火焰文字：
+	color: white;
+	text-shadow: 0 0 2px #fefcc9, 1px -1px 3px #feec85, -2px -2px 4px #ffae34, 2px -4px 5px #ec760c, -2px -6px 6px #cd4606, 0 -8px 7px #973716, 1px -9px 8px #451b0e;
+  4 模糊效果
+	<style>
+	h1 {
+	   font: 100px/200px "微软雅黑";
+	   text-align: center;
+	   color: #000;
+	   text-shadow: 0 0 0 rgba(0, 0, 0, 1);
+	   border: 1px solid #000;
+	   transition: 1s;
+	}
+
+	h1:hover {
+	   color: rgba(0, 0, 0, 0);
+	   text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+	}
+	</style>
+
+	<h1>这是标题~</h1>
+
+
+-----------------
+	*文字描边-webkit-text-stroke*
+兼容：只有webkit内核浏览器才支持，而且必须加前缀。FF和chrome支持，IE都不支持。
+-webkit-text-stroke:宽度 颜色
+例子：-webkit-text-stroke: 3px red;
+
+
+-----------------
+	*新增文本功能*
+新增文本功能direction和text-overflow
+兼容：2个都是全兼容，低至IE6都可以
+
+1 direction  定义文字排列方式(全兼容)
+	Rtl 从右向左排列
+	Ltr 从右向左排列
+	注意要配合unicode-bidi 一块使用
+	例子：
+		p{width:300px;border:1px solid #000;font:14px/30px "宋体";direction:rtl;unicode-bidi:bidi-override;}
+		<p>这是一段话~</p>
+
+2 text-overflow 文字溢出时是否显示省略号
+	clip  无省略号
+	Ellipsis 省略号 (注意配合overflow:hidden和white-space:nowrap一块使用) 
+	例子：
+		p{width:100px;border:1px solid #000;font:14px/30px "宋体"; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+		<p>这是一段话~这是一段话~这是一段话~</p>
+
+
+-----------------
+	*自定义字体*
+兼容：ie8-部分支持：即只支持EOT字体。ie9+全支持
+（复制课件内容，没看具体的，以后有需要再查详细的吧）
+1 格式：
+	@font-face {
+	    font-family: ‘miaov';
+	    src: url('111-webfont.eot');
+	    src: url('111-webfont.eot?#iefix') format('embedded-opentype'),
+	         url('111-webfont.woff') format('woff'),
+	         url('111-webfont.ttf') format('truetype'),
+	         url('111-webfont.svg#untitledregular') format('svg');
+	    font-weight: normal;
+	    font-style: normal;
+	}
+
+2 转换字体格式生成兼容代码
+	http://www.fontsquirrel.com/fontface/generator
+
+
+-----------------
+	*阶段总结*
+讲了一些文本设置。
+1 颜色模式 rgba    IE9+
+2 文字阴影 text-shadow    IE10+
+3 文字描边 -webkit-text-stroke
+	只有webkit内核浏览器才支持，而且必须加前缀。FF和chrome支持，IE都不支持。
+4 文本功能 direction和text-overflow  全兼容
+5 自定义字体：ie8-部分支持：即只支持EOT字体。ie9+全支持
+
+	*阶段预告*
+1 box-sizing IE8+
+2 box-shadow IE9+
+3 倒影box-reflect 所有IE都不支持
+4 自由缩放resize 所有IE都不支持
+5 CSS3分栏布局 IE10+支持，FF和chrome需要前缀
+6 响应式布局@media IE9+支持（IE6-8通过引入js来兼容）
+7 弹性盒模型 兼容性不好，没学，以后没事再看
+
+-----------------
+	*box-sizing*
+兼容：IE8+
+Content-box
+Border-box
+
+-----------------
+	*box-shadow*
+兼容：IE9+
+box-shadow:[inset] x y blur [spread] color
+参数
+	inset：投影方式
+		inset：内投影
+		不写：外投影
+	x、y：阴影偏移
+	blur：模糊半径
+	spread：扩展阴影半径
+		先扩展原有形状，再开始画阴影
+	color
+可以叠加，用逗号分隔
+
+-----------------
+	*倒影box-reflect*
+兼容：所有IE都不支持
+	direction  方向     above|below|left|right;
+	距离
+	渐变（可选）
+	*自由缩放resize*
+兼容：所有IE都不支持
+	Both 水平垂直都可以缩放
+	Horizontal 只有水平方向可以缩放
+	Vertical 只有垂直方向可以缩放
+	注意：一定要配合overflow:auto 一块使用只有水平方向可以缩放
+
+-----------------
+	*CSS3分栏布局*
+兼容：IE10+支持，FF和chrome需要前缀
+	column-width 栏目宽度
+	column-count 栏目列数
+	column-gap   栏目距离
+	column-rule  栏目间隔线 
+
+-----------------
+	*CSS3响应式布局@media*
+兼容：IE9+支持（IE6-8通过引入js来兼容）
+1 媒体类型
+	all 所有媒体
+	braille 盲文触觉设备
+	embossed 盲文打印机
+	print 手持设备 
+	projection 打印预览
+	screen 彩屏设备
+	speech '听觉'类似的媒体类型
+	tty 不适用像素的设备
+	tv  电视
+2 关键字
+	and
+	not      not关键字是用来排除某种制定的媒体类型
+	only     only用来定某种特定的媒体类型
+3 媒体特性
+	(max-width:600px) 
+	(max-device-width: 480px)  设备输出宽度
+	(orientation:portrait)  竖屏
+	(orientation:landscape)	横屏
+	 (-webkit-min-device-pixel-ratio: 2) 像素比
+	devicePixelRatio 设备像素比 window.devicePixelRatio = 物理像素 / dips
+4 样式引入，例子：
+	<link rel="stylesheet" type="text/css" media="print" href="../css/print.css" >
+	其中可以：
+		media=”all and (orientation:portrait)”
+		media=”all and (orientation:landscape)”
+		media="screen and (min-width: 800px)"
+		media="screen and (min-width: 600px) and (max-width: 800px)"
+		media="screen and (max-width: 600px)"
+
+	@media screen and (min-width:400px) and (max-width:500px){
+		.box {
+			margin: 0 auto;
+		}
+	}
+
+具体看这里：http://www.cnblogs.com/softlover/archive/2012/11/21/2781388.html
+
+-----------------
+	*移动端meta*
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+该meta标签的作用是让当前viewport的宽度等于设备的宽度，同时不允许用户手动缩放。也许允不允许用户缩放不同的网站有不同的要求，但让viewport的宽度等于设备的宽度，这个应该是大家都想要的效果，如果你不这样的设定的话，那就会使用那个比屏幕宽的默认viewport，也就是说会出现横向滚动条。
+
+width	设置layout viewport  的宽度，为一个正整数，或字符串"width-device"
+initial-scale	设置页面的初始缩放值，为一个数字，可以带小数
+minimum-scale	允许用户的最小缩放值，为一个数字，可以带小数
+maximum-scale	允许用户的最大缩放值，为一个数字，可以带小数
+height	设置layout viewport  的高度，这个属性对我们并不重要，很少使用
+user-scalable	是否允许用户进行缩放，值为"no"或"yes", no 代表不允许，yes代表允许
+具体看这里：http://www.cnblogs.com/2050/p/3877280.html
+
+
+
+-----------------
+	*弹性盒模型*
+兼容性不好，没学，以后没事再看
+	注意在使用弹性盒模型的时候 父元素必须要加display:box 或 display:inline-box
+	Box-orient 定义盒模型的布局方向
+		Horizontal 水平显示
+		vertical 垂直方向
+	box-direction 元素排列顺序
+		Normal 正序
+		Reverse 反序
+	box-ordinal-group 设置元素的具体位置
+	Box-flex 定义盒子的弹性空间
+		子元素的尺寸=盒子的尺寸*子元素的box-flex属性值 / 所有子元素的box-flex属性值的和 
+	box-pack 对盒子富裕的空间进行管理
+		Start 所有子元素在盒子左侧显示，富裕空间在右侧
+		End 所有子元素在盒子右侧显示，富裕空间在左侧
+		Center 所有子元素居中
+		Justify 富余空间在子元素之间平均分布
+	box-align 在垂直方向上对元素的位置进行管理
+		Star 所有子元素在据顶
+		End 所有子元素在据底
+		Center 所有子元素居中
+
+
+-----------------
+	*阶段总结*
+1 box-sizing IE8+
+2 box-shadow IE9+
+3 倒影box-reflect 所有IE都不支持
+4 自由缩放resize 所有IE都不支持
+5 CSS3分栏布局 IE10+支持，FF和chrome需要前缀
+6 响应式布局@media IE9+支持（IE6-8通过引入js来兼容）
+7 弹性盒模型 兼容性不好，没学，以后没事再看
+
+	*阶段预告*
+1 border-radius IE9+
+2 linear-gradient IE10+
+3 radial-gradient IE10+
+4 background-size IE9+
+5 background-origin IE9+
+6 background-clip IE9+
+7 mask IE不支持，chrome要前缀且只支持Mask-image
+
+-----------------
+	*border-radius* IE9+
+1 border-radius: 1-4个数字 / 1-4个数字
+	斜杠前面是水平，后面是垂直，不给“/”则水平和垂直一样
+	例子：border-radius:20px 50px/100%;
+2 左上角开始，顺时针计数：
+	border-radius: 10px;
+	border-radius: 10px 20px;
+	（1,3：10px  2,4：20px）
+	border-radius: 10px 20px 50px ;
+	（2,4: 20px  1：10px  3:50px）
+	border-radius: 10px 20px 50px 100px;
+3 各种长度单位都可以：px，%
+4 例子
+	花瓣1：border-radius: 0 100%; 
+	花瓣2：100%  150% 10%;
+	转动的风车：
+		   <style>
+		   .box {
+		      width: 400px;
+		      height: 400px;
+		      margin: 50px auto;
+		      transition: 5s linear;
+		   }		   
+		   .box div {
+		      width: 180px;
+		      height: 180px;
+		      margin: 10px;
+		      border: 1px solid #000;
+		      box-sizing: border-box;
+		      float: left;
+		      background: coral;
+		   }		   
+		   .box div:nth-child(1),
+		   .box div:nth-child(4) {
+		      border-radius: 0 70%;
+		   }		   
+		   .box div:nth-child(2),
+		   .box div:nth-child(3) {
+		      border-radius: 70% 0;
+		   }		   
+		   .box:hover {
+		      transform: rotate(720deg);
+		   }
+		   </style>
+		</head>
+		<body>
+		   <div class="box">
+		      <div></div>
+		      <div></div>
+		      <div></div>
+		      <div></div>
+		   </div>
+		</body>
+
+-----------------
+	*linear-gradient* IE10+
+1 格式: linear-gradient(角度, 点, 点…)
+  参数
+	1 角度：从什么角度开始渐变 可选
+		xxdeg
+	2 点：渐变点的颜色和位置 位置可选
+		black 50%，
+
+2 只能用在背景上，是背景图片【重要！！】
+	是background-image，不是background-color
+
+3 IE9-用不了，IE的渐变：
+  	1 filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff',endColorstr='#ff0000',GradientType='1');
+  	2 缺点：只能有两个颜色；角度少，GradientType只能是1和-1
+	
+4 小例子
+	1 background-image: linear-gradient(coral, yellow);
+	2 background-image: linear-gradient(60deg, coral 0, white 100%);
+	3 background-image: linear-gradient(45deg, coral 0, blue 50%, lightgreen 100%);
+	4 background-image: repeating-linear-gradient(60deg, red, coral 10%, white 20%, red 30%)
+	5 模拟进度条：
+	   <style>
+	   .wrap {
+	      width: 200px;
+	      height: 30px;
+	      overflow: hidden;
+	      border: 1px solid #000;
+	   }
+	   
+	   .box {
+	      width: 400px;
+	      height: 30px;
+	      background: repeating-linear-gradient(15deg, coral 0, coral 10px, #fff 10px, #fff 20px);
+	      transition: 3s;
+	   }
+	   
+	   .box:hover {
+	      margin-left: -100px;
+	   }
+	   </style>
+	   <div class="wrap">
+	      <div class="box"></div>
+	   </div>
+
+		6
+	6 百度光斑：
+		<style>
+		.box {
+		   width: 300px;
+		   height: 300px;
+		   background: 
+			   -webkit-linear-gradient(
+			        -30deg, 
+			   		rgba(255, 255, 255, 0) 0, 
+			   		rgba(255, 255, 255, 0) 150px, 
+			   		rgba(255, 255, 255, 1) 170px, 
+			   		rgba(255, 255, 255, 1) 180px, 
+			   		rgba(255, 255, 255, 0) 210px) no-repeat -200px 0, 
+			   		url(new_bg.png) no-repeat;
+		   transition: 0.5s;
+		}
+		
+		.box:hover {
+		   background-position: 300px 0, -100px -100px;
+		}
+		</style>
+		<div class="box"></div>
+
+注：多背景，用逗号分开(IE低版本不支持，具体哪个忘了)
+	background: url(a.jpg) 0 0, url(b.jpg) 0 100%;
+
+
+
+-----------------
+	*radial-gradient* IE10+
+1 格式: radial-gradient([<起点>]? [<形状> || <大小>,]? <点>, <点>…);
+  参数
+	1 起点：可以是关键字（left,top,right,bottom），具体数值或百分比
+	2 形状： ellipse、circle
+	  大小 :具体数值或百分比，也可以是关键字
+		closest-side, closest-corner, farthest-side, farthest-corner, contain or cover
+例子：
+	background: -webkit-radial-gradient(100px 50px, cover, red, white);
+备注:有一些兼容问题，有的参数要加-webkit-，以后用到再研究
+
+
+-----------------
+	*background-size IE9+
+background-size:x y
+	可以是px % 关键字：cover放大 contain缩小
+例子1：
+	background: url(miaov.jpg) no-repeat;
+	background-size: 100% 100%;
+例子2：
+	background:url(miaov.jpg) no-repeat, url(miaov2.jpg) no-repeat 0 bottom; 
+	background-size:contain,100px 100px;
+
+
+-----------------
+	*background-origin* IE9+
+border-box： 从border区域开始显示背景。 
+padding-box： 从padding区域开始显示背景。 
+content-box： 从content区域开始显示背景。
+
+	*background-clip* IE9+
+border： 从border区域向外裁剪背景。 
+padding： 从padding区域向外裁剪背景。 
+content： 从content区域向外裁剪背景。 
+no-clip： 从border区域向外裁剪背景。
+例子1：
+   <style>
+   .box {
+      width: 300px;
+      height: 300px;
+      background: url(miaov.jpg) center;
+      border: 30px solid rgba(0, 0, 0, 0.5);
+      -webkit-background-clip: text;
+      padding: 50px;
+      font: bold 120px/150px "微软雅黑";
+      text-align: center;
+      color: rgba(0, 0, 0, 0);
+      transition: 1s;
+   }
+   
+   .box:hover {
+      background-position: -200px -200px;
+   }
+   </style>
+   <div class="box">文字文字文字</div>
+例子2：iPhone解锁动画
+	<style>
+	body {
+	   background: #000;
+	   text-align: center;
+	   font: 50px/200px "微软雅黑";
+	}
+	
+	h1 {
+	   display: inline-block;
+	   color: rgba(255, 255, 255, 0.3);
+	   background: linear-gradient(-30deg, rgba(255, 255, 255, 0) 100px, rgba(255, 255, 255, 1) 180px, rgba(255, 255, 255, 1) 240px, rgba(255, 255, 255, 0) 300px) -300px 0 no-repeat;
+	   -webkit-background-clip: text;
+	}
+	</style>
+	<h1>文字文字文字</h1>
+	<script>
+	var oH1 = document.getElementsByTagName("h1")[0];
+	var oTimer = null;
+	var iLeft = -300;
+	document.title = 0;
+
+	function toMove() {
+	   oTimer = setInterval(function() {
+	      iLeft += 10;
+	      if (iLeft == 1000) {
+	         iLeft = -300;
+	         clearInterval(oTimer);
+	      }
+	      oH1.style.backgroundPosition = iLeft + "px 0px";
+
+	   }, 20);
+	}
+	toMove();
+	setInterval(function() {
+	   toMove();
+	}, 5000);
+	</script>
+
+
+-----------------	
+	*遮罩mask*
+IE不支持，chrome要前缀且只支持Mask-image
+	Mask-image
+	Mask-position
+	Mask-repeat
+例子1：
+	<style>
+	.box {
+	   width: 800px;
+	   height: 600px;
+	   background: url(miaov.jpg) no-repeat;
+	   background-size: 100% 100%;
+	   border: 10px solid #000;
+	   -webkit-mask: url(mask.png) no-repeat;
+	   transition: 1s;
+	}
+	.box:hover {
+	   -webkit-mask-position: 100% 100%;
+	}
+	</style>
+	<div class="box"></div>
+例子2：特殊形状的幻灯片效果
+
+-----------------
+	*阶段总结*
+1 border-radius IE9+
+2 linear-gradient IE10+
+3 radial-gradient IE10+
+4 background-size IE9+
+5 background-origin IE9+
+6 background-clip IE9+
+7 mask IE不支持，chrome要前缀且只支持Mask-image
+
+	*阶段预告*
+1 渐变transition  IE10+
+2 2D变换transform IE10+
+  3D变换transform IE10+
+3 动画animation   IE10+
+
+-----------------
+	*transition* IE10+
+1 参数
+	1 transition-property  要运动的样式
+		all || [attr] || none  ，默认all
+	2 transition-duration 运动时间
+	3 transition-delay 延迟时间
+	4 transition-timing-function 运动形式 
+		ease 		逐渐变慢 默认值
+		linear 		匀速
+		ease-in 	加速
+		ease-out 	减速
+		ease-in-out 先加速后减速）
+		cubic-bezier 贝塞尔曲线 http://matthewlein.com/ceaser/
+
+2 写法举例：
+	1 transition:500ms;	
+		全部，运动500ms
+	2 transition: width 5s cubic-bezier(0.145, 1.295, 0.000, 1.610);
+		只有width,运动5s
+	3 transition: width 1s,height 2s,background 3s;
+		width运动1s；height运动2s；背景运动3s
+	4 transition: width 1s, height 2s 1s, background 5s 3s;
+		width运动1s,无延迟；height运动2s,延迟1s开始；背景运动5s,延迟3s开始
+
+3 过渡完成事件 
+	obj.addEventListener('transitionend',function(){},false);
+  例子1：
+  	oBox.addEventListener('transitionend', function() {
+  	   alert('finished');
+  	}, false);
+  	效果：当transition完成时，弹出'finished'
+  		每一个transition的attr变化结束，都会分别触发事件。
+  		那些没加transition效果的attr，不会触发transitionnend事件，不弹。
+
+  例子2：
+  	oBox.onclick = function() {
+		this.style.width = this.offsetWidth + 100 + "px";
+		oBox.addEventListener('transitionend', end, false);
+	};
+
+	function end() {
+		this.style.width = this.offsetWidth + 10 + "px";
+		oBox.removeEventListener('transitionend', end, false);
+	}
+  	效果：点击后，宽渐渐+100；+100结束后，宽又渐渐+10，+10结束后停。
+
+
+-----------------
+	*transform 2D变换* IE10+
+注意：transform适用于：所有块级元素及某些内联元素
+1  	rotate()  旋转函数 取值度数
+	  	deg  度数
+	  	Transform-origin 旋转的基点
+  	skew() 倾斜函数 取值度数 
+	  	skewX()
+	  	skewY()
+  	scale() 缩放函数 取值 正数、负数和小数
+	  	scaleX()
+	  	scaleY()
+  	translate() 位移函数
+	  	translateX() →
+	  	translateY() ↓
+	matrix()
+
+2 使用举例：
+	1 transform: rotate(160deg);
+		旋转160度
+	2 transform: skewX(30deg);
+	  transform: skewY(15deg);
+	  transform:skew(15deg,30deg);
+	  transform:skewY(45deg);
+	实例：倾斜的导航：
+		div {
+		   width: 100px;
+		   height: 30px;
+		   background: coral;
+		   transform: skewX(30deg);
+		}		
+		span {
+		   transform: skewX(-30deg);
+		   display: inline-block;
+		}
+		<div><span>啦啦啦啦</span></div>
+	  效果：div块是斜的，文字（span）是正的
+	  注意span是inline元素，transform对它不起作用）
+	3 transform: scale(2);
+		放大到2倍
+	4 transform:translate(-100px,200px);
+		左移100px，下移200px
+
+3 变换基点：默认为中心
+	transform-origin: right bottom;
+	transform-origin:200px 200px;(左上角是起点0 0)
+
+4 执行顺序：后写先执行
+	transform: translateX(100px) scale(0.5);
+	效果：先开始缩放，再开始右走100px
+	transform: scale(0.5) translateX(100px);
+	效果：先开始右走100px，再开始缩放（这时走的距离变成100*0.5=50px）
+
+5 实例1：钟表效果（见“做着玩”）
+  实例2：旋转导航（见“做着玩”）
+
+6 matrix(a,b,c,d,e,f) 矩阵函数
+	前面的rotate skew scale translate都是基于矩阵，封装好的函数
+
+	兼容IE9-只能通过矩阵来实现
+	filter: progid:DXImageTransform.Microsoft.Matrix( M11= a, M12= c, M21= b , M22=d,SizingMethod='auto expand');
+	IE下的矩阵M12==c; M21==b,没有e和f两个参数
+	而且，IE下有基点修正问题
+
+
+-----------------
+	*transform 3D变换* IE10+
+1 参考资料：
+http://www.zhangxinxu.com/wordpress/2012/09/css3-3d-transform-perspective-animate-transition/
+http://www.cnblogs.com/jarson-7426/p/5699209.html
+2   transform-style：preserve-3d建立3D空间 必须
+	Perspective 景深 必须
+	Perspective- origin 景深基点
+	Transform 新增函数
+		rotateX(30deg)
+		rotateY(30deg)
+		rotateZ(30deg)
+		translateZ(-20px):当translateZ>0时，元素会向其面对的方向走去；如果元素无旋转，就会朝显示器走来
+		scaleZ()
+
+3 使用：3层
+   <div class="stage">
+      <div class="container">
+         <div>内容</div>
+         <div>内容</div>
+         ...
+      </div>
+   </div>
+
+ 1 最外层舞台：
+   设置perspective（从多远的地方看过去），使子元素获得近大远小的透视效果
+	.stage{
+	perspective:xxxpx;
+	}
+
+ 2 容器：
+ 	设置transform-style: preserve-3d，让其子元素在3D空间呈现
+	.container{
+		transform-style: preserve-3d;
+		position:relative;
+	}
+ 3 最内层
+   为了让所有元素共用一个中心点，给每个都设置position:absolute
+	
+
+-----------------
+	*动画animation* IE10+
+0 所有简介：
+	@keyframes					规定动画。
+	animation					所有动画属性的简写属性，除了animation-play-state属性。
+	animation-name				使用的@keyframes动画的名称。
+	animation-duration			动画完成一个周期的时间
+	animation-timing-function	规定动画的速度曲线。				默认是 "ease"。
+	animation-delay				规定动画何时开始。					默认是0。
+	animation-iteration-count	规定动画被播放的次数。				默认是 1。
+	animation-direction			规定动画是否在下一周期逆向地播放。	默认是 "normal"。
+	animation-play-state		规定动画是否正在运行或暂停。		默认是 "running"。
+	animation-fill-mode			规定对象动画时间之外的状态。
+
+1 定义关键帧@keyframes
+	1 只需指明两个状态，之间的过程由计算机自动计算
+	2 关键帧的时间单位
+		数字：0%、25%、100%等
+		字符：from(0%)、to(100%)
+	3 格式
+		@keyframes 动画名称
+		{
+			动画状态
+		}
+
+2 如何将@keyframes应用到具体的元素或事件
+	1 animation-name（必须）
+	2 animation-duration（必须）
+	3 animation-timing-function
+		linear 		匀速。
+		ease		缓冲。
+		ease-in		由慢到快。
+		ease-out	由快到慢。
+		ease-in-out	由慢到快再到慢。
+		cubic-bezier 贝塞尔曲线 http://matthewlein.com/ceaser/
+	  注：作用于每两个关键帧之间，而不是整个动画
+	4 animation-delay 动画延迟 只是第一次
+	5 animation-iteration-count 重复次数 infinite为无限次
+	6 animation-direction  动画是否重置后再开始播放
+		alternate	动画直接从上一次停止的位置开始执行
+		normal	动画第二次直接跳到0%的状态开始执行
+	7 animation-play-state 属性规定动画正在运行还是暂停。
+		paused/running
+	8 animation-fill-mode 属性规定动画在播放之前或之后，其动画效果是否可见。
+		none	不改变默认行为。
+		forwards	当动画完成后，保持最后一个属性值（在最后一个关键帧中定义）。
+		backwards	在 animation-delay 所指定的一段时间内，在动画显示之前，应用开始属性值（在第一个关键帧中定义）。
+		both	向前和向后填充模式都被应用。
+
+3 例子：
+	@keyframes test {
+	     0% {
+	        width: 200px;
+	        height: 100px;
+	        background-color: pink;
+	        border-radius: 20%;
+	        opacity: 0.2;
+	     }
+	     100% {
+	        width: 250px;
+	        height: 120px;
+	        background-color: coral;
+	        border-radius: 50%;
+	        opacity: 1;
+	     }
+	  }
+	  
+	  div {
+	     animation-name: test;
+	     animation-duration: 2s;
+	     animation-timing-function: ease;
+	     animation-iteration-count: infinite;
+	     animation-direction: alternate;
+	  }
+	  
+	  div:hover {
+	     animation-play-state: paused;
+	  }
+
+4 事件
+
+
+-----------------
+	*总体总结*
+CSS3新增了很多选择器：
+   1 属性选择器 如[lzx~='ab']
+   2 结构性选择器 如p:nth-child(3n) p:only-child
+   3 伪类选择器 如input:checked
+有的内容，比如[lzx='ab'] ::after不是css3新加的，不过就放到一起说了
+新增的CSS3选择器的兼容问题，和解决方法看“兼容性总结.txt”，简单来说就是下一个东西，引进来就好了，很简单。
+CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查，先不管了。
+
+讲了一些文本设置。
+1 颜色模式 rgba    IE9+
+2 文字阴影 text-shadow    IE10+
+3 文字描边 -webkit-text-stroke
+   只有webkit内核浏览器才支持，而且必须加前缀。FF和chrome支持，IE都不支持。
+4 文本功能 direction和text-overflow  全兼容
+5 自定义字体：ie8-部分支持：即只支持EOT字体。ie9+全支持
+
+1 box-sizing IE8+
+2 box-shadow IE9+
+3 倒影box-reflect 所有IE都不支持
+4 自由缩放resize 所有IE都不支持
+5 CSS3分栏布局 IE10+支持，FF和chrome需要前缀
+6 响应式布局@media IE9+支持（IE6-8通过引入js来兼容）
+7 弹性盒模型 兼容性不好，没学，以后没事再看
+
+1 border-radius IE9+
+2 linear-gradient IE10+
+3 radial-gradient IE10+
+4 background-size IE9+
+5 background-origin IE9+
+6 background-clip IE9+
+7 mask IE不支持，chrome要前缀且只支持Mask-image
+
+1 渐变transition IE10+
+2 2D变换transform IE10+
+  3D变换transform IE10+
+3 动画animation IE10+
+
+

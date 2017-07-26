@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <title>Document</title>
+   <style>
+   * {
+      margin: 0;
+      padding: 0;
+   }
+   /*
+    CSS中有vertical-align属性，但是它只对(X)HTML元素中拥有valign特性的元素才生
+    效，例如表格元素中的<td>、<th>、<caption>等。
+    而像<div>、<span>这样的元素是没有valign特性的，因此使用vertical-align对它们不起作用。    
+     
+    1、单行文本
+        方法：把文本段落高度(line-height)和所在区域层的高度(height)设为一致即可。
+        缺点：这种方法只对单行文本有效。*/
+   
+   div.singleLine {
+      background-color: #bdf;
+      height: 250px;
+      line-height: 250px;
+      overflow: hidden;
+   }
+   /* 
+
+    2、多行文本
+        方法: 不设区域高度(让高度自适应), 然后上下padding设为相同值。
+        优点：简单
+        缺点：容器的高度必须是可伸缩的。 */
+   
+   div.manyLine {
+      background-color: #fca;
+      padding: 100px 0;
+   }
+   /*
+
+    3、浏览器居中：
+        方法: 设置position属性为fixed。例如文本区域高度为浏览器高度的20%，那么上方应该留下50%-10%=40%；左边同理
+        缺点：其实是块居中，块中的文本没有垂直居中*/
+   
+   div.broswerfixed {
+      background-color: #cab;
+      position: fixed;
+      top: 40%;
+      left: 40%;
+      width: 20%;
+      height: 20%;
+   }
+   /*
+
+    4、多行文本固定高度的居中
+    父元素设为table，子元素设为table-cell,
+    之后就可以使用vertical-align:middle;
+
+    */
+   
+   div#outer {
+      background-color: #FFCCFF;
+      display: table;
+      height: 200px;
+   }
+   
+   div#inner {
+      display: table-cell;
+      vertical-align: middle;
+   }
+   </style>
+</head>
+
+<body>
+   <a href="0 目录.html">返回目录</a>
+   <a href="http://www.cnblogs.com/dushao/p/5999239.html">点这里查看更多</a>
+   <br>
+   <div class="singleLine">
+      <p>单行</p>
+   </div>
+   <div class="manyLine">
+      <p>
+         多行： 眼泪这东西啊，是流出来就能把辛酸和悲伤都冲走的好东西。可等你们长大成人了就会明白，人生还有眼泪也冲刷不干净的巨大悲伤，还有难忘的痛苦让你们即使想哭也不能流泪.所以真正坚强的人，都是越想哭反而笑得越大声，怀揣着痛苦和悲伤，即使如此也要带上它们笑着前行。
+      </p>
+   </div>
+   <div class="broswerfixed">
+      <p>浏览器居中（其实是块居中，块中的文本没有垂直居中）</p>
+   </div>
+   <div id="outer">
+      <div id="inner">
+         转换成有valign属性的元素
+      </div>
+   </div>
+</body>
+
+</html>

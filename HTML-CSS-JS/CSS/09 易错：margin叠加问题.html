@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <title>margin collapsing</title>
+   <link rel="stylesheet" href="">
+   <style>
+   /* 首先把所有元素的内外边距设为0，防止browser的设置影响结果 */
+   
+   * {
+      padding: 0;
+      margin: 0;
+   }
+   
+   .emphasize {
+      color: red;
+      font-size: 120%;
+   }
+   
+   body {
+      background-color: #eee;
+   }
+   /* 情况一 */
+   
+   .outer1 {
+      width: 600px;
+      height: 150px;
+      background-color: lightcoral;
+   }
+   
+   .a,
+   .b {
+      width: 300px;
+      height: 30px;
+   }
+   
+   .a {
+      background-color: coral;
+      margin-bottom: 10px;
+   }
+   
+   .b {
+      background-color: lightcyan;
+      margin-top: 30px;
+   }
+   /* 情况二 */
+   
+   .outer2 {
+      width: 600px;
+      height: 150px;
+      background-color: lightcoral;
+      margin-top: 50px;
+   }
+   
+   .inner {
+      width: 300px;
+      height: 50px;
+      background-color: cyan;
+      margin-top: 50px;
+   }
+   </style>
+</head>
+
+<body>
+   <a href="0 目录.html">返回目录</a>
+   <br>
+   <h1 style="text-align: center;font-family: '华文彩云'">竖直方向的margin叠加问题</h1>
+   <a href="https://www.sitepoint.com/web-foundations/collapsing-margins/" target="_blank">英文的(有margin为负的情况解释)</a>
+   <br>
+   <a href="https://www.zhihu.com/question/19823139" target="_blank">知乎：如何解决外边距叠加的问题？——丁小倪的回答</a>
+   <br>
+   <br> 只有文档
+   <span class="emphasize">流</span>中<span class="emphasize">block</span>框的<span class="emphasize">垂直</span>外边距才会发生外边距叠加。以下三种：
+   <br><span class="emphasize">①行内元素(inline,inline-block)</span>
+   <br><span class="emphasize">②浮动元素</span>
+   <br><span class="emphasize">③绝对定位元素(absolute.fixed)</span>之间的外边距不会叠加。
+   <br>
+   <br>解决方法：丁小妮的建议：在写的时候尽量用同一方向的margin，比如都设置为top或者bottom
+   <hr>
+   <p>情况一：元素的顶margin与前面元素的底margin叠加</p>
+   <div class="outer1">
+      <div class="a">a的底margin=10px</div>
+      <div class="b">b的顶margin=30px</div>
+      a和b之间的margin取max(10px,30px)=30px;
+   </div>
+   <hr>
+   <p>情况二：元素的顶margin与父元素的顶margin叠加（底margin要求height:auto）</p>
+   <div class="outer2">
+      <div class="inner"></div>
+      coral色的大block的上marigin=50px
+      <br> cyan色的子block的上margin=50px
+      <br> 所以父block和上面的block之间的margin=max(50px,50px)=50px
+      <br>而子和父之间的margin=0
+   </div>
+   <hr>
+   <p>情况三:元素自身叠加</p>
+   <p>当元素没有内容（即空元素）、内边距、边框时， 它的上下边距就相遇了， 即会产生叠加（垂直方向）。 当为元素添加内容、 内边距、 边框任何一项， 就会取消叠加。 如果margin一直碰到其他的margin，就会一直叠加所以一连串空元素占用空间很小，因为它们的margin都叠加到一起，形成了一个很小的margin。
+   </p>
+   <br>
+</body>
+
+</html>
