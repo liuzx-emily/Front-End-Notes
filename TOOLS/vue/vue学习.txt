@@ -1,0 +1,269 @@
+ 兼容性：不支持IE8-，因为 Vue.js 使用了 IE8 不能模拟的 ECMAScript 5 特性。 
+（IE8-中用不了Object.definedProperty）
+ https://unpkg.com/vue/dist/vue.js
+
+最重要的是思路转换：
+1 数据驱动
+	去修改数据，让vue自动帮你做其它所有事。
+	目标是：让DOM操作绝迹！
+2 组件化
+
+
+
+一. 渐进式框架
+
+二. vue中的两个核心点
+	1 响应的数据绑定
+	 	数据改变 -> 自动更新视图
+	 	利用Object.definedProperty中的setter/getter代理数据，监控对数据的操作
+	 	(具体：mozila搜索Object.definedProperty)
+
+	2 组合的视图组件
+	 	ui页面映射为组件树
+	 	划分组件可维护、可重用、可测试
+
+
+三. 虚拟DOM
+	vue2.0中引入新功能：虚拟DOM
+	http://www.cnblogs.com/lvyongbo/p/5931636.html
+
+四. MVVM模式	
+	Model - View- ViewModel
+	http://www.cnblogs.com/indream/p/3602348.html
+
+----------------
+	*声明式渲染
+例：求数组中每一项的倍数，放在另一个数组中
+命令式：
+	var newArr = [];
+    for( var i = 0; i < arr.length; i++ ){
+        newArr.push(arr[i]*2)
+    }
+命令式：
+    var newArr = arr.map(function(item){
+        return item * 2;
+    });
+
+
+----------------
+	*指令
+是一种特殊的自定义行间属性。
+指令的职责就是当其表达式的值改变时，相应地将某些行为应用到DOM上。
+在vue中，指令以v-开头。
+
+v-bind:	简写为: 动态地绑定数据
+v-on:	简写为@ 绑定事件监听器
+
+
+----------------
+	*模版
+1 html模版
+2 字符串模版：template字符串
+3 模版-render函数
+
+
+----------------
+	*html模版
+插值：
+	文本："Mustache"语法（双大括号）{{}} 
+	v-text v-html
+	属性：v-bind:  简写:
+
+例：
+	<article>
+	    <div v-html="lzxHtml"></div>
+	    <div>{{lzxMessage1}}</div>
+	    <div :lzx="lzxAttrValue"></div>
+	</article>
+	<script>
+	new Vue({
+	    el: "article",
+	    data: {
+	        lzxMessage1: "银之匙",
+	        lzxHtml: '<span>钢之炼金术师</span>',
+	        lzxAttrValue: '上校'
+	    }
+	});
+	</script>
+  渲染结果：
+  	<article>
+  	    <div><span>钢之炼金术师</span></div>
+  	    <div>银之匙</div>
+  	    <div lzx="上校"></div>
+  	</article>
+
+----------------
+	*字符串模版
+模版将会替换挂载的元素。只能有一个根节点
+例1：
+    <article></article>
+    <script>
+    new Vue({
+        el: "article",
+        data: {lzxMessage1: '钢之炼金术师'},
+        template: '<span>{{lzxMessage1}}</span>'
+    });
+    </script>
+  渲染结果：
+	<span>钢之炼金术师</span>
+
+只有一个页面时，可以将html结构写在script中，设置type="x-template"。多个页面时不能复用，所以不要这么写。
+例2：
+	<article></article>
+	<script type="x-template" id="lzxT">
+	    <input type="button" value="吧啦">
+	</script>
+	<script>
+	new Vue({
+	    el: "article",
+	    data: {
+	        lzxMessage1: '钢之炼金术师'
+	    },
+	    template: '#lzxT'
+	});
+	</script>
+  渲染结果：
+  	<input type="button" value="吧啦">
+
+----------------
+	*模版-render函数
+vue中的createEle函数：
+	参数：标签名 [数据对象] 子元素
+参数 - 数据对象；
+	class:{}
+	style:{}
+	attrs:{}
+	domProps:{} DOM元素属性
+	on:{}
+例：
+	<div id="demo"></div>
+	<script>
+	new Vue({
+	    el: "#demo",
+	    render(createEle) {
+	        return createEle(
+	            "ul", {
+	                class: {
+	                    pretty: true
+	                },
+	                style: {
+	                    fontSize: '50px',
+	                    backgroundColor: '#eee'
+	                },
+	                attrs: {
+	                    lk: "吧嗒"
+	                },
+	                domProps: {
+	                    innerHTML: '<li>我是html，会使下面创建的的子元素无效</li>'
+	                }
+	            }, [
+	                createEle("li", 1),
+	                createEle("li", 2)
+	            ]
+	        );
+	    }
+	});
+	</script>
+  渲染结果：
+  	<ul lk="吧嗒" class="pretty" style="font-size: 50px; background-color: rgb(238, 238, 238);">
+  	    <li>我是html，会使下面创建的的子元素无效</li>
+  	</ul>
+
+----------------
+	*绑定class
+例1：
+	<div id="demo">
+	    <span class="coral" :class="{gray:addClass2}">钢之炼金术师</span>
+	    <br>打勾勾
+	    <input type="radio" name="dada" v-model="addClass1" value="true">
+	    <br>我才不选呢
+	    <input type="radio" name="dada" v-model="addClass1" value="false">
+	</div>
+	<script>
+	var vm = new Vue({
+	    el: "#demo",
+	    data: {
+	        addClass1: "true"
+	    },
+	    computed: {
+	        addClass2() {
+	            return this.addClass1 === "true";
+	        }
+	    }
+	});
+	</script>
+  渲染结果：
+  	class coral一直都在。class gray根据radio，可以来回切换
+
+
+----------------
+	*v-for指令：
+	根据一组数组的选项列表进行渲染
+变异方法：
+	vue提供一组方法，对数组进行操作的时候，会触发视图更新。
+	这些方式是vue自己实现的，和原生的方法名字相同，API没有变化（为了方便使用）。
+	push pop shift unshift splice sort reverse
+
+
+----------------
+	*v-on：监听DOM事件，触发处理函数
+事件修饰符：
+	.stop  .prevent  .capture  .selft  .once
+  按键修饰符：
+  	.enter  .tab  .left  .ctrl .键值
+  例：
+  	v-on:keyup.enter
+
+
+----------------
+	*v-model
+
+
+----------------
+	*
+事件处理函数需要传参时，要把数据对象手动地用$event传
+v-on:keyup="addTodo(123,$event)"
+addTodo(data,ev){}
+
+
+----------------
+	*
+条件渲染：v-show 
+1. v-show
+	<span v-show="list.length">...</span>	list中有东西，才显示span
+	元素会被渲染在页面中，只是根据表达式切换css(display：none)
+2 v-if
+
+----------------
+	*自定义指令
+directive
+钩子函数 钩子函数的参数
+
+----------------
+	*监控watch  
+  list:function(){} //是“浅层监控”
+
+  list:{
+    handler:function(){},
+    deep:true //深度监控
+  }
+
+----------------
+	*组件
+vue中的组件：自定义标签 or 扩展的原生html元素
+
+单文件组件：.vue文件
+
+思路：
+	1 先写出html结构和css
+	2 找出"可变的"：
+		<1> props：简单数据（类型检查 默认值..）
+				想传非string类型，必须要用v-bind
+		<2> slot ：模版 html结构
+	3 交互：自定义事件
+		元素.$emit(事件名，参数)
+
+----------------
+	*实例 树形菜单
+迭代：组件的模版里调用自己
+计算迭代层级

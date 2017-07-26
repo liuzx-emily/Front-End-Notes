@@ -1,0 +1,102 @@
+-----------------------
+	*布局小技巧：toAbsolute函数*
+1 初始时，
+	1 不用给img设置float:left;因为没有必要。
+	2 不能给position:absolute，不然会全部重叠在一起。
+
+	.container>img {
+	    width: 200px;
+	    margin: 5px;
+	}
+
+2	function toAbsolute(aObj) {
+	    for (var i = 0; i < aObj.length; i++) {
+	        aPos.push([aObj[i].offsetLeft, aObj[i].offsetTop]);
+	        aObj[i].index = i;
+	        changePos(aObj[i]);
+	        aObj[i].style.position = "absolute";	//写这里不行
+	        
+	    }
+	}
+	aPos必须要全部设置完，才能把所有的aObj改成absolute。
+	如果像上面这样，那么i=0时，第一张图片取完值，改成absolute后。此时第一张图片脱离normal flow，后面所有的照片都重新排位置了。第二张跑到原来的第一张位置。最终结果就是aPos中的所有值都相同，都是原本第一张图片的值。
+	要改成下面这样：
+	function toAbsolute(aObj) {
+	    for (var i = 0; i < aObj.length; i++) {
+	        aPos.push([aObj[i].offsetLeft, aObj[i].offsetTop]);
+	        aObj[i].index = i;
+	        changePos(aObj[i]);	        
+	    }
+	    for (var i = 0; i < aObj.length; i++) {
+	        aObj[i].style.position = "absolute";	//必须要aPos全部取完，才能改absolute
+	    }
+	}
+
+3 布局改完absolute后，要把margin清掉，toAbsolute函数中：
+	for (i = 0; i < aObj.length; i++) {
+	    aObj[i].style.position = "absolute";
+	    aObj[i].style.margin = 0;	//加上这一行
+	}
+
+4 小问题待解决：为什么div.container包不住img？？？
+
+-----------------------
+	*引入之前写好的js:fnMove
+	*引入之前写好的js:drag
+drag.js需要修改
+
+
+-----------------------
+	*预留边框位置*
+因为加减边框，图片位置会变，所以最开始就留出边框的位置，颜色设为transparent。
+
+	.container>img {
+        width: 200px;
+        margin: 5px;	
+        box-sizing: border-box;			//新加
+        border: 2px solid transparent;	//新加
+    }
+	aImg[i].style.borderColor = 'transparent';
+	aImg[findNearest(oTarget)].style.borderColor = 'red';
+
+而不能用之前常用的：
+	.container>img {
+	    width: 200px;
+	    margin: 5px;
+	}
+	aImg[i].style.border = 'none
+	aImg[findNearest(oTarget)].style.border = '2px solid red';
+
+还有其他解决办法：
+	比如每次添加、删除边框时，同时也该left top值，不过那样写起来要麻烦一点
+
+
+-----------------------
+	*找最近的
+findNearest(obj)函数：在撞上了的img中，找最近的
+其中包含三个函数：
+1 碰撞检测：
+	detectCollision(obj1, obj2)函数,具体见html
+	注意：特别处理obj1==obj2的情况
+2 求两个img之间的距离：
+	getDistance(obj1,obj2)函数,具体见html
+3 找最小值:
+	findShortest(arr)函数,具体见html
+
+修改drag.js：
+  1 在document.onmousemove中修改：
+  	每次mousemove都要先清除所有img的红色边框：
+  		for (var i = 0; i < aImg.length; i++) {
+  		    aImg[i].style.border = 'none';
+  		}
+	然后判断：如果obj有和其他img相撞，则距离最近的img加上红色边框。
+  2 在document.onmouseup中修改：
+  	每次鼠标抬起时，需要确定是否交换位置
+  	判断：obj有没有和其他img相撞
+  		如果有，则交换位置
+  		如果没有，obj会原位
+
+注意：判断是否相撞，不能用：if (findNearest(oTarget) !== false)
+必须写成if (findNearest(oTarget) !== false)
+	不然和第一张图片相撞而且最近时，findNearest(oTarget)返回0，但是条件判断仍为假
+

@@ -1,0 +1,38 @@
+1 canvas设计到运动的，一定是重绘
+2 canvas的宽和高要设置行间属性，不能在<style>标签里设置
+	<canvas width="600" height="600"></canvas>
+
+
+------------
+	*1 青蛙*
+1 添加青蛙到画布中心
+2 青蛙跟着鼠标旋转
+
+
+------------
+	*2 画路径
+修改逻辑：把angle提高成全局变量
+每次mousemove时修改angle的值。
+draw函数负责画画。
+
+------------
+	*3 绕圈的小球
+小球存在数组ball里，ball初始为空
+setInterval(addBall, 800); //每1s增加一个球
+setInterval(moveBall, 1000 / 60); //按'每秒60帧'移动所有小球
+
+
+------------
+	*4 子弹小球
+子弹存在数组bullet里，bullet初始为空
+每次触发oCanvas.onclick时，给bullet中添加一个子弹
+setInterval(moveBullet, 1000 / 60); //按'每秒60帧'移动子弹
+
+------------
+	*5 子弹命中检测
+setInterval(aimClear, 1000 / 60); //按'每秒60帧'进行命中检测
+
+
+
+
+待完善

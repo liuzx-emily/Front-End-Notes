@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>007 缩略图+图片切换</title>
+    <style>
+    body {
+        margin: 0
+    }
+    
+    button {
+        cursor: pointer
+    }
+    
+    a {
+        text-decoration: none
+    }
+    
+    img {
+        border: none
+    }
+    
+    * {
+        box-sizing: border-box
+    }
+    
+    .out {
+        width: 600px;
+        margin: 10px auto 0 auto;
+        background: #eee;
+        position: relative;
+        border-radius: 30px
+    }
+    
+    .title {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        line-height: 50px;
+        font-family: "华文彩云";
+        font-size: 26px;
+        text-align: center;
+        letter-spacing: 5px;
+        background: rgba(0, 0, 0, 0.4);
+        color: white;
+        border-top-left-radius: 30px;
+        border-top-right-radius: 30px
+    }
+    
+    .wall {
+        height: 400px
+    }
+    
+    .dots {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        text-align: center;
+        line-height: 50px;
+        background: rgba(0, 0, 0, 0.4);
+        border-bottom-left-radius: 30px;
+        border-bottom-right-radius: 30px;
+        color: white
+    }
+    
+    .dots a {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        line-height: 50px;
+        text-decoration: none;
+        margin: auto 0;
+        vertical-align: middle;
+        background: #ccc;
+        border-radius: 50px;
+        margin: 0 10px;
+        position: relative
+    }
+    
+    .dots a:hover {
+        background: white
+    }
+    
+    .left,
+    .right {
+        position: absolute;
+        top: 45%;
+        width: 20px;
+        height: 20px;
+        background: gray;
+        border-radius: 50px
+    }
+    
+    .left:hover,
+    .right:hover {
+        background: #aaa;
+        width: 22px;
+        height: 22px
+    }
+    
+    .left {
+        left: 50px
+    }
+    
+    .right {
+        right: 50px
+    }
+    
+    img {
+        width: 100%;
+        height: 100%;
+        border-radius: 30px
+    }
+    
+    .smallpic {
+        position: absolute;
+        top: -90px;
+        left: -40px;
+        width: 100px;
+        height: 60px;
+        display: none;
+        border-radius: 10px;
+        opacity: 0.9
+    }
+    </style>
+</head>
+
+<body>
+    <div class="out">
+        <div class="title">缩略图+图片切换</div>
+        <div class="wall">
+            <img src="" alt="图片墙">
+        </div>
+        <a href="#" class="left"></a>
+        <a href="#" class="right"></a>
+        <div class="dots">
+            <!--
+         js中根据图片个数动态添加：
+         <a href="#" class="dot">
+            <img src="" class="smallpic">
+         </a> 
+         -->
+        </div>
+    </div>
+    <script>
+    /*初始化*/
+    var picsNum = 8;
+    var pics = [];
+    for (var i = 0; i <= picsNum; i++) {
+        pics.push('image/' + (i + 1) + '.jpg');
+    }
+    var smallpics = document.getElementsByClassName('smallpic');
+    var oleft = document.getElementsByClassName('left')[0];
+    var oright = document.getElementsByClassName('right')[0];
+    var oimg = document.getElementsByTagName('img')[0];
+    var adotsdiv = document.getElementsByClassName('dots')[0];
+
+    var current = 0;
+
+    /* initialization*/
+
+    change();
+    for (var i = 0; i < pics.length; i++) {
+        adotsdiv.innerHTML += '<a href="#" class="dot"><img src="" class="smallpic"></a>';
+    }
+    var adots = document.getElementsByClassName('dot');
+    for (var i = 0; i < smallpics.length; i++) {
+        smallpics[i].src = pics[i];
+    }
+
+
+    //
+    var timer = null;
+
+
+    autoPlay();
+
+    function autoPlay() {
+        timer = setInterval(function() {
+            current = (current + 1) % (pics.length);
+            change();
+        }, 1000);
+
+    }
+    var oOut = document.getElementsByClassName('out')[0];
+    oOut.onmouseenter = function() {
+        clearInterval(timer);
+    };
+    oOut.onmouseleave = autoPlay;
+    //
+
+
+
+    /*show pics*/
+    function change() {
+        oimg.src = pics[current];
+    }
+
+    oleft.onclick = function() {
+        current = (current + 3) % (pics.length);
+        change();
+    };
+    oright.onclick = function() {
+        current = (current + 1) % (pics.length);
+        change();
+    };
+
+    //adots
+
+    for (var i = 0; i < adots.length; i++) {
+        adots[i].index = i; //自定义属性，避免用循环变量i
+        adots[i].onclick = function() {
+            current = this.index;
+            change();
+
+        };
+
+        adots[i].onmouseover = function() {
+            var img = this.getElementsByTagName('img')[0];
+            img.style.display = "block";
+        };
+
+        adots[i].onmouseleave = function() {
+            var img = this.getElementsByTagName('img')[0];
+            img.style.display = "none";
+
+        };
+    }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+./demo/src/index.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+</head>
+
+<body>
+    <!-- <input type="text" value="hi~girl"> -->
+</body>
+
+</html>
+
+
+
+./demo/src/js/app.js
+﻿function say() {
+    console.log('hey~ girl!');
+}
+// const PI = 3.14;
+
+
+

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>1</title>
+    <style>
+    body {
+        margin: 0;
+    }
+    
+    section {
+        position: relative;
+        width: 300px;
+        margin: 20px auto;
+    }
+    
+    article {
+        font-size: 0;
+        position: relative;
+        height: 200px;
+    }
+    
+    article>img {
+        width: 300px;
+        height: 200px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 1;
+        transition: 0.5s opacity;
+    }
+    
+    aside {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }
+    
+    aside>span {
+        background-color: #eee;
+        padding: 5px;
+    }
+    
+    span.active {
+        background-color: coral;
+    }
+    </style>
+    <script>
+    window.onload = function() {
+        var aImg = document.querySelectorAll('img');
+        var aSpan = document.querySelectorAll('span');
+        for (let i = 0; i < aSpan.length; i++) {
+            aSpan[i].onmouseover = function() {
+                for (let j = 0; j < aSpan.length; j++) {
+                    aSpan[j].className = "";
+                    aImg[j].style.opacity = 0;
+                }
+                aImg[i].style.opacity = 1;
+                this.className = "active";
+            };
+        }
+
+    };
+    </script>
+</head>
+
+<body>
+    <section>
+        <article>
+            <img src="1.jpg" alt="">
+            <img src="2.jpg" alt="">
+            <img src="3.jpg" alt="">
+            <img src="4.jpg" alt="">
+            <img src="5.jpg" alt="">
+        </article>
+        <aside>
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+        </aside>
+    </section>
+</body>
+
+</html>

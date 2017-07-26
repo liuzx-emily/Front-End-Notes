@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <title>aa</title>
+   <style>
+   body {
+      margin: 0
+   }
+   
+   * {
+      box-sizing: border-box
+   }
+   
+   .out {
+      width: 600px;
+      background-color: coral;
+      font-size: 0;
+      margin: 20px auto 0 auto;
+      position: relative;
+      cursor: pointer
+   }
+   
+   .line1 .title {
+      display: inline-block;
+      width: 25%;
+      text-align: center;
+      font-size: 26px
+   }
+   
+   .line2 .content {
+      position: absolute;
+      top: 35px;
+      display: none
+   }
+   
+   .line2 .content .detail {
+      font-size: 22px;
+      text-align: center;
+      display: block;
+      padding: 0 20px;
+      border: #aaa 1px solid;
+      background-color: #eee;
+      border-radius: 5px;
+      box-shadow: 1px 1px 5px black;
+      margin-top: 2px
+   }
+   </style>
+</head>
+
+<body>
+   <div class="out">
+      <div class="line1">
+         <span class="title">A</span>
+         <span class="title">B</span>
+         <span class="title">C</span>
+         <span class="title">D</span>
+      </div>
+      <div class="line2">
+         <div class="content">
+            <span class="detail">A1</span>
+            <span class="detail">A2</span>
+         </div>
+         <div class="content">
+            <span class="detail">B1</span>
+            <span class="detail">B2</span>
+            <span class="detail">B3</span>
+         </div>
+         <div class="content">
+            <span class="detail">C1</span>
+         </div>
+         <div class="content">
+            <span class="detail">D1</span>
+            <span class="detail">D2</span>
+            <span class="detail">D3</span>
+            <span class="detail">D4</span>
+         </div>
+      </div>
+   </div>
+   <script>
+   var aContent = document.getElementsByClassName('content');
+   //set location
+   for (var i = 0; i < aContent.length; i++) {
+      aContent[i].index = i; //自定义属性index
+      aContent[i].style.left = 50 + 150 * i + 'px';
+   }
+
+   var aTitle = document.getElementsByClassName('title');
+   var timer = null; //定时器，初始化为null
+   //
+   var num = 0;
+   for (var i = 0; i < aTitle.length; i++) {
+      aTitle[i].index = i; //自定义属性index
+      aTitle[i].onmouseover = show;
+      aTitle[i].onmouseleave = hide;
+      aContent[i].onmouseover = show;
+      aContent[i].onmouseleave = hide;
+   }
+
+   function show() {
+      clearInterval(timer);
+      for (var i = 0; i < aTitle.length; i++) {
+         aContent[i].style.display = 'none';
+      }
+      num = this.index;
+      aContent[num].style.display = 'block';
+   }
+
+   function hide() {
+
+      timer = setInterval(function() {
+         aContent[num].style.display = 'none';
+      }, 1000);
+   }
+   //其他一些小细节
+   var aDetail = document.getElementsByClassName('detail');
+   for (var i = 0; i < aDetail.length; i++) {
+      aDetail[i].onmouseenter = function() {
+         this.style.backgroundColor = '#aaa';
+      };
+      aDetail[i].onmouseleave = function() {
+         this.style.backgroundColor = '#eee';
+      };
+   }
+   </script>
+</body>
+
+</html>

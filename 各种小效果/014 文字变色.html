@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <title>aa</title>
+   <style>
+   .out {
+      width: 800px;
+      margin: 50px auto 0 auto;
+      background-color: #eee;
+      border: 1px solid black;
+   }
+   
+   .in {
+      width: 730px;
+      height: 200px;
+      border: 5px solid #aaa;
+      margin: 20px auto;
+   }
+   
+   .bottom {
+      line-height: 50px;
+      margin-bottom: 20px;
+   }
+   
+   input {
+      margin-left: 100px;
+      width: 300px;
+      height: 40px;
+      vertical-align: middle;
+   }
+   
+   button {
+      margin-left: 50px;
+      width: 100px;
+      height: 40px;
+      font-size: 26px;
+      vertical-align: middle;
+   }
+   </style>
+</head>
+
+<body>
+   <div class="out">
+      <div class="in"></div>
+      <div class='bottom'>
+         <input type="text" value='坂田银时'>
+         <button>点一下</button>
+      </div>
+   </div>
+   <script>
+   var text = document.getElementsByTagName('input')[0];
+   var oBtn = document.getElementsByTagName('button')[0];
+   var aColors = ['#abf', '#fba', '#baf', '#bfa', '#5fb', '#fab', '#cfb'];
+   var show = document.getElementsByClassName('in')[0];
+   oBtn.onclick = function() {
+      var str = text.value;
+      //方法一：
+      var arr = str.split('');
+      for (let i = 0; i < arr.length; i++) {
+         arr[i] = '<span class="addColor">' + arr[i] + '</span>';
+      }
+      var newStr = arr.join('');
+      //方法二：
+      //var newStr = '';
+      // for (let i = 0; i < str.length; i++) {
+      //    newStr += '<span class="addColor">' + str[i] + '</span>';
+      // }
+
+      show.innerHTML += newStr;
+      addColor();
+
+      function addColor() {
+         var aSpans = document.getElementsByClassName('addColor');
+         for (let i = 0; i < aSpans.length; i++) {
+            aSpans[i].style.backgroundColor = aColors[i % aColors.length];
+         }
+
+      }
+   };
+   </script>
+</body>
+
+</html>

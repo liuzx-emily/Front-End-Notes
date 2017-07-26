@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>010 “匀速”滚动条（改transition）jq</title>
+    <script src="jquery-3.2.0.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        /*top_now获取现在的位置，      让mouseleave时的top=top_now，
+        来让滚动停止*/
+        var top_now;
+        /*speed控制速度，根据要滚的“长度”来调节
+         */
+        var speed;
+
+
+        $(".down").mousedown(function() {
+            // 例如：200px（string）
+            // 去掉末尾的px：200（string）
+            // 再将string转成数字：200（数字）
+            speed = parseInt(($("nav").css("top").slice(0, -2)), 10);
+            //根据当前位置调整速度
+            speed = (1000 + speed) / 300;
+            //别忘了加上单位：1+"s"    ——> “12s”
+            $("nav").css("transition", speed + "s");
+            $("nav").css("top", "-1000px");
+            $(this).mouseup(function() {
+                top_now = $("nav").css("top");
+                $("nav").css("top", top_now);
+            });
+
+        });
+
+
+
+        /*
+          
+        hover()方法用于模拟光标悬停事件。
+        当鼠标移动到元素上时，会触发指定的第一个函数(mouseenter);
+        当鼠标移出这个元素时，会触发指定的第二个函数(mouseleave)。
+        */
+        $(".back").hover(
+            function() {
+                speed = parseInt(($("nav").css("top").slice(0, -2)), 10);
+                // 上面除300，这里除600，看上去滚动速度一致，懒得算为什么了
+                speed = (-speed) / 600;
+
+                $("nav").css("transition", speed + "s");
+
+                $("nav").css("top", "0");
+
+            },
+            function() {
+                top_now = $("nav").css("top");
+                $("nav").css("top", top_now);
+            });
+
+        /*上面的hover，等价于下面的*/
+        /*
+        $(".back").mouseenter(function() {
+            speed = parseInt(($("nav").css("top").slice(0, -2)), 10);
+            // 上面除300，这里除600，看上去滚动速度一致，懒得算为什么了
+            speed = (-speed) / 600;
+
+            $("nav").css("transition", speed + "s");
+
+            $("nav").css("top", "0");
+            $(this).mouseleave(function() {
+                top_now = $("nav").css("top");
+                $("nav").css("top", top_now);
+            });
+        });
+
+        */
+    });
+    </script>
+    <style type="text/css">
+    /* not important */
+    
+    a {
+        text-decoration: none;
+        display: block;
+        width: 250px;
+        border: 1px solid coral;
+        text-align: center;
+        overflow: hidden;
+    }
+    /* not important */
+    
+    * {
+        box-sizing: border-box;
+    }
+    
+    .out {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .back,
+    .down {
+        height: 25px;
+        line-height: 25px;
+    }
+    
+    .in {
+        height: 400px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .in nav {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transition: 2.5s;
+    }
+    
+    .in nav a {
+        height: 100px;
+        line-height: 100px;
+        overflow: hidden;
+    }
+    
+    .content {
+        display: inline-block;
+        vertical-align: middle;
+    }
+    
+    img.content {
+        width: 40%;
+    }
+    
+    div.content {
+        width: 60%;
+        color: coral;
+        font-family: "华文彩云";
+        font-size: 30px;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="out">
+        <a href="#" class="back">向上(一直悬浮)</a>
+        <div class="in">
+            <nav>
+                <a href="#" style="font-size: 0;">
+                    <img class="content" src="image/1.jpg" alt="图片">
+                    </img>
+                    <div class="content">
+                        你好
+                    </div>
+                </a>
+                <a href="#">2</a>
+                <a href="#" style="font-size: 0;">
+                    <img class="content" src="image/2.jpg" alt="图片">
+                    </img>
+                    <div class="content">
+                        你好
+                    </div>
+                </a>
+                <a href="#">4</a>
+                <a href="#" style="font-size: 0;">
+                    <img class="content" src="image/3.jpg" alt="图片">
+                    </img>
+                    <div class="content">
+                        你好
+                    </div>
+                </a>
+                <a href="#">6</a>
+                <a href="#">7</a>
+                <a href="#" style="font-size: 0;">
+                    <img class="content" src="image/4.jpg" alt="图片">
+                    </img>
+                    <div class="content">
+                        你好
+                    </div>
+                </a>
+                <a href="#">9</a>
+                <a href="#" style="font-size: 0;">
+                    <img class="content" src="image/5.jpg" alt="图片">
+                    </img>
+                    <div class="content">
+                        你好
+                    </div>
+                </a>
+                <a href="#">11</a>
+                <a href="#" style="font-size: 0;">
+                    <img class="content" src="image/6.jpg" alt="图片">
+                    </img>
+                    <div class="content">
+                        你好
+                    </div>
+                </a>
+                <a href="#">13</a>
+                <a href="#" style="font-size: 0;">
+                    <img class="content" src="image/7.jpg" alt="图片">
+                    </img>
+                    <div class="content">
+                        你好
+                    </div>
+                </a>
+            </nav>
+        </div>
+        <a href="#" class="down">向下(一直按着)</a>
+    </div>
+</body>
+
+</html>

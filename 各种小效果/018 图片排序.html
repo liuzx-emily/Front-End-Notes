@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>018 图片排序</title>
+    <style>
+    body {
+        margin: 0
+    }
+    
+    * {
+        box-sizing: border-box
+    }
+    
+    .out {
+        width: 1000px;
+        margin: 50px auto;
+        background-color: coral;
+        border: 5px solid red
+    }
+    
+    .buttons {
+        width: 350px;
+        margin: 10px auto;
+        font-size: 0
+    }
+    
+    .buttons span {
+        display: inline-block;
+        width: 150px;
+        margin-right: 25px;
+        line-height: 50px;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+        text-align: center;
+        font-size: 26px;
+        color: white;
+        font-family: '华文彩云';
+        cursor: pointer
+    }
+    
+    .main {
+        font-size: 0
+    }
+    
+    .main .block {
+        display: inline-block;
+        font-size: 18px;
+        width: 25%;
+        border: 1px solid black
+    }
+    
+    .main .block img {
+        width: 100%;
+        height: 150px;
+        vertical-align: top
+    }
+    
+    .main .block span {
+        display: block;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        font-family: '幼圆'
+    }
+    </style>
+</head>
+
+<body>
+    <div class="out">
+        <div class="buttons">
+            <span>从大到小</span>
+            <span>打乱顺序</span>
+        </div>
+        <div class="main">
+            <div class="block">
+                <img src="#" alt="">
+                <span class="title"></span>
+            </div>
+            <div class="block">
+                <img src="#" alt="">
+                <span class="title"></span>
+            </div>
+            <div class="block">
+                <img src="#" alt="">
+                <span class="title"></span>
+            </div>
+            <div class="block">
+                <img src="#" alt="">
+                <span class="title"></span>
+            </div>
+            <div class="block">
+                <img src="#" alt="">
+                <span class="title"></span>
+            </div>
+            <div class="block">
+                <img src="#" alt="">
+                <span class="title"></span>
+            </div>
+            <div class="block">
+                <img src="#" alt="">
+                <span class="title"></span>
+            </div>
+            <div class="block">
+                <img src="#" alt="">
+                <span class="title"></span>
+            </div>
+        </div>
+    </div>
+    <script>
+    var Pictures = {
+        'url': [],
+        'title': []
+    };
+    for (let i = 0; i < 8; i++) {
+        Pictures.url.push("image/" + (i + 1) + ".jpg");
+        Pictures.title.push("图片" + (i + 1));
+    }
+    var aBlock = document.getElementsByClassName('block');
+    var aImg = document.getElementsByTagName('img');
+    var aTitle = document.getElementsByClassName('title');
+    var oBtn1 = document.getElementsByTagName('span')[0];
+    var oBtn2 = document.getElementsByTagName('span')[1];
+
+    changePics('smallToBig');
+    var order = true; //最开始是正序
+    oBtn1.onclick = function() {
+        if (order) {
+            changePics('bigToSmall');
+            oBtn1.innerText = '从小到大';
+        } else {
+            changePics('smallToBig');
+            oBtn1.innerText = '从大到小';
+        }
+        order = !order;
+    };
+    oBtn2.onclick = function() {
+        changePics('chaos');
+    };
+
+    function changePics(picsOrder) {
+        var order = [];
+        for (let i = 0; i < 8; i++) {
+            order.push(i);
+        }
+        if (picsOrder == 'smallToBig'); //不用动
+
+        else if (picsOrder == 'bigToSmall') { //倒序
+            order.reverse();
+        } else {
+            //乱序
+            order.sort(function(a, b) {
+                return Math.random() - 0.5;
+            });
+        }
+        for (let i = 0; i < 8; i++) {
+            aImg[i].src = Pictures.url[order[i]];
+            aTitle[i].innerText = Pictures.title[order[i]];
+        }
+    }
+    </script>
+</body>
+
+</html>

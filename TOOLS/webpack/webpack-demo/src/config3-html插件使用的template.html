@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>
+        <%= htmlWebpackPlugin.options.lzxTitle %>
+    </title>
+    <style>
+    p {
+        background-color: hotpink;
+    }
+    </style>
+</head>
+
+<body>
+    <div>
+        <% for (let attr in htmlWebpackPlugin.options.lzxSth ) { %>
+            <%= attr %> :
+                <%= htmlWebpackPlugin.options.lzxSth[attr] %>
+                    <% } %>
+    </div>
+    <p>查看htmlWebpackPlugin这个对象的所有属性</p>
+    <div>
+        <% for (let attr in htmlWebpackPlugin) { %>
+            <%= attr %>
+                <% } %>
+    </div>
+    <p>查看htmlWebpackPlugin.files的所有属性</p>
+    <div>
+        <% for (let attr in htmlWebpackPlugin.files) { %>
+            <%= attr %> :
+                <%= JSON.stringify(htmlWebpackPlugin.files[attr]) %>
+                    <% } %>
+    </div>
+    <p>查看htmlWebpackPlugin.options的所有属性</p>
+    <div>
+        <% for (let attr in htmlWebpackPlugin.options) { %>
+            <%= attr %> :
+                <%= JSON.stringify(htmlWebpackPlugin.options[attr]) %>
+                    <% } %>
+    </div>
+</body>
+
+</html>

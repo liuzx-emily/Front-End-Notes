@@ -1,0 +1,61 @@
+modernizr:好像很厉害的样子，有时间看看
+
+
+CSS选择器：（放到一起说）
+	1 所有css选择器的浏览器支持情况看这里：https://labs.qianduan.net/css-selector/
+	2 CSS3选择器 兼容方法：selectivizr 详情见http://selectivizr.com/
+	4 IE7-基本支持CSS3的属性选择器（[lzx~='ab']这种），一小部分有bug：
+		详情看这里：http://www.zhangxinxu.com/wordpress/2015/06/ie7-attribute-css-selector/
+		备注：不知道上面的selectivizr能不能解决这个问题，没试过
+	5 IE7-不支持before/after伪类(CSS2)
+		解决：http://www.zhangxinxu.com/wordpress/2012/11/before-after-use-web/
+	6 其他的待补充
+
+
+IE9-：
+	很多CSS3属性都不支持，比如transition
+
+
+IE8-：
+	1 不支持响应式布局@media
+		解决：https://github.com/livingston/css3-mediaqueries-js
+			just include the script in your pages.
+			(And you should combine and compress with other scripts and include it just before </body> for better page speed - but you already knew that).
+			Write your media queries like you would for browsers with native support. The script will parse your CSS and apply the styles for positive media query tests realtime (also when you resize).
+			Note: Doesn't work on @import'ed stylesheets (which you shouldn't use anyway for performance reasons). Also won't listen to the media attribute of the <link> and <style> elements.
+	2 不允许修改input的type，所以不能用一个input切换type属性
+		解决：只能弄两个input,然后换着用
+	3 无opacit
+		标准：opacity:0.35;;
+		坏的：filter:alpah(opacity=35);
+
+IE7-：
+	1 没有JSON对象
+		好的：alert(JSON);	//弹出[object JSON]
+		IE7-: alert(JSON);	//报错：JSON未定义
+		解决：在http://json.org/中下载json2.js，判断浏览器IE7-引入：<script src="json2.js"></script>
+			[json2.js:This file creates a global JSON object containing two methods: stringify
+			and parse.]
+		弄好json2.js之后IE7-: alert(JSON);	//弹出[object Object]
+	2 无box-sizing属性
+		
+IE6-:
+	1 ajax创建对象时：
+		好的：var xhr = new XMLHttpRequest();
+		IE6-：var xhr = new ActiveXObject('Microsoft.XMLHTTP');
+		兼容：
+			var xhr=null;
+			if (window.XMLHttpRequest) {
+				xhr = new XMLHttpRequest();
+			} else {
+				xhr = new ActiveXObject('Microsoft.XMLHTTP');
+			}
+			或者：
+			var xhr=null;
+			try {
+				xhr = new XMLHttpRequest();
+			} catch (e) {
+				xhr = new ActiveXObject('Microsoft.XMLHTTP');
+			}
+	2 无position：fixed
+	3 只支持<a>的伪类

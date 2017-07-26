@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <title>文字搬运工</title>
+   <style>
+   .out {
+      width: 1000px;
+      padding: 10px;
+      margin: 10px auto;
+      background: #eee;
+   }
+   
+   textarea {
+      display: inline-block;
+      border: 1px solid gray;
+      vertical-align: top;
+      width: 350px;
+      height: 200px;
+      resize: none;
+   }
+   
+   .middle {
+      display: inline-block;
+      vertical-align: top;
+      width: 80px;
+      height: 100px;
+   }
+   
+   .middle button,
+   .middle>span {
+      display: block;
+      width: 80%;
+      margin: 5px auto;
+      text-align: center;
+   }
+   
+   #processing .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+   }
+   </style>
+</head>
+
+<body>
+   <div class="out">
+      <textarea class="left"></textarea>
+      <div class="middle">
+         <button type="button">搬运</button>
+         <span></span>
+         <div id='processing'>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+         </div>
+      </div>
+      <textarea class="right"></textarea>
+   </div>
+   <script>
+   var left = document.getElementsByClassName('left')[0];
+   var right = document.getElementsByClassName('right')[0];
+   left.value = '摩登家庭，最爱的美剧。老友记也很好看！';
+   var btn = document.getElementsByTagName('button')[0];
+   var span = document.getElementsByTagName('span')[0];
+   var processing = document.getElementById('processing');
+   var timer = null;
+   var maxLen = left.value.length;
+   var num = 0;
+   var dots = document.getElementsByClassName('dot');
+   killDots();
+   var done = true;
+
+   function killDots() {
+      for (var i = 0; i < dots.length; i++) {
+         dots[i].style.backgroundColor = 'transparent';
+      }
+   }
+   btn.onclick = function(argument) {
+      if (!done)
+         return;
+      done = false;
+      clearInterval(timer);
+      maxLen = left.value.length;
+      num = 0;
+      right.value = '';
+      timer = setInterval(function(argument) {
+
+         if (num === maxLen) {
+            clearInterval(timer);
+            killDots();
+            done = true;
+            setTimeout(function() {
+               span.innerHTML = '';
+            }, 100);
+
+            return;
+         }
+         num++;
+         dots[num % 5].style.backgroundColor = 'coral';
+         dots[(num + 4) % 5].style.backgroundColor = '#F5F593';
+         var char = left.value[0];
+         left.value = left.value.substring(1);
+         right.value += char;
+         span.innerHTML = num + '/' + maxLen;
+
+      }, 20);
+
+   };
+   </script>
+</body>
+
+</html>

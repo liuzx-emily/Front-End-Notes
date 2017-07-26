@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- 
+易错点：
+
+1 容易忘记+ iSecond / 60
+var fMinute = oTime.getMinutes() + iSecond / 60;
+var fHour = oTime.getHours() + fMinute / 60;
+
+2 rotate(i - 3) degree
+要减去3，是因为初始指向90degree
+
+ -->
+
+<head>
+    <meta charset="UTF-8">
+    <title>021 CSS3transform 钟表</title>
+    <style>
+    #clock {
+        box-sizing: border-box;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 10px solid #438CDF;
+        box-shadow: 3px 3px 10px #2476DA;
+        background-image: radial-gradient(circle, lightcyan -200%, white 200%);
+        position: relative;
+    }
+    
+    #clock>* {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform-origin: left center;
+        background-color: blue;
+    }
+    
+    #clock .clockNumber {
+        width: 80px;
+        top: 45%;
+        background: none;
+    }
+    
+    #clock .clockNumber * {
+        font-family: '华文彩云';
+        float: right;
+    }
+    
+    #hour {
+        width: 30px;
+        height: 3px;
+    }
+    
+    #minute {
+        width: 50px;
+        height: 2px;
+    }
+    
+    #second {
+        width: 70px;
+        height: 1px;
+    }
+    
+    #centerDot {
+        width: 2px;
+        height: 2px;
+        border-radius: 50%;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="clock">
+        <div id="hour"></div>
+        <div id="minute"></div>
+        <div id="second"></div>
+        <div id="centerDot"></div>
+    </div>
+    <script>
+    var oClock = document.getElementById('clock');
+    var oHour = document.getElementById('hour');
+    var oMinute = document.getElementById('minute');
+    var oSecond = document.getElementById('second');
+    tikTok();
+    setInterval(tikTok, 500);
+    for (let i = 1; i <= 12; i++) {
+        let oDiv1 = document.createElement('div');
+        oDiv1.className = 'clockNumber';
+        oDiv1.style.transform = 'rotate(' + (i - 3) * 30 + 'deg)';
+        let oDiv2 = document.createElement('div');
+        oDiv2.innerText = i;
+        oDiv2.style.textAlign = 'right';
+        oDiv2.style.transform = 'rotate(' + -(i - 3) * 30 + 'deg)';
+        oDiv1.appendChild(oDiv2);
+        oClock.appendChild(oDiv1);
+    }
+
+
+    function tikTok() {
+        var oTime = new Date();
+        var iSecond = oTime.getSeconds();
+        var fMinute = oTime.getMinutes() + iSecond / 60;
+        var fHour = oTime.getHours() + fMinute / 60;
+        oHour.style.transform = 'rotate(' + 30 * (fHour - 3) + 'deg)';
+        oMinute.style.transform = 'rotate(' + 6 * (fMinute - 15) + 'deg)';
+        oSecond.style.transform = 'rotate(' + 6 * (iSecond - 15) + 'deg)';
+    }
+    </script>
+</body>
+
+</html>

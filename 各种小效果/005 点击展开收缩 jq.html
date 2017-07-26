@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>点击展开收缩</title>
+    <script src="jquery-3.2.0.min.js"></script>
+    <script>
+    var first = false;
+    var second = false;
+    var third = false;
+    $(document).ready(function() {
+
+        $("#first").mousedown(function() {
+            if (!first) {
+                $(".first").css("height", "0");
+                first = true;
+            } else {
+                $(".first").css("height", "30px");
+                first = false;
+            }
+
+        });
+
+        $("#second").mousedown(function() {
+            if (!second) {
+                $(".second").css("height", "0");
+                second = true;
+            } else {
+                $(".second").css("height", "30px");
+                second = false;
+            }
+
+        });
+
+        $("#third").mousedown(function() {
+            if (!third) {
+                $(".third").css("height", "0");
+                third = true;
+            } else {
+                $(".third").css("height", "30px");
+                third = false;
+            }
+
+        });
+
+
+
+
+
+
+
+
+
+
+    });
+    </script>
+    <style type="text/css">
+    * {
+        box-sizing: border-box;
+    }
+    
+    .out {
+        width: 300px;
+        background: #eee;
+    }
+    
+    .title {
+        line-height: 50px;
+        height: 50px;
+        overflow: hidden;
+        background-color: coral;
+        outline: 1px solid red;
+        cursor: pointer;
+        padding: 0 5px;
+    }
+    
+    .small {
+        line-height: 30px;
+        width: 80%;
+        margin: 0 auto;
+        height: 30px;
+        overflow: hidden;
+        background-color: lightcoral;
+        outline: 1px solid red;
+        padding: 0 3px;
+        transition: 0.5s;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="out">
+        <div class="big">
+            <div class="title" id="first">I realized that if I was gonna raise a boy, I needed to butch up my life. You know, I wanted to be able to teach my son all the things that my Dad taught Claire. </div>
+            <div class="small first">
+                I'm afraid that cow over there might bite me.</div>
+            <div class="small first">
+                I'm afraid that cow over there might bite me.</div>
+            <div class="small first">
+                I'm afraid that cow over there might bite me.</div>
+        </div>
+        <div class="big">
+            <div class="title" id="second">Jay! Is this like the lobster?! Do I get to pick one for dinner? Because this one looks very tender.</div>
+            <div class="small second">
+                I'm afraid that cow over there might bite me.</div>
+            <div class="small second">
+                I'm afraid that cow over there might bite me.</div>
+            <div class="small second">
+                I'm afraid that cow over there might bite me.</div>
+        </div>
+        <div class="big" id="third">
+            <div class="title">Why are you riding that way?</div>
+            <div class="small third">
+                I'm afraid that cow over there might bite me.</div>
+            <div class="small third">
+                I'm afraid that cow over there might bite me.</div>
+            <div class="small third">
+                I'm afraid that cow over there might bite me.</div>
+        </div>
+    </div>
+</body>
+
+</html>

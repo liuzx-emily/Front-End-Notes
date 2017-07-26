@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>009 淘宝广告自动切换</title>
+    <style>
+    body {
+        margin: 0
+    }
+    
+    * {
+        box-sizing: border-box
+    }
+    
+    .out {
+        width: 600px;
+        background-color: coral;
+        margin: 20px auto 0 auto;
+        position: relative;
+        cursor: pointer
+    }
+    
+    .img {
+        height: 400px
+    }
+    
+    .img img {
+        width: 100%;
+        height: 100%
+    }
+    
+    .title {
+        position: absolute;
+        width: 50px;
+        text-align: center;
+        font-family: '华文彩云';
+        font-size: 30px;
+        border-bottom: 1px red solid;
+        background-color: #eee
+    }
+    </style>
+</head>
+
+<body>
+    <div class="out">
+        <div class="img">
+            <img src="#" alt="图片">
+        </div>
+        <div class="side">
+            <span class="title">1</span>
+            <span class="title">2</span>
+            <span class="title">3</span>
+            <span class="title">4</span>
+            <span class="title">5</span>
+            <span class="title">6</span>
+            <span class="title">7</span>
+            <span class="title">8</span>
+            <span class="title">9</span>
+        </div>
+        <script>
+        //给side中的所有title设定位置
+        var aTitle = document.getElementsByClassName('title');
+        for (var i = 0; i < 4; i++) {
+            aTitle[i].style.left = '0';
+            aTitle[i].style.top = 100 * i + 'px';
+            aTitle[i].style.height = '100px';
+            aTitle[i].style.lineHeight = '100px';
+        }
+        for (var i = 4; i < aTitle.length; i++) {
+            aTitle[i].style.right = '0';
+            aTitle[i].style.top = 80 * (i - 4) + 'px';
+            aTitle[i].style.height = '80px';
+            aTitle[i].style.lineHeight = '80px';
+        }
+        //初始化图片数组
+        var aPics = [];
+        for (var i = 1; i < 10; i++) {
+            var url = 'image/' + i + '.jpg';
+            aPics.push(url);
+        }
+        //
+        var oImg = document.getElementsByTagName('img')[0];
+
+        for (var i = 0; i < aTitle.length; i++) {
+            aTitle[i].index = i; //自定义属性
+            aTitle[i].onmouseenter = function() {
+                current = this.index;
+                change(0);
+            };
+        }
+
+        var current = 0;
+        change();
+
+        function change() {
+            oImg.src = aPics[current];
+            for (var i = 0; i < aTitle.length; i++) {
+                aTitle[i].style.backgroundColor = '#eee';
+            }
+            aTitle[current].style.backgroundColor = '#aaa';
+        }
+        //自动循环
+        var timer = null;
+
+        function autoPlay() {
+            timer = setInterval(function() {
+                current = (current + 1) % aPics.length;
+                change();
+            }, 500);
+        }
+        autoPlay();
+
+        var oWhole = document.getElementsByClassName('out')[0];
+        oWhole.onmouseenter = function() {
+            clearInterval(timer);
+        };
+        oWhole.onmouseleave = autoPlay;
+        //setTimeout(autoPlay, 1000);
+        </script>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>003 图片切换 jq</title>
+    <script src="jquery-3.2.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        /*
+          
+          mousedown点一下跳转
+          mouseenter鼠标悬浮，显示缩略图
+          mouseleave鼠标不再悬浮，不显示缩略图
+          
+          */
+
+        $("#first").mousedown(function() {
+            $(".pics").css("left", "0");
+        });
+
+        $("#first").mouseenter(function() {
+            $("#first .smallpics").css("display", "inline-block");
+        });
+
+        $("#first").mouseleave(function() {
+            $("#first .smallpics").css("display", "none");
+        });
+
+
+        $("#second").mousedown(function() {
+            $(".pics").css("left", "-400px");
+        });
+
+        $("#second").mouseenter(function() {
+            $("#second .smallpics").css("display", "inline-block");
+        });
+
+        $("#second").mouseleave(function() {
+            $("#second .smallpics").css("display", "none");
+        });
+
+
+        $("#third").mousedown(function() {
+            $(".pics").css("left", "-800px");
+        });
+
+        $("#third").mouseenter(function() {
+            $("#third .smallpics").css("display", "inline-block");
+        });
+
+        $("#third").mouseleave(function() {
+            $("#third .smallpics").css("display", "none");
+        });
+
+        $("#forth").mousedown(function() {
+            $(".pics").css("left", "-1200px");
+        });
+
+
+        $("#forth").mouseenter(function() {
+            $("#forth .smallpics").css("display", "inline-block");
+        });
+
+        $("#forth").mouseleave(function() {
+            $("#forth .smallpics").css("display", "none");
+        });
+
+        $("#left").mousedown(function() {
+            var now = -parseInt(($(".pics").css("left").slice(0, -2)), 10);
+            if (now == 0) {
+
+            } else if (now <= 400) {
+                $(".pics").css("left", "0");
+            } else if (now <= 800) {
+                $(".pics").css("left", "-400px");
+            } else if (now <= 1200) {
+                $(".pics").css("left", "-800px");
+            }
+
+        });
+
+        $("#right").mousedown(function() {
+            var now = -parseInt(($(".pics").css("left").slice(0, -2)), 10);
+            /*和上面的对比， 在没有滚动完前再次点击，可以发现区别*/
+            if (now < 800) {
+                now += 400;
+                $(".pics").css("left", -now + "px");
+
+            } else {
+                $(".pics").css("left", "-1200px");
+            }
+
+        });
+
+    });
+    </script>
+    <style type="text/css">
+    * {
+        box-sizing: border-box;
+    }
+    
+    body {
+        margin: 0;
+    }
+    
+    .out {
+        width: 450px;
+        background: #eee;
+        padding: 25px;
+    }
+    /* 图片切换部分 */
+    
+    .in {
+        height: 250px;
+        background: #aaa;
+        position: relative;
+        overflow: hidden;
+        font-size: 0;
+    }
+    
+    #left,
+    #right {
+        font-size: 14px;
+        text-align: center;
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 45%;
+        z-index: 1;
+        cursor: pointer;
+        background: #eee;
+        border-radius: 50px;
+    }
+    
+    #left:hover,
+    #right:hover {
+        background: #ccc;
+    }
+    
+    #left {
+        left: 10%;
+    }
+    
+    #right {
+        right: 10%;
+    }
+    
+    .pics {
+        position: absolute;
+        width: 1600px;
+        height: 250px;
+        top: 0;
+        left: 0;
+        transition: 1s;
+    }
+    
+    .pics img {
+        width: 400px;
+        height: 250px;
+    }
+    /* 原点部分 */
+    
+    .dot {
+        background: #999;
+        padding: 1px;
+    }
+    
+    .dot_inner {
+        width: 120px;
+        margin: 5px auto;
+        font-size: 0;
+        text-align: center;
+    }
+    
+    .dot_inner span {
+        font-size: 16px;
+        vertical-align: middle;
+        width: 20px;
+        height: 20px;
+        margin: 0 5px;
+        display: inline-block;
+        background: #eee;
+        border-radius: 50px;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .dot_inner span:hover {
+        background: #ccc;
+    }
+    
+    .dot_inner .smallpics {
+        position: absolute;
+        bottom: 35px;
+        left: -20px;
+        width: 60px;
+        height: 35px;
+        opacity: 0.9;
+        display: none;
+        transition: 1s;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="out">
+        <div class="in">
+            <span id="left">左</span>
+            <div class="pics">
+                <img src="image/1.jpg" alt="">
+                <img src="image/2.jpg" alt="">
+                <img src="image/3.jpg" alt="">
+                <img src="image/4.jpg" alt="">
+            </div>
+            <span id="right">右</span>
+        </div>
+        <div class="dot">
+            <div class="dot_inner">
+                <span id="first">
+                1
+                <img class="smallpics" src="image/1.jpg">
+                </span>
+                <span id="second">2<img class="smallpics" src="image/2.jpg"></span>
+                <span id="third">3<img class="smallpics" src="image/3.jpg"></span>
+                <span id="forth">4<img class="smallpics" src="image/4.jpg"></span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

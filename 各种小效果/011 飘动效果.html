@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <title>飘动效果 定时器 js</title>
+   <style>
+   body {
+      margin: 0
+   }
+   
+   * {
+      box-sizing: border-box
+   }
+   
+   .out {
+      width: 600px;
+      height: 50px;
+      background-color: rgba(255, 127, 80, 0.5);
+      text-align: center;
+      position: absolute;
+      top: 200px;
+      right: 383px
+   }
+   
+   .mark {
+      width: 50px;
+      line-height: 48px;
+      border: 1px solid lightcoral;
+      position: absolute;
+      top: 0;
+      margin-left: 5px;
+      font-size: 26px;
+      color: #D03801
+   }
+   </style>
+</head>
+
+<body>
+   <div class="out"></div>
+   <script>
+   var out = document.getElementsByClassName('out')[0];
+   out.clickReady = true;
+   out.mouseenterReady = true;
+   //spanNum是span的个数
+   var spanNum = 10;
+   for (let i = 0; i < spanNum; i++) {
+      out.innerHTML += '<span class="mark">+1</span>';
+   }
+   //给每个span设定位置
+   var aSpan = document.getElementsByClassName('mark');
+   for (let i = 0; i < aSpan.length; i++) {
+      aSpan[i].index = i; //自定义属性
+      aSpan[i].style.left = 51 * i + 'px';
+   }
+
+   var num = 0;
+
+   //悬浮效果
+   out.onmouseenter = function() {
+      if (!out.mouseenterReady)
+         return;
+
+      for (let i = 0; i < aSpan.length; i++) {
+         aSpan[i].style.top = 0;
+         aSpan[i].style.opacity = 1;
+      }
+      out.clickReady = true;
+      out.mouseenterReady = false;
+   };
+
+
+   //点击效果
+   out.onclick = function() {
+      if (!out.clickReady)
+         return;
+      out.mouseenterReady = false;
+      setTimeout(function() {
+         fade(out, 0.6);
+      }, 500);
+      //changeWidth(out);
+      clearInterval(out.timer);
+      out.timer = setInterval(function() {
+         goMove(aSpan[num]);
+         fade(aSpan[num]);
+         num++;
+         if (num === spanNum) {
+            clearInterval(out.timer);
+            num = 0;
+            setTimeout(function() {
+               out.mouseenterReady = true;
+               out.clickReady = false;
+               out.style.opacity = 1;
+            }, 1000);
+         }
+      }, 100);
+   };
+
+   //上移
+
+   function goMove(element) {
+      clearInterval(element.timer);
+      element.goUpTimer = setInterval(function() {
+         element.position = parseFloat(getComputedStyle(element).top);
+         if (element.position <= -150) {
+            clearInterval(element.goUpTimer);
+            return;
+         }
+         element.style.top = element.position - 1 + 'px';
+
+      }, 1);
+   }
+
+
+   /**
+    * 逐渐改变element的透明度
+    * @param  {object} element 
+    * @param  {Number} opacity 最终透明度，默认为0
+    * @return 暂无
+    */
+   function fade(element, finalOpacity = 0) {
+      clearInterval(element.fadeTimer);
+      element.fadeTimer = setInterval(function() {
+         element.opacity = getComputedStyle(element).opacity;
+         if (element.opacity <= finalOpacity) {
+            clearInterval(element.fadeTimer);
+            return;
+         }
+         element.style.opacity = element.opacity - 0.005;
+      }, 1);
+   }
+   /**
+    * 逐渐改变element的宽度
+    * @param  {object} element 
+    * @return {[type]}         [description]
+    */
+   function changeWidth(element) {
+      clearInterval(element.widthTimer);
+      element.widthTimer = setInterval(function() {
+         element.width = parseFloat(getComputedStyle(element).width);
+         if (element.width <= 0) {
+            clearInterval(element.widthTimer);
+            return;
+         }
+         element.style.width = element.width - 1 + 'px';
+      }, 1);
+   }
+   </script>
+</body>
+
+</html>

@@ -1,0 +1,70 @@
+@charset "utf-8";
+
+/*因为当前目录有中文，所以在这里直接编译scss会报错*/
+
+body {
+   margin: 0;
+}
+
+* {
+   //IE7-不兼容,先不管
+   box-sizing: border-box;
+}
+
+.out {
+   background-color: #eee;
+   border: 1px solid #aaa;
+   width: 400px;
+   margin: 10px auto;
+   overflow: hidden;
+   .big {
+      width: 100%;
+      height: 300px;
+      position: relative;
+      * {
+         position: absolute;
+      }
+      a {
+         top: 45%;
+         width: 20px;
+         height: 20px;
+         background-color: gray;
+         //为了让a永远在大图上面
+         z-index: 9999999;
+         visibility: hidden;
+      }
+      #left {
+         left: 5%;
+      }
+      #right {
+         right: 5%;
+      }
+      img {
+         left: 0;
+         top: 0;
+         width: 100%;
+         height: 100%;
+      }
+   }
+   .small {
+      position: relative;
+      left: 0;
+      div {
+         width: 100px;
+         height: 75px;
+         padding: 5px;
+         display: inline-block;
+         font-size: 0;
+         img {
+            width: 100%;
+            height: 100%;
+            border-radius: 5px;
+            &:hover {
+               cursor: pointer;
+            }
+            opacity:0.3;
+            filter:Alpha(opacity=30);
+         }
+      }
+   }
+}

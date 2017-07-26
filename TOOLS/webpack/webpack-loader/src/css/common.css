@@ -1,0 +1,12 @@
+@import './flex.css';
+
+body{
+  margin: 0;
+  background-color: hotpink;
+}
+ul,li{
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+  color:crimson;
+}

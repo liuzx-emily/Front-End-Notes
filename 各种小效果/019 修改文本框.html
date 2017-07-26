@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>019 修改文本框内容</title>
+    <style>
+    section {
+        width: 800px;
+        margin: 10px auto;
+        background-color: #eee;
+    }
+    
+    .content {
+        border-bottom: 1px solid crimson;
+    }
+    
+    .sameStyle {
+        display: inline-block;
+        border: none;
+        margin: 5px;
+        padding: 0;
+        font: 20px/40px '华文彩云';
+        min-width: 200px;
+    }
+    
+    .change {
+        display: none;
+    }
+    </style>
+    <script>
+    window.onload = function() {
+        var aContent = document.querySelectorAll('.content');
+        var aNotChange = document.querySelectorAll('.notchange');
+        var aChange = document.querySelectorAll('.change');
+        var aClick = document.querySelectorAll('.click');
+        var aSave = document.querySelectorAll('.save');
+        var aCancel = document.querySelectorAll('.cancel');
+        var aInput = document.querySelectorAll('input.sameStyle');
+        for (let i = 0; i < aClick.length; i++) {
+            aClick[i].onclick = function() {
+                aNotChange[i].style.display = 'none';
+                aChange[i].style.display = 'block';
+            };
+            aSave[i].onclick = function() {
+                var oSpan = aContent[i].querySelector('span');
+                oSpan.innerText = aInput[i].value;
+                aNotChange[i].style.display = 'block';
+                aChange[i].style.display = 'none';
+            };
+            aCancel[i].onclick = function() {
+                var oSpan = aContent[i].querySelector('span');
+                aInput[i].value = oSpan.innerText;
+                aNotChange[i].style.display = 'block';
+                aChange[i].style.display = 'none';
+            };
+        }
+    };
+    </script>
+</head>
+
+<body>
+    <section>
+        <div class="content">
+            <div class="notchange">
+                <span class='sameStyle'>坂田银时</span>
+                <input type="button" class="click" value="修改">
+            </div>
+            <div class="change">
+                <input type="text" class='sameStyle' value="坂田银时">
+                <input type="button" class='save' value="保存">
+                <input type="button" class='cancel' value="取消">
+            </div>
+        </div>
+        <div class="content">
+            <div class="notchange">
+                <span class='sameStyle'>钢之炼金术师</span>
+                <input type="button" class="click" value="修改">
+            </div>
+            <div class="change">
+                <input type="text" class='sameStyle' value="钢之炼金术师">
+                <input type="button" class='save' value="保存">
+                <input type="button" class='cancel' value="取消">
+            </div>
+        </div>
+        <div class="content">
+            <div class="notchange">
+                <span class='sameStyle'>土方十四郎</span>
+                <input type="button" class="click" value="修改">
+            </div>
+            <div class="change">
+                <input type="text" class='sameStyle' value="土方十四郎">
+                <input type="button" class='save' value="保存">
+                <input type="button" class='cancel' value="取消">
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

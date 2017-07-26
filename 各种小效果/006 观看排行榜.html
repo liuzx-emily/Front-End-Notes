@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <title>aaa</title>
+   <style>
+   body {
+      margin: 0
+   }
+   
+   a {
+      text-decoration: none
+   }
+   
+   * {
+      box-sizing: border-box
+   }
+   
+   .out {
+      width: 600px;
+      margin: 10px auto 0 auto;
+      position: relative;
+      border: 1px solid coral;
+      padding: 10px
+   }
+   
+   .bigTitle {
+      position: relative
+   }
+   
+   #text {
+      display: block;
+      line-height: 50px;
+      background: #BD283C;
+      padding-left: 10px
+   }
+   
+   .nav {
+      position: absolute;
+      bottom: 1px;
+      line-height: 20px;
+      width: 50px;
+      text-align: center;
+      background: #eee;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      cursor: pointer
+   }
+   
+   #nav1 {
+      right: 120px
+   }
+   
+   #nav2 {
+      right: 60px
+   }
+   
+   #nav3 {
+      right: 0
+   }
+   
+   .contentBox {
+      display: none
+   }
+   
+   .content {
+      line-height: 30px;
+      border-bottom: 1px solid #aaa
+   }
+   
+   div.activeBox {
+      display: block
+   }
+   
+   .detail {
+      display: none;
+      background: #eee;
+      height: 40px;
+      margin: 5px
+   }
+   </style>
+</head>
+
+<body>
+   <div class="out">
+      <div class="bigTitle">
+         <span id="text">观看排行榜</span>
+         <span class="nav" id="nav1">1</span>
+         <span class="nav" id="nav2">2</span>
+         <span class="nav" id="nav3">3</span>
+      </div>
+      <div class="contentBox activeBox">
+         <div class="content">1-1 Modern Family</div>
+         <div class="content">1-2 Friends</div>
+         <div class="content">1-3 How I Met Your Mother</div>
+         <div class="content">1-4 潜伏</div>
+         <div class="content">1-5 武林外传</div>
+      </div>
+      <div class="contentBox">
+         <div class="content">2-1 Modern Family</div>
+         <div class="content">2-2 Friends</div>
+         <div class="content">2-3 How I Met Your Mother</div>
+         <div class="content">2-4 潜伏</div>
+      </div>
+      <div class="contentBox">
+         <div class="content">3-1 Modern Family</div>
+         <div class="content">3-2 Friends</div>
+         <div class="content">3-3 How I Met Your Mother</div>
+         <div class="content">3-4 潜伏</div>
+         <div class="content">3-5 武林外传</div>
+         <div class="content">3-6 七侠五义</div>
+      </div>
+   </div>
+   <script>
+   var aNav = document.getElementsByClassName('nav');
+   var aBox = document.getElementsByClassName('contentBox');
+   var len = aNav.length; //aNav和aBox长度一样，存在len，不用写长串了
+   for (var i = 0; i < len; i++) {
+      aNav[i].index = i; //每个nav+自定义属性
+      aBox[i].index = i; //每个box+自定义属性
+      aNav[i].onmouseenter = function() {
+         this.style.backgroundColor = '#ccc';
+         for (var i = 0; i < len; i++) {
+            aBox[i].className = 'contentBox';
+         }
+         aBox[this.index].className = 'contentBox activeBox';
+      };
+      aNav[i].onmouseleave = function() {
+         this.style.backgroundColor = '#eee';
+      };
+   }
+
+   var aContent = [];
+   for (var i = 0; i < len; i++) {
+      aContent.push([]); //加一级
+      var somecontent = aBox[i].getElementsByClassName('content');
+
+      for (var j = 0; j < somecontent.length; j++) {
+         aContent[i].push(somecontent[j]);
+      }
+   }
+
+   for (var i = 0; i < aContent.length; i++) {
+      for (var j = 0; j < aContent[i].length; j++) {
+         var content = aContent[i][j];
+         /*给每个content加具体内容*/
+         content.innerHTML += '<div class="detail"></div>';
+         /*.detail在css中预设好*/
+         content.onmouseenter = function() {
+            this.style.backgroundColor = '#ccc';
+            this.style.fontSize = 'x-large';
+            this.getElementsByClassName('detail')[0].style.display = 'block';
+
+         };
+         content.onmouseleave = function() {
+            this.style.backgroundColor = 'white';
+            this.style.fontSize = 'initial';
+            this.getElementsByClassName('detail')[0].style.display = 'none';
+         };
+      }
+   }
+   </script>
+</body>
+
+</html>

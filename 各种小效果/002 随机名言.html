@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>作业4 随机名言 - 银魂</title>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+    var s = {
+        "author": "坂田银时",
+        "idiom": [
+            "眼泪这东西啊，是流出来就能把辛酸和悲伤都冲走的好东西。可等你们长大成人了就会明白，人生还有眼泪也冲刷不干净的巨大悲伤，还有难忘的痛苦让你们即使想哭也不能流泪.所以真正坚强的人，都是越想哭反而笑得越大声，怀揣着痛苦和悲伤，即使如此也要带上它们笑着前行。",
+            "孕妇经历从鼻孔里拉出西瓜一样的痛苦后才生出小孩，艺术家经历从肛门里拉出宇宙一样的痛苦后才创造出作品。谁都有碰壁后自暴自弃想要逃避的时候，但所谓痛苦，也就是你体内的机械冲破避障创造出什么的时候。这一点决不能忘记，在这痛苦之中有重要的东西，决不能忘记，大家都是背负这些烦人的机械，一路跌跌撞撞滚过来的。",
+            "跟你们这些少爷不同，我们光是活着就已经倾尽全力了。",
+            "人啊，根据重新振作的方法可分为两种： \n一种是看着比自己卑微的东西，寻找垫底的聊以自慰； 另一种则是看着比自己伟大的东西，狠狠踢醒毫无气度的自己。",
+            "人生，就像肥皂泡一样。风一吹就呼呼的飞上了天，注意到的时候，却啪地一下消失了。就在即将破裂的瞬间，想要自己飞得更高。但回过神来的时候，却总是来不及。",
+            "真正重要的东西，总是没有的人比拥有的人清楚。",
+            "与其想着怎么美丽地牺牲,倒不如想着怎么漂亮地活到最后一刻。",
+            "只要有你想要保护的东西，那就拔剑好了",
+            "那些口口声声为了别人的家伙，基本上其实都是为了自己。",
+            "坚持立场和死缠滥打只是一线之隔。",
+            "自由不是无法无天而是按照自己的规则活下去。",
+            "没关系，我已经决定吃自己喜欢的东西，过短命的人生了。",
+            "如果你不改变的话，所有的一切都不会改变。",
+            " 一心一意去思考去追求自己觉得有意思的事物吧，这才是通往成功的最佳捷径。",
+            "世界上可是有着就算不惜弄脏自己的手也要保护的东西啊",
+            "嘛，我也差不多啊，没有人能从始至终做到光明磊落的，想要挺起胸膛前进，却在不知不觉中满身是泥。但是，尽管如此也能不回首地继续前进的话，终有一天，泥巴也会干涸脱落的。",
+            "我，在自己的肉体毁灭之前，都要挺直背脊活下去！",
+            "挺起胸膛，正视天空。不这样怎么算活着。",
+            "愉快度过人生的秘诀之一，就是不忘童心。",
+            "过去什么的都无所谓，重要的是现在不是么。",
+            "与其被自己的本性牵着鼻子走而痛苦，还不如忍痛将自己改变。"
+        ]
+    };
+
+    $(document).ready(function() {
+        $(":button").click(function() {
+            $(".showIdiom").text(pick());
+            $(".showIdiom").append('<br><br><div style="text-align: right"> ——' + author + '</div>');
+        });
+
+
+    });
+    var author = "银魂";
+
+    function pick() {
+        var len = s["idiom"].length;
+        var num = Math.floor(Math.random() * len);
+        return s["idiom"][num];
+
+    }
+    </script>
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        color: white;
+        font-family: "Wawati SC";
+        font-size: 25px;
+        background-color: #eee;
+    }
+    
+    #a {
+        position: relative;
+        height: 500px;
+        background-color: b
+    }
+    
+    .showIdiom {
+        background-color: #4369B0;
+        position: absolute;
+        width: 50%;
+        top: 10%;
+        left: 20%;
+        padding: 50px 100px;
+        border-color: #4369B0 #2B3C67 #2B3C67 #4369B0;
+        border-width: 5px;
+        border-style: solid;
+        border-radius: 50px;
+        box-shadow: 10px 10px 10px #2B3C67;
+        text-align: left;
+    }
+    
+    button {
+        color: white;
+        overflow: hidden;
+        background-color: #4369B0;
+        padding: 10px;
+        font-size: 30px;
+        position: relative;
+        border-color: #4369B0 #2B3C67 #2B3C67 #4369B0;
+        border-width: 5px;
+        border-style: solid;
+        border-radius: 20px;
+        box-shadow: 10px 10px 10px #2B3C67;
+        width: 200px;
+        /*改变光标*/
+        cursor: pointer;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="a">
+        <div class="showIdiom">眼泪这东西啊，是流出来就能把辛酸和悲伤都冲走的好东西。可等你们长大成人了就会明白，人生还有眼泪也冲刷不干净的巨大悲伤，还有难忘的痛苦让你们即使想哭也不能流泪.所以真正坚强的人，都是越想哭反而笑得越大声，怀揣着痛苦和悲伤，即使如此也要带上它们笑着前行。
+            <br>
+            <br>
+            <div style="text-align: right;">—— 《银魂》</div>
+        </div>
+    </div>
+    <div id="b">
+        <button type="button">change</button>
+    </div>
+</body>
+
+</html>

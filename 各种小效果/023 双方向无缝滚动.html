@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>023 双方向无缝滚动</title>
+    <style>
+    .out {
+        border: 1px solid coral;
+        width: 1000px;
+        line-height: 160px;
+        margin: 10px auto;
+        overflow: hidden;
+        font-size: 0;
+    }
+    
+    .out>* {
+        display: inline-block;
+        vertical-align: middle;
+    }
+    
+    span {
+        width: 5%;
+        font-size: 18px;
+        text-align: center;
+        background-color: gray;
+    }
+    
+    .wrap {
+        width: 90%;
+        white-space: nowrap;
+        position: relative;
+        z-index: -1;
+    }
+    
+    img {
+        width: 200px;
+        height: 160px;
+        vertical-align: top;
+    }
+    </style>
+    <script>
+    var oWrap = null;
+    var oLeft = null;
+    var oRight = null;
+    var n = 1;
+    window.onload = function() {
+        oWrap = document.querySelector('.wrap');
+        oLeft = document.querySelectorAll('span')[0];
+        oRight = document.querySelectorAll('span')[1];
+        oLeft.addEventListener('mouseover', fnLeft, false);
+        oRight.addEventListener('mouseover', fnRight, false);
+        oLeft.addEventListener('mouseout', stopMove, false);
+        oRight.addEventListener('mouseout', stopMove, false);
+        init();
+    };
+
+    function init() {
+        oWrap.innerHTML += oWrap.innerHTML; //把图片double，5张变10张
+    }
+
+    function fnLeft() {
+        move(-1);
+    }
+
+    function fnRight() {
+        move(1);
+    }
+
+    function move(x) {
+        clearInterval(oWrap.timer);
+        oWrap.timer = setInterval(function() {
+            var now = parseInt(getComputedStyle(oWrap).left);
+            if (x === -1 && now === -1000) {
+                now = 0;
+            }
+            if (x === 1 && now === 0) {
+                now = -1000;
+            }
+            oWrap.style.left = now + x + 'px';
+        }, 1);
+    }
+
+    function stopMove() {
+        clearInterval(oWrap.timer);
+
+    }
+    </script>
+</head>
+
+<body>
+    <div class="out">
+        <span>左</span>
+        <div class="wrap">
+            <img src="image/1.jpg" alt="">
+            <img src="image/2.jpg" alt="">
+            <img src="image/3.jpg" alt="">
+            <img src="image/4.jpg" alt="">
+            <img src="image/5.jpg" alt="">
+        </div>
+        <span>右</span>
+    </div>
+</body>
+
+</html>

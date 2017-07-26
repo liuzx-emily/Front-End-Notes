@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>3 绕圈的小球</title>
+    <style>
+    canvas {
+        position: absolute;
+        left: 30%;
+        background-color: #eee;
+    }
+    </style>
+</head>
+
+<body>
+    <canvas id="myCanvas" width="500" height="500"></canvas>
+    <script>
+    var oCanvas = document.querySelector('#myCanvas');
+    var ctx = oCanvas.getContext('2d');
+    var angle = 0; //青蛙旋转角度
+    var ball = []; //存所有小球
+    var aColor = ['crimson', 'coral', 'hotpink', 'lightcyan', '#abc', '#bac']; //小球的所有颜色
+    setInterval(addBall, 800); //每1s增加一个球
+    setInterval(moveBall, 1000 / 60); //按'每秒60帧的速度'移动小球
+    var oImg = new Image();
+    oImg.onload = function() {
+        setInterval(draw, 1000 / 60); //按'每秒60帧的速度'画画
+    };
+    oImg.src = '蛙.png';
+    oCanvas.onmousemove = function(ev) { //每次移动鼠标，改变angle(青蛙的方向)
+        var a = ev.clientX - oCanvas.getBoundingClientRect().left - oCanvas.width / 2;
+        var b = oCanvas.height / 2 - ev.clientY + oCanvas.getBoundingClientRect().top;
+        if (b >= 0) {
+            angle = Math.atan(a / b);
+        } else {
+            angle = Math.atan(a / b) + Math.PI;
+        }
+    };
+
+    function addBall() {
+        var newBall = {
+            x: 250,
+            y: 50,
+            color: aColor[Math.floor(Math.random() * aColor.length)],
+            angle: 0
+        };
+        ball.push(newBall);
+    }
+
+    function moveBall() {
+        for (let i = 0; i < ball.length; i++) {
+            ball[i].angle += 0.5;
+            if (ball[i].angle > 270 + 180) {
+                alert('GAME OVER');
+                window.location.reload();
+            }
+            if (ball[i].angle >= 270) {
+                ball[i].x = 200 + 150 * Math.sin(ball[i].angle * Math.PI / 180);
+                ball[i].y = 250 - 150 * Math.cos(ball[i].angle * Math.PI / 180);
+            } else {
+                ball[i].x = 250 + 200 * Math.sin(ball[i].angle * Math.PI / 180);
+                ball[i].y = 250 - 200 * Math.cos(ball[i].angle * Math.PI / 180);
+            }
+        }
+    }
+
+    function draw() {
+        //先清空画布
+        ctx.clearRect(0, 0, oCanvas.width, oCanvas.height);
+
+        //画青蛙
+        ctx.save();
+        ctx.translate(oCanvas.width / 2, oCanvas.height / 2);
+        ctx.rotate(angle);
+        ctx.translate(-oCanvas.width / 2, -oCanvas.height / 2);
+        ctx.drawImage(oImg, (oCanvas.width - oImg.width) / 2, (oCanvas.height - oImg.height) / 2);
+        ctx.restore();
+
+        //画轨迹：半径分别为200 150
+        ctx.beginPath();
+        ctx.arc(oCanvas.width / 2, oCanvas.height / 2, 200, -Math.PI / 2, Math.PI);
+        ctx.arc(oCanvas.width / 2 - 50, oCanvas.height / 2, 150, Math.PI, Math.PI * 2);
+        ctx.stroke();
+        //画小球
+        for (let i = 0; i < ball.length; i++) {
+            ctx.beginPath();
+            ctx.fillStyle = ball[i].color;
+            ctx.arc(ball[i].x, ball[i].y, 20, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+    }
+    </script>
+</body>
+
+</html>

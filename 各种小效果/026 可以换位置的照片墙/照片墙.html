@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>可以换位置的照片墙</title>
+    <style>
+    .container {
+        width: 840px;
+        position: fixed;
+        top: 10px;
+        left: 150px;
+        border: 1px solid gray;
+        font-size: 0;
+    }
+    
+    .container>img {
+        box-sizing: border-box;
+        width: 200px;
+        border: 2px solid transparent;
+        margin: 5px;
+        border-radius: 5%;
+    }
+    </style>
+    <script src='fnMove.js'></script>
+    <script src='drag.js'></script>
+    <script>
+    var aPos = [];
+    var oParent = null;
+    var aImg = null;
+    var oBtn = null;
+    window.onload = function() {
+        oParent = document.getElementsByClassName('container')[0];
+        aImg = oParent.getElementsByTagName('img');
+        oBtn = document.getElementsByTagName('input')[0];
+        oBtn.onclick = out_of_order;
+        toAbsolute(aImg);
+        for (var i = 0; i < aImg.length; i++) {
+            drag(aImg[i]);
+        }
+
+    };
+
+    function out_of_order() {
+        var arr = [];
+        for (var i = 0; i < aImg.length; i++) {
+            arr.push(i);
+        }
+        arr.sort(function(a, b) {
+            return Math.random() - 0.5;
+        });
+        for (i = 0; i < aImg.length; i++) {
+            aImg[i].index = arr[i];
+            fnMove(aImg[i], {
+                left: aPos[aImg[i].index][0],
+                top: aPos[aImg[i].index][1]
+            });
+        }
+    }
+
+    function toAbsolute(aObj) {
+        for (var i = 0; i < aObj.length; i++) {
+            aPos.push([aObj[i].offsetLeft, aObj[i].offsetTop]);
+            aObj[i].index = i;
+            aObj[i].style.left = aPos[aObj[i].index][0] + 'px';
+            aObj[i].style.top = aPos[aObj[i].index][1] + 'px';
+        }
+        for (i = 0; i < aObj.length; i++) {
+            aObj[i].style.position = "absolute";
+            aObj[i].style.margin = 0;
+        }
+    }
+
+
+    function findNearest(obj) {
+        var aIndex = []; //存：和obj撞上了的img的序号
+        for (var i = 0; i < aImg.length; i++) {
+            if (detectCollision(obj, aImg[i])) {
+                aIndex.push(i);
+            }
+        }
+        if (aIndex.length === 0) {
+            return false; //没有撞上的，所以直接返回false
+        }
+        var aDis = []; //存："和obj存撞上了的img"与obj的距离
+        for (i = 0; i < aIndex.length; i++) {
+            aDis.push(getDistance(obj, aImg[aIndex[i]]));
+        }
+        var index = aIndex[findShortest(aDis)]; //findShortest(aDis)返回的是aDis中最小值的位置
+        return index;
+
+        function detectCollision(obj1, obj2) {
+            if (obj1 == obj2) {
+                return false; //如果是同一个物体，则没撞上
+            }
+            var L1 = obj1.offsetLeft;
+            var R1 = obj1.offsetLeft + obj1.offsetWidth;
+            var T1 = obj1.offsetTop;
+            var B1 = obj1.offsetTop + obj1.offsetHeight;
+            var L2 = obj2.offsetLeft;
+            var R2 = obj2.offsetLeft + obj2.offsetWidth;
+            var T2 = obj2.offsetTop;
+            var B2 = obj2.offsetTop + obj2.offsetHeight;
+            if (R1 < L2 || R2 < L1 || B1 < T2 || B2 < T1) {
+                return false; //没撞上
+            } else {
+                return true;
+            }
+        }
+
+        function getDistance(obj1, obj2) {
+            var a = obj1.offsetLeft - obj2.offsetLeft;
+            var b = obj1.offsetTop - obj2.offsetTop;
+            var c = a * a + b * b; //距离值只用了比较大小，所以不用开方了
+            return c;
+        }
+
+        function findShortest(arr) {
+            var index = 0;
+            var smallest = arr[0];
+            for (var i = 1; i < arr.length; i++) {
+                if (arr[i] < smallest) {
+                    index = i;
+                    smallest = arr[i];
+                }
+            }
+            return index;
+        }
+    }
+    </script>
+</head>
+
+<body>
+    <input type="button" value='乱序'>
+    <div class="container">
+        <img src="1.jpg" alt="">
+        <img src="2.jpg" alt="">
+        <img src="3.jpg" alt="">
+        <img src="4.jpg" alt="">
+        <img src="5.jpg" alt="">
+        <img src="6.jpg" alt="">
+        <img src="7.jpg" alt="">
+        <img src="8.jpg" alt="">
+        <img src="9.jpg" alt="">
+        <img src="10.jpg" alt="">
+        <img src="11.jpeg" alt="">
+        <img src="12.jpg" alt="">
+    </div>
+</body>
+
+</html>

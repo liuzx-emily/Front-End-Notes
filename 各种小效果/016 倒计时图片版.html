@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>016 倒计时图片版</title>
+    <style>
+    img {
+        width: 122px;
+        height: 172px;
+        margin-right: 5px;
+    }
+    
+    .out {
+        width: 600px;
+        background-color: #ADADFF;
+        text-align: center;
+        margin: 50px auto 0 auto;
+        padding: 10px 0;
+    }
+    
+    span {
+        display: block;
+        width: 300px;
+        margin: 10px auto 0 auto;
+        line-height: 50px;
+        height: 50px;
+        background-color: #eee;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="out">
+        <input type="text" value="April 19,2018 23:3:0">
+        <button>开始倒计时</button><span></span>
+    </div>
+    <br>
+    <script>
+    var aPics = [];
+    //aPics初始化
+    for (let i = 0; i < 10; i++) {
+        aPics.push('image/电子表/number' + i + '.JPG');
+    }
+    aPics.push('image/电子表/colon.JPG');
+    //生成图片初始化
+    for (let i = 0; i < 8; i++) {
+        document.body.innerHTML += '<img src="" alt="">';
+    }
+    var aImg = document.getElementsByTagName('img');
+    for (let i = 0; i < 8; i++) {
+        aImg[i].index = i; //自定义属性
+        aImg[i].src = aPics[0];
+    }
+    aImg[2].src = aPics[10];
+    aImg[5].src = aPics[10];
+
+    var oInput = document.getElementsByTagName('input')[0];
+    var oBtn = document.getElementsByTagName('button')[0];
+    var oSpan = document.getElementsByTagName('span')[0];
+
+    var deadline = getDeadLine();
+    var currentTime = getCurrentTime();
+    var timer = null;
+    oBtn.onclick = function() {
+        clearInterval(timer);
+        deadline = getDeadLine();
+        currentTime = getCurrentTime();
+        var t = deadline - currentTime;
+        if (t <= 0) {
+            oSpan.innerHTML = "过期了";
+            for (let i = 0; i < 8; i++) {
+                aImg[i].index = i; //自定义属性
+                aImg[i].src = aPics[0];
+            }
+            aImg[2].src = aPics[10];
+            aImg[5].src = aPics[10];
+            return;
+        }
+        timer = setInterval(function() {
+            currentTime = getCurrentTime();
+            t = deadline - currentTime;
+            t = Math.floor(t / 1000);
+            var str = Math.floor(t / 86400) + '天' + Math.floor(t % 86400 / 3600) + '时' + Math.floor(t % 86400 % 3600 / 60) + '分' + t % 60 + '秒';
+            oSpan.innerHTML = str;
+            Imageclock(t);
+        }, 100);
+
+
+    };
+
+    function getDeadLine() {
+        return new Date(oInput.value);
+    }
+
+    function getCurrentTime() {
+        return new Date();
+    }
+
+    function Imageclock(time) {
+        var hours = Math.floor(time % 86400 / 3600);
+        var minute = Math.floor(time % 86400 % 3600 / 60);
+        var second = time % 60;
+        var str = Math.floor(hours / 10) + '' + hours % 10 + '' +
+            Math.floor(minute / 10) + '' + minute % 10 + '' +
+            Math.floor(second / 10) + '' + second % 10;
+        for (let i = 0; i < 2; i++) {
+            aImg[i].src = aPics[str[i]];
+        }
+        for (let i = 3; i < 5; i++) {
+            aImg[i].src = aPics[str[i - 1]];
+        }
+        for (let i = 6; i < 8; i++) {
+            aImg[i].src = aPics[str[i - 2]];
+        }
+    }
+    </script>
+</body>
+
+</html>
