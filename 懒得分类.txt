@@ -1,0 +1,50 @@
+﻿
+-------------
+for(var i=0;i<6000;i++){
+	oDiv.innerHTML+=i;
+}
+性能提升：
+var str=oDiv.innerHTML;
+for(var i=0;i<6000;i++){
+	str+=i;
+}
+oDiv.innerHTML=str;
+
+-------------
+有区别，不只是"简写"：
+var str='abc';
+var str=new String('abc');
+
+
+没区别，是"简写"
+var arr=[1,2,3];	//性能略略高，因为代码短
+var arr=new Array(1,2,3);
+
+var show=function(){var a;};
+var show=new Function('var a;');
+
+-------------
+只要能用原生方法，就不要自己写。
+1 方便
+2 原生的方法是C++写的，性能比js强多了。
+
+
+-------------
+alert()只能弹出字符串，非string会自动先转成str
+例：
+	var a=[1,2,3];
+	Array.prototype.toString=function(){
+		return "改了";
+	}
+	alert(a);		//弹出"改了"
+	console.log(a);	//[1,2,3]
+
+-------------
+number的toString方法可以进制转换
+num.toString(16)	//转成16进制
+
+
+-------------
+数组复制：
+var arr=[1,2,3];
+var arr2=arr.concat([]);

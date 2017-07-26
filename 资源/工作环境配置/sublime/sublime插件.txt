@@ -1,0 +1,90 @@
+﻿2 SideBarEnhancements
+	一键预览html
+	安装好插件后，需要在keybindings中加入：
+
+		（快捷键、地址自己改）
+		{ "keys": ["f3"], "command": "side_bar_files_open_with",
+	         "args": {
+	            "paths": [],
+	            "application": "D:/Firefox火狐浏览器/firefox.exe",
+	            "extensions":".*"
+	        },
+	增强侧边栏：导航栏中project->add folder to project
+
+3 Color Highlighter
+	显示颜色+取色（快捷键ctrl+shift+c）
+	在user文件中设置：
+
+		{
+		  "ha_style": "filled",
+		  "icons": false
+		}
+
+
+
+6 Doc​Blockr：
+	代码块注释
+	可以快速的对函数进行注释。保存代码规范
+	/*:回车创建一个代码块注释
+	/**:回车在自动查找函数中的形参等等。
+	它会生成 JSDoc 格式的注释。
+
+7 JsFormat：
+	代码格式化，快捷键：Ctrl + Alt + f
+
+8 jQuery：
+	JQuery的API代码片段
+
+9 CSS3:
+	CSS3语法高亮
+
+11 Terminal【这个我没安装】
+	在Sublime Text直接打开命令行
+	使用方法：https://packagecontrol.io/packages/Terminal
+
+12 IMESupport	【必备】
+	解决输入法不跟随
+
+13 AutoPrefixer:(依赖Node.js)	【必备】
+	浏览器私有属性前缀补全，对CSS和SCSS都行 
+	修改快捷键：在keybinds中添加：
+
+		{ "keys": ["ctrl+alt+p"], "command": "autoprefixer" },
+
+	修改user设置：详见
+	http://www.w3cplus.com/css3/autoprefixer-css-vender-prefixes.html）
+
+14 SublimeLinter
+	修改csslint，使“css属性不按字母表顺序排列”时不报错：
+		在sublimeLinter设置文件中csslint下：改成
+		"ignore": "order-alphabetical",
+		具体可查看https://github.com/SublimeLinter/SublimeLinter-csslint
+	
+	某个新版本？提示改的，在user中："tooltips": true
+	
+15 ChineseLocalizations
+	sublime3界面汉化
+
+16 在sass中编译见“安装jquery sass.txt”
+
+17 SassBeautify
+
+19 CSSComb 
+	给CSS属性进行排序
+	（和color highlighter快捷键冲突，我又不会改，就把comb卸载了。。。）
+
+20 Can I Use	【必备】
+	检查浏览器是否支持代码中的CSS和HTML元素。
+	选择元素，右键“canIuse”
+	快捷键： ctrl+alt+f
+
+21 SublimeCodeIntel
+	跳转到定义，自动补全
+	装的很慢。
+
+23 SCSS
+	
+24 FileDiffs
+	可以比较两个文件的差异
+	没安装，先记录在这
+	

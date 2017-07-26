@@ -1,0 +1,57 @@
+﻿安装jQuery：
+	使用 <script src=""></script> 来引用
+
+	1 下载到本地(这样不联网也可以用)
+		官网：http://jquery.com/download/，有两个版本可供下载：	
+
+		    Production version - 用于实际的网站中，已被精简和压缩。
+		    Development rversion - 用于测试和开发（未压缩，是可读的代码）
+
+	2 从CDN（内容分发网络）引用
+		国内建议用百度、新浪等国内CDN（因为国内用google的不稳定）
+		【百度静态资源公共库 http://cdn.code.baidu.com/】
+		截至目前百度上的最新：http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js
+
+
+
+
+安装Sass：
+	1 sass依赖ruby
+		从 “http://rubyinstaller.org/downloads/” 处下载并安装
+		安装过程记得“添加路径”(add ruby to your path)
+		在cmd中输入“ruby -v”查看是否成功安装ruby
+	2 在cmd中输入："gem install sass"来安装sass
+		在在cmd中输入“sass -v”查看是否成功安装sass
+	3 通过cmd编译编译：scss -> css
+		在cmd中输入：形如“sass --style my.scss my.css”
+
+			style:
+		    　　* nested：嵌套缩进的css代码，默认值。
+		    　　* expanded：没有缩进的、扩展的css代码。
+		    　　* compact：简洁格式的css代码。
+		    　　* compressed：压缩后的css代码。
+
+		详情见“http://www.w3cplus.com/sassguide/compile.html”
+	4 在sublime3中设置:
+		新建build：
+					
+					{
+					"cmd": ["sass", "--update", 
+					"$file:${file_path}/${file_base_name}.css", 
+					"--stop-on-error", 
+					"--no-cache", 
+					"--style", 
+					"compressed"],
+					"selector": "source.sass, source.scss",
+					"line_regex": "Line ([0-9]+):",
+					"windows":{"shell": "true"}
+					}
+
+		保存为sass.sublime-build(效果：在同一目录下保存同名.css)		
+
+	4 在sublime3中编译：按ctrl+b(注意是.scss不是.sass)
+	  在sublime3中编译时：中文目录会报错 所以scss文件要放在英文目录下
+
+sass中文问题：
+在首行加上：
+	@charset "utf-8";

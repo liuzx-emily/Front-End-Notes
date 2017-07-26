@@ -1,0 +1,90 @@
+﻿1 斐波那契数列 1.1.2.3.5.8.13.21
+2 数组排序
+3 数组去重
+4 如何给一个不具备Iterator接口的数据结构部署一个Iterator？
+	const d={
+		"0":"e",
+		"1":"m",
+		"2":"i",
+		"3":"l",
+		"4":"y"	
+	};
+
+
+----------------
+	解答1 斐波那契数列
+用循环：
+	function f(num) {
+	    var arr = [1, 1];
+	    while (arr.length < num) {
+	        arr.push(arr[arr.length - 1] + arr[arr.length - 2])
+	    }
+	    return arr;	//返回数列的前num项
+	    //return arr.pop();	//返回数列中的第num个
+	}
+	console.log(f(10));	//[ 1, 1, 2, 3, 5, 8, 13, 21, 34, 55 ]
+	//console.log(f(10));	//55
+
+	function f(num) {
+	    var a = 1;
+	    var b = 1;
+	    for (var i = 2; i < num; i++) {
+	        [a, b] = [b, a + b];
+	    }
+	    return b;
+	}
+	console.log(f(10)); //55
+用递归：
+	function f(num) {
+	    if (num === 1 || num === 2) {
+	        return 1;
+	    } else {
+	        return f(num - 1) + f(num - 2);
+	    }
+	}
+	console.log(f(10)); //55
+
+----------------
+	解答2 数组排序
+去看算法书
+
+
+----------------
+	解答3 数组去重
+方法1：arr向arr2里存，存前看有没有重复
+	var arr = [1, 7, 5, 9, 5, 4, 7, 2, 1, 7];
+	function quChong(arr) {
+	    var arr2 = [arr[0]]; //[1]
+	    for (var i = 1; i < arr.length; i++) {
+	        arr2.push(arr[i]);
+	        for (var j = 0; j < arr2.length - 1; j++) {
+	            if (arr[i] === arr2[j]) {
+	                arr2.length--;
+	                break;
+	            }
+	        }
+	    }
+	    return arr2;
+	}
+	console.log(quChong(arr)); //[ 1, 7, 5, 9, 4, 2 ]
+
+方法2：json
+	var arr = [5, 1, 8, 5, 9, 5, 4, 8, 2, 1, 8];
+
+	function quChong(arr) {
+	    var arr2 = [];
+	    var json = {};
+	    for (var i = 0; i < arr.length; i++) {
+	        if (!json[arr[i]]) {
+	            arr2.push(arr[i]);
+	            json[arr[i]] = 1;
+	        }
+	    }
+	    return arr2;
+	}
+	console.log(quChong(arr)); //[ 5, 1, 8, 9, 4, 2 ]
+
+方法3：
+	var arr = [5, 1, 8, 5, 9, 5, 4, 8, 2, 1, 8];
+	arr=[...new Set(arr)];	//[5, 1, 8, 9, 4, 2]
+	//arr = Array.from(new Set(arr));

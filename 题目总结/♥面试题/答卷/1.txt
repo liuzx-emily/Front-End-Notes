@@ -1,0 +1,53 @@
+------------
+	第一套
+一；css实现垂直水平居中
+	【没做】
+
+三；ajax请求的时候get和post方式的区别，用jQ写出ajax请求。
+
+	get:
+		1 内容加在url后面，有长度限制
+		2 缓存问题，解决：时间戳getTime
+		3 编码问题，解决：encodeURI()
+		xhr.open('get',url+'?a='+encodeURI('哈哈')+'&b=liuzx&'+new Date().getTime(),true);
+		xhr.send();
+	post:
+		1 内容放在requestHeader中，数据放在send()里作为参数传递
+		2 需要声明发送的数据类型
+		xhr.open('post',url,true);
+		xhr.setRequestHeader('content-type','application/x-www-form-unlencoded');
+		xhr.send('a=哈&b=啦');
+
+	jQuery写ajax请求：
+	$.ajax({
+		url : 'xxx.php',
+		data : 'name=hello&age=20',
+		type : 'POST',
+		success : function(data){
+			alert(1);
+		},
+		error : function(){
+			alert(2);
+		}
+	});
+
+	$.get('xxx.php',function(){});
+
+	$.post('xxx.php',function(){});
+
+
+五：熟悉微信小程序吗？什么是微信小程序？
+
+
+------------
+	第二套
+1 HTTP状态码及其含义
+	【没做】
+
+3 请描述cookies、sessionStorage和localStorage的区别
+	【没做】
+
+5 	
+
+------------
+	第三套

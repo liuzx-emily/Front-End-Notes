@@ -1,0 +1,32 @@
+
+
+2 setTimeout("buy()",2000); 什么效果
+
+3 当按键盘A时，使用onKeyDown事件打印event.keyCode的结果是
+
+4 希望图片具有”提交”按钮同样的功能,该如何编写表单提交
+	a)在图片的onClick事件中手动提交
+	b)在图片上添加onSubmit事件
+	c)在图片的onSubmit事件中手动提交
+	d)在表单中自动提交
+
+5 PING基于什么协议？
+
+6 link 和@import 的区别？ 
+
+7 alert(1&&2);
+  alert(1||2);
+
+-------------
+	答案
+2.	2s后执行buy();，只执行一次
+3.	65
+4.	a) [不确定]
+5.	ICMP
+	分析：ICMP：Internet控制报文协议。它是TCP/IP协议族的一个子协议，用于在IP主机、路由器之间传递控制消息
+6.
+	1 link属于HTML标签，而@import是CSS提供的;  
+	2 页面被加载时，link会同时被加载，而@import引用的CSS会等到页面被加载完再加载; 
+	3 import只在IE5以上才能识别，而link是XHTML标签，无兼容问题;
+	4 link方式的样式的权重 高于@import的权重.
+7.	2  1
