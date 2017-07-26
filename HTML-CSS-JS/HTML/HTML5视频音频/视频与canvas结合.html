@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>视频与canvas结合</title>
+    <style>
+    canvas {
+        padding: 10px;
+        border: 1px solid coral;
+    }
+    </style>
+    <script>
+    window.onload = function() {
+        var oVideo = document.querySelector('video');
+        var oCanvas = document.querySelector('canvas');
+        var ctx = oCanvas.getContext('2d');
+        oCanvas.width = oVideo.videoWidth; //用oVideo.width不行
+        oCanvas.height = oVideo.videoHeight;
+        setInterval(function() {
+            ctx.drawImage(oVideo, 0, 0);
+        }, 1000 / 60);
+
+    };
+    </script>
+</head>
+
+<body>
+    <video controls src="bromance.mp4"></video>
+    <canvas></canvas>
+</body>
+
+</html>

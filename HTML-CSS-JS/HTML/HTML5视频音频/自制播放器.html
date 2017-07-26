@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>自制播放器</title>
+    <style>
+    body {
+        margin: 0;
+    }
+    
+    [type="button"] {
+        width: 80px;
+    }
+    
+    [type="range"],
+    progress {
+        width: 200px;
+    }
+    </style>
+    <script>
+    window.onload = function() {
+        var oVideo = document.querySelector('video');
+        var oBtnPlay = document.querySelector('#play');
+        var oBtnCurrentTime = document.querySelector('#current_time');
+        var oBtnTotalTime = document.querySelector('#total_time');
+        var oBtnMute = document.querySelector('#mute');
+        var oBtnFullscreen = document.querySelector('#fullscreen');
+        var oCheckReplay = document.querySelector('#autoReplay');
+        var oBtnPlayControl = document.querySelector('#play_control');
+        var oBtnVolumeControl = document.querySelector('#volume_control');
+        //播放 暂停
+        oBtnPlay.onclick = function() {
+            if (oVideo.paused) {
+                oVideo.play();
+                oVideo.timer = setInterval(function() {
+                    showTime(oBtnCurrentTime, oVideo.currentTime);
+                    //播放的时候，播放进度条也跟着走：
+                    oBtnPlayControl.value = oVideo.currentTime / oVideo.duration * 100;
+                }, 1000);
+                this.value = 'pause';
+            } else {
+                clearInterval(oVideo.timer);
+                oVideo.pause();
+                this.value = 'play';
+            }
+        };
+        //显示播放时间：当前 总共
+        showTime(oBtnCurrentTime, oVideo.currentTime);
+        showTime(oBtnTotalTime, oVideo.duration);
+
+        function showTime(obj, seconds) {
+            var iHour = toTwo(Math.floor(seconds / 3600));
+            var iMin = toTwo(Math.floor(seconds % 3600 / 60));
+            var iSec = toTwo(Math.floor(seconds % 60));
+            obj.value = iHour + ':' + iMin + ":" + iSec;
+
+            function toTwo(num) {
+                return (num > 9 ? "" : "0") + num;
+            }
+        }
+        //静音
+        oBtnMute.onclick = function() {
+            if (oVideo.muted) {
+                this.value = "mute";
+            } else {
+                this.value = "unmute";
+            }
+            oVideo.muted = !oVideo.muted;
+        };
+        //全屏
+        oBtnFullscreen.state = false;
+        oBtnFullscreen.onclick = function() {
+            if (!oBtnFullscreen.state) {
+                oVideo.width = document.documentElement.clientWidth;
+                oVideo.height = document.documentElement.clientHeight;
+            } else {
+                oVideo.width = oVideo.videoWidth;
+                oVideo.height = oVideo.videoHeight;
+            }
+            oBtnFullscreen.state = !oBtnFullscreen.state;
+            //webkit内核全屏：oVideo.webkitRequestFullScreen();
+        };
+        //自动重播
+        oCheckReplay.onchange = function() {
+            oVideo.loop = this.checked;
+        };
+        //调播放进度
+        oBtnPlayControl.oninput = function() {
+            //不用onchange，用oninput事件
+            //oninput：在内容修改后立即被触发
+            //onchange：在内容修改，并且失去焦点后才触发
+            var curtTime = this.value / 100 * oVideo.duration;
+            showTime(oBtnCurrentTime, curtTime);
+            oVideo.currentTime = curtTime;
+        };
+        //调音量（没成功）
+        oVideo.volume = oBtnVolumeControl.value / 100;
+        oBtnVolumeControl.onclick = function() {
+            alert('progress标签click事件有反应了!');
+        };
+
+
+
+    };
+    </script>
+</head>
+
+<body>
+    <video src="bromance.mp4"></video>
+    <br>
+    <input type="button" value="play" id="play">
+    <input type="button" value="00:00:00" id="current_time">
+    <input type="button" value="00:00:00" id="total_time">
+    <input type="button" value="mute" id="mute">
+    <input type="button" value="fullscreen" id="fullscreen">
+    <br>自动重播
+    <input type="checkbox" id="autoReplay">
+    <br>播放进度：
+    <input type="range" min="0" max="100" step="0.001" value="0" id="play_control">step改得小一点，这样滑的时候看着更流畅，不是疙瘩疙瘩的
+    <br>音量大小：
+    <progress max="100" value="100" id="volume_control"></progress>
+    音量大小控制没有实现。因为不知道为什么progress标签onclick onmouseover都没反应。。。
+</body>
+
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>用worker-沫沫</title>
+    <style>
+    canvas {
+        border: 1px solid black;
+    }
+    </style>
+    <script>
+    var oCanvas;
+    var ctx;
+    var w1;
+    window.onload = function() {
+        init();
+    };
+
+    function init() {
+        oCanvas = document.querySelector('canvas');
+        ctx = oCanvas.getContext('2d');
+        ctx.fillStyle = 'crimson';
+        ctx.font = "bold 100px '黑体'";
+        var aLi = document.querySelectorAll('li');
+        for (let i = 0; i < aLi.length; i++) {
+            aLi[i].onclick = show;
+        }
+
+    }
+
+
+    function show() {
+        console.time(1);
+        var text = this.innerText;
+        ctx.clearRect(0, 0, oCanvas.width, oCanvas.height);
+        ctx.textBaseline = 'top';
+        ctx.fillText(text, 0, 0);
+        var w = ctx.measureText(text).width;
+        var h = 100;
+        var myText = ctx.getImageData(0, 0, w, h);
+        ctx.clearRect(0, 0, oCanvas.width, oCanvas.height);
+
+        var w1 = new Worker('momo.js'); //新建worker
+        w1.postMessage(w * h); //传
+        w1.onmessage = function(ev) { //收
+            var arr = ev.data;
+            var newText = ctx.createImageData(myText);
+            for (let i = 0; i < arr.length; i++) {
+                let startIndex = 4 * arr[i];
+                newText.data[startIndex] = myText.data[startIndex];
+                newText.data[startIndex + 1] = myText.data[startIndex + 1];
+                newText.data[startIndex + 2] = myText.data[startIndex + 2];
+                newText.data[startIndex + 3] = myText.data[startIndex + 3];
+            }
+            ctx.putImageData(newText, 0, 0);
+        };
+
+        console.timeEnd(1);
+
+    }
+    </script>
+</head>
+
+<body>
+    <canvas width="500" height="400"></canvas>
+    <ol>
+        <li>小当家</li>
+        <li>数码宝贝</li>
+        <li>钢炼</li>
+        <li>银之匙</li>
+    </ol>
+</body>
+
+</html>

@@ -1,0 +1,274 @@
+-----------------
+	*从0-N中随机获取m个数
+
+	function randNum(iAll, iWant) {
+	    var arr = [];
+	    var newArr = [];
+	    for (let i = 0; i < iAll; i++) {
+	        arr.push(i);
+	    }
+	    for (let i = 0; i < iWant; i++) {
+	        let random = Math.floor(Math.random() * arr.length);
+	        newArr.push(arr.splice(random, 1));
+	    }
+	    return newArr;
+	}
+例子：randNum(100,10)：从0-99中随机选10个不重复的数，返回数组
+
+注意:random=Math.floor(Math.random() * arr.length);里：
+	1 arr.length不能换成iAll，因为arr的长度在动态减少
+	2 floor不能换成round，不然可能取到arr[arr.length]，是undefined
+
+
+
+
+-----------------
+	*判断是不是数组*
+	var arr=[3,4];
+1 arr.constructor==Array //true
+2 arr instanceof Array 	//true	
+3 Object.prototype.toString.call(arr)=='[object Array]' 		//true
+最好的方法3，因为1，2在iframe下会失效：
+  	var oF = document.createElement('iframe');
+  	document.body.appendChild( oF );  	
+  	var ifArray = window.frames[0].Array;  	
+  	var arr = new ifArray();  	
+  	alert( arr.constructor == Array );  //false
+	alert( arr instanceof Array );  //false
+	alert( Object.prototype.toString.call(arr) == '[object Array]' );  //true
+
+-----------------
+	*数组array*
+
+创建数组：
+	1	var arr = [ 'a',5,9 ];
+	2  	var arr = new Array('a',5,9);
+	   	//因为数组是object，所以可以这样new定义
+	3  	var arr = new Array();
+	   	arr[0]='a';
+	   	arr[1]=5;
+	   	arr[2]=9;
+		使用注意：
+			var arr = new Array(10);//只有一个数时，默认当成长度
+			//arr为[ , , , , , , , , ,  ],里面的元素、元素类型都是undefined
+
+			var arr2 = new Array(10, 20);//多于1个数时不用怕，不会当成长度
+			//arr为[ 10, 20 ]
+			var arr = new Array('10');//只有一个数时，加上''变成string就不会当作长度了
+			//arr为[ '10' ]，但是10不是number，是string
+
+数组的length：
+   var arr = ['aaa', 2, 3];
+   数组的length可读，也可写(因为array是可变的，复习：string是不可变的)
+   arr.length = 1;//则arr只保留第一个元素，长度变为1
+   arr.length = 0;//清空数组
+   arr = [];//赋值，也是清空数组
+字符串的length：
+   var str = 'aaaaa';
+   str的length可读，但不可写(因为string是不可变的)
+   str.length = 1;//没有用，str还是'aaaaa'
+
+
+遍历数组可以用for和for in：
+	例子：（for的例子就省略了）
+		var arr = ['a', 'b', 'c'];
+		for (let a in arr) {
+	   		console.log(a + ',' + arr[a]);
+		}
+	结果：
+		0,a
+		1,b
+		2,c	
+
+-----------------
+	*添加*
+
+1	var arr = new Array();
+	console.log(arr); 	//[]
+	arr[2] = 'a';
+	console.log(arr); 	//[ , , 'a' ]
+	console.log(arr[0]); 		//undefined
+	console.log(typeof arr[0]);	//undefined
+
+2	push unshift：一次可以加多个
+	在尾加：arr.push('abc',4,5);	//返回arr的新length
+	在头加：arr.unshift(0,1);	//返回arr的新length
+
+------------------------------------
+	*删除*
+
+	var arr = ['a', 'b', 'c'];
+
+删最后一个：arr.pop() ; 返回被扔掉的
+删第一个：arr.shift();  返回被扔掉的
+
+一次只能删一个
+
+------------------------------------
+	*换位置*
+
+	var arr = ['a', 'b', 'c'];
+
+	arr.unshift(arr.pop());
+	//把最后一个塞到第一个
+
+	arr.push(arr.shift())；
+	//把第一个塞到最后
+
+应用：几个东西前后切换，就可以用这个
+
+
+------------------------------------
+	*splice:删除、替换、添加*
+原始array会被修改
+
+先是一些例子：
+	var myFish = ["angel", "clown", "mandarin", "sturgeon"];
+
+	myFish.splice(2, 0, "drum"); 
+	//["angel", "clown", "drum", "mandarin", "sturgeon"] 
+
+	myFish.splice(2, 1); 
+	//["angel", "clown", "mandarin", "sturgeon"] 
+
+	myFish.splice(2, 1, "splice", "parrot");
+	//["angel", "clown", "splice", "parrot", "sturgeon"]
+
+语法：array.splice(start, deleteCount, item1, item2, ...)
+
+参数：
+	start​
+	    指定修改的开始位置（从0计数）。如果超出了数组的长度，则从数组末尾开始添加内容；如果是负值，则表示从数组末位开始的第几位。
+
+	deleteCount 可选
+	    整数，表示要移除的数组元素的个数。如果 deleteCount 是 0，则不移除元素。这种情况下，至少应添加一个新元素。如果 deleteCount 大于start 之后的元素的总数，则从 start 后面的元素都将被删除（含第 start 位）。
+	    如果deleteCount被省略，则其相当于(arr.length - start)。
+
+	item1, item2, ... 可选（可以有多个！！）
+	    要添加进数组的元素,从start 位置开始。如果不指定，则 splice() 将只删除数组元素。 
+
+返回值：
+	由被删除的元素组成的一个数组。如果只删除了一个元素，则返回只包含一个元素的数组。如果没有删除元素，则返回空数组。
+
+提示：
+	splice() 方法与 slice() 方法的作用是不同的，splice() 方法会直接对数组进行修改。
+
+
+------------------------------------
+	*slice*	
+slice() 取子数组：返回一个从start到end（不包括end）的浅拷贝，原数组不会被修改。
+	var arr=[1,2,3,4,5,6];
+	var arr2=arr.slice(2,3)
+	arr不变，arr2是[3,4,5]
+
+//string也有slice方法，取子字符串
+
+
+
+------------------------------------
+	*数组去重*
+
+   for (var i = 0; i < arr.length; i++) {
+      for (var j = i + 1; j < arr.length; j++) {
+         if (arr[i] == arr[j]) {
+            arr.splice(j, 1);
+            j--; //多想想为什么要这样
+         }
+      }
+   }
+
+
+------------------------------------
+	*sort排序*
+	var arr = ['c', 'd', 'a', 'e'];
+	arr.sort();
+	console.log(arr);
+	//[ 'a', 'c', 'd', 'e' ]
+
+   	var arr2 = [3, 5, 5, 76, 0, 8];
+	arr2.sort();
+	console.log(arr2);
+	//[ 0, 3, 5, 5, 76, 8 ]
+	//会自动当作str排序，so76排在8的前面
+
+为了真的给number排序，用比较函数：
+	a b是arr2里的任2个
+	返回的是number类型
+	若是正数，则a b换位
+	若是负数或0，则不换位
+	如：
+	arr2.sort(function(a, b) {      
+      return a - b; //从小到大排
+      //return b - a;//从大到小排
+   });
+
+比较函数根据需要自己写：
+
+例子1：
+   var arrWidth = ['345px', '23px', '10px', '1000px'];
+
+   arrWidth.sort(function(a, b) {
+      return parseInt(a) - parseInt(b);
+   });
+
+例子2：随机排序（利用sort和随机数函数）
+	var arr = [ 1,2,3,4,5,6,7,8 ];
+
+	arr.sort(function ( a, b ) {
+		return Math.random() - 0.5;
+	});
+
+	alert( arr );
+
+例子3：中文按拼音顺序来排
+	var arr=["颠倒","啊","存储","明","版本"];
+	arr.sort(function(a,b){
+		return a.localeCompare(b);
+	});
+
+
+------------------------------------
+	*concat连接*
+合并两个或多个数组。
+此方法不会更改现有数组，而是返回一个新数组。
+	let arr1 = ["a", "b", "c"];
+	let arr2 = ["d", "e", "f"];
+
+	let arr3 = arr1.concat(arr2);
+
+	console.log(arr3);
+	// results in a new array 
+	// [ "a", "b", "c", "d", "e", "f" ]
+
+	console.log(arr1);
+	// ["a", "b", "c"]
+
+	console.log(arr2);
+	// ["d", "e", "f"]
+
+将非数组值合并到数组里：
+例子：多个数组和多个非数组值合并为一个新数组:
+
+var alpha = ['a', 'b', 'c'];
+
+var alphaNumeric = alpha.concat(1, [2, 3]);
+// 组成新数组 ["a", "b", "c", 1, 2, 3],
+// 原alpha数组未被修改
+
+
+------------------------------------
+	*颠倒reverse*
+会修改original数组
+	var myArray = ['one', 'two', 'three'];
+	myArray.reverse(); 
+
+	console.log(myArray) 
+	// ['three', 'two', 'one']
+
+
+------------------------------------
+	*连接成string：join方法*
+var arr = ['aa', 'bb', 'cc'];
+console.log(arr.join());	//aa,bb,cc
+console.log(arr.join(''));	//aabbcc
+console.log(arr.join('-'));	//aa-bb-cc

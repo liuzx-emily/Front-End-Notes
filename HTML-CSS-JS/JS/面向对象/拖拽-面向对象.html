@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>面向对象的拖拽</title>
+    <style>
+    div {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        border-radius: 20%;
+    }
+    
+    #div1 {
+        left: 200px;
+        top: 150px;
+        background-color: coral;
+    }
+    
+    #div2 {
+        left: 10px;
+        top: 50px;
+        background-color: lightcoral;
+    }
+    </style>
+    <script>
+    function Drag(id) {
+        this.obj = document.getElementById(id);
+        this.disX = 0;
+        this.disY = 0;
+    }
+    Drag.prototype.init = function() {
+        var This = this;
+        this.obj.onmousedown = function(ev) {
+            ev = ev || window.event;
+            This.fnDown(ev);
+
+        };
+    };
+    Drag.prototype.fnDown = function(ev) {
+        var This = this;
+        this.disX = ev.clientX - this.obj.offsetLeft;
+        this.disY = ev.clientY - this.obj.offsetTop;
+        document.onmousemove = function(ev) {
+            ev = ev || window.event;
+            This.fnMove(ev);
+            return false;
+        };
+        document.onmouseup = this.fnUp;
+    };
+    Drag.prototype.fnMove = function(ev) {
+        var L = ev.clientX - this.disX;
+        var T = ev.clientY - this.disY;
+        this.obj.style.left = L + 'px';
+        this.obj.style.top = T + 'px';
+    };
+    Drag.prototype.fnUp = function() {
+        document.onmousemove = document.onmouseup = null;
+    };
+    </script>
+</head>
+
+<body>
+    <div id="div1">11111</div>
+    <div id="div2">22222</div>
+    <script>
+    var d1 = new Drag('div1');
+    d1.init();
+    var d2 = new Drag('div2');
+    d2.init();
+    </script>
+</body>
+
+</html>

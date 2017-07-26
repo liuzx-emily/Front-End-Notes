@@ -1,0 +1,1027 @@
+1.运动原理
+Js运动，本质来说，就是让web上DOM元素动起来。而想要DOM动起来，改变其自身的位置属性，比如高宽，左边距，上边距，透明度等。还有一个很重要的前提是，运动的物体必须是绝对定位。
+
+	window.onload = function(){    
+	    var oBtn = document.getElementById('btn');    
+	    oBtn.onclick = function(){    
+	        var oDiv = document.getElementById('div1');    
+	        //设置定时器    
+	        setInterval(function(){    
+	            //改变物体位置    
+	            oDiv.style.left = oDiv.offsetLeft + 10 + 'px';    
+	        },30)    
+	                                                                                                                                                                                                                                                                        
+	    }    
+	}  
+
+上述代码，点击btn之后，就能是物体向左运动。可是会一直向右动，不会停止。因此需要创立一个停止的条件。在条件符合的情况下，清楚定时器。其中对于目标点的判断，尤为重要。
+
+	window.onload = function(){    
+	    var oBtn = document.getElementById('btn');    
+	    oBtn.onclick = function(){    
+	        var oDiv = document.getElementById('div1');    
+	        //设置定时器    
+	        var timer = setInterval(function(){    
+	            //判断停止条件    
+	            if(oDiv.offsetLeft > 300){    
+	                clearInterval(timer);    
+	            }else{    
+	                //改变物体位置    
+	                oDiv.style.left = oDiv.offsetLeft + 10 + 'px';    
+	                document.title = oDiv.offsetLeft;    
+	            }    
+	        },30);                                                                                                                     
+	    }    
+	}  
+
+上述代码中，但物体的位置大于300的时候，将停止运动。但是上述代码还有个问题，就是连续点击按钮，物体会运动越来越快。因为每点击一次，就开了一个定时器，累加的定时器。造成运动混乱。
+
+2，运动框架 （滑入滑出，淡入淡出）
+
+	window.onload = function(){    
+	    var oBtn = document.getElementById('btn');    
+	    oBtn.onclick = function(){    
+	        startMove();    
+	    }    
+	}    
+	var timer = null;    
+	function startMove(){    
+	    var oDiv = document.getElementById('div1');    
+	    clearInterval(timer);    
+	    //设置定时器    
+	    timer = setInterval(function(){    
+	        //判断停止条件    
+	        if(oDiv.offsetLeft > 300){    
+	            clearInterval(timer);    
+	        }else{    
+	            //改变物体位置    
+	            oDiv.style.left = oDiv.offsetLeft + 10 + 'px';    
+	            document.title = oDiv.offsetLeft;    
+	        }    
+	    },30);    
+	}  
+
+此外，在改变物体位置的时候，那个 “10”则是更改的数量，其实也就是速度。如果更改速度，运动的快慢就能确定。因此，运动框架的原理，基本步骤为：
+1.先清除定时器
+2.开启定时器，计算速度
+3.判断停止条件，执行运动
+
+	var timer = null;    
+	function startMove(){    
+	    var oDiv = document.getElementById('div1');    
+	    clearInterval(timer);    
+	        //计算速度    
+	    var iSpeed = 10;    
+	    //设置定时器    
+	    timer = setInterval(function(){    
+	        //判断停止条件    
+	        if(oDiv.offsetLeft > 300){    
+	            clearInterval(timer);    
+	        }else{    
+	            //改变物体位置    
+	            oDiv.style.left = oDiv.offsetLeft + iSpeed + 'px';    
+	            document.title = oDiv.offsetLeft;    
+	        }    
+	    },30);    
+	}  
+
+对于停止条件，写死在里面了，所以需分离出参数。下面是一个分享到的例子。主要是根据目标判断速度的正负。从而在鼠标滑入画出时候进行运动/恢复的效果。
+	[html] view plain copy
+	<!DOCTYPE html>  
+	<html lang="en">  
+	<head>  
+	    <meta charset="UTF-8">  
+	    <title>JS运动——分享到</title>  
+	    <style>  
+	    *{padding: 0; margin: 0;}  
+	    #div1{ width: 150px; height: 200px; background: #ccc; position: absolute; left: -150px;}  
+	    #div1 span{ width: 20px; height: 60px; line-height: 20px; background: #8E91FF; color: #fff; position: absolute; top: 70px; right: -20px;}  
+	    </style>  
+	    <script>  
+	    // 方法一：传一个参数(iTarget)  
+	    /*window.onload = function(){  
+	        var oDiv = document.getElementById('div1');  
+	        var timer = null;  
+	  
+	        oDiv.onmouseover = function(){  
+	            startMove(0);  
+	        };  
+	  
+	        oDiv.onmouseout = function(){  
+	            startMove(-150);  
+	        };  
+	  
+	        function startMove(iTarget){  
+	            var oDiv = document.getElementById('div1');  
+	              
+	            clearInterval(timer);  
+	  
+	            timer = setInterval(function(){  
+	                var speed = 0;  
+	                  
+	                oDiv.offsetLeft > iTarget ? speed = -10 : speed = 10;  
+	  
+	                if(oDiv.offsetLeft == iTarget){  
+	                    clearInterval(timer);  
+	                }else{  
+	                    oDiv.style.left = oDiv.offsetLeft + speed + 'px';  
+	                }  
+	            },30);  
+	        };  
+	    };*/  
+	  
+	    // 方法二：传两个参数(speed,iTarget)  
+	    window.onload = function(){  
+	        var oDiv = document.getElementById('div1');  
+	        var timer = null;  
+	  
+	        oDiv.onmouseover = function(){  
+	            startMove(10,0);  
+	        };  
+	  
+	        oDiv.onmouseout = function(){  
+	            startMove(-10,-150);  
+	        };  
+	  
+	        function startMove(speed,iTarget){  
+	            var oDiv = document.getElementById('div1');  
+	            clearInterval(timer);  
+	            timer = setInterval(function(){  
+	                // 判断oDiv距离左边的距离是否等于目标点  
+	                if(oDiv.offsetLeft == iTarget){  
+	                    clearInterval(timer);  
+	                }else{  
+	                    oDiv.style.left = oDiv.offsetLeft + speed + 'px';  
+	                }  
+	            },30);  
+	        };  
+	    };  
+	    </script>  
+	</head>  
+	<body>  
+	    <div id="div1"><span>分享到</span></div>  
+	</body>  
+	</html>  
+
+另外一个小例子，淡入淡出，即改变物体的透明度，由于没有像原生的位置属性那样的offsetLset. 需要一个变量来保存透明度的值，用来和速度加减，最后付给元素的透明度样式。从而实现淡入淡出效果。
+	[html] view plain copy
+	<!DOCTYPE html>  
+	<html lang="en">  
+	<head>  
+	    <meta charset="UTF-8">  
+	    <title>JS运动——淡入淡出</title>  
+	    <style>  
+	    #div1{ width: 100px; height: 100px; background: green; position: absolute; filter:alpha(opacity:30); opacity: .3;}  
+	    </style>  
+	    <script>  
+	    /*window.onload = function(){  
+	        var oDiv = document.getElementById('div1');  
+	        var timer = null;  
+	        var alpha = 30;  
+	  
+	        oDiv.onmouseover = function(){  
+	            startMove(100);  
+	        };  
+	  
+	        oDiv.onmouseout = function(){  
+	            startMove(30);  
+	        };  
+	  
+	        function startMove(iTarget){  
+	            var oDiv = document.getElementById('div1');  
+	            clearInterval(timer);  
+	            timer = setInterval(function(){  
+	                var speed = 0;  
+	                if(alpha < iTarget){  
+	                    speed = 10;  
+	                }else{  
+	                    speed = -10;  
+	                }  
+	                if(alpha == iTarget){  
+	                    clearInterval(timer);  
+	                }else{  
+	                    alpha += speed;  
+	                    oDiv.style.filter = 'alpha(opacity:' + alpha +')';  
+	                    oDiv.style.opacity = alpha/100;  
+	                }  
+	            },30);  
+	        };  
+	    };*/  
+	  
+	    window.onload = function(){  
+	        var oDiv = document.getElementById('div1');  
+	        var timer = null;  
+	        var alpha = 30;  
+	  
+	        oDiv.onmouseover = function(){  
+	            startMove(10,100);  
+	        };  
+	  
+	        oDiv.onmouseout = function(){  
+	            startMove(-10,30);  
+	        };  
+	  
+	        function startMove(speed,iTarget){  
+	            var oDiv = document.getElementById('div1');  
+	            clearInterval(timer);  
+	            timer = setInterval(function(){  
+	                if(alpha == iTarget){  
+	                    clearInterval(timer);  
+	                }else{  
+	                    alpha += speed;  
+	                    oDiv.style.filter = 'alpha(opacity:' + alpha +')';  
+	                    oDiv.style.opacity = alpha/100;  
+	                }  
+	            },30);  
+	        }  
+	    };  
+	    </script>  
+	</head>  
+	<body>  
+	    <div id="div1"></div>  
+	</body>  
+	</html>  
+
+匀速运动：
+匀速运动的停止条件：距离足够近
+	[html] view plain copy
+	<!DOCTYPE HTML>  
+	<html>  
+	<head>  
+	<meta charset="utf-8">  
+	<title>匀速运动</title>  
+	<style>  
+	#div1 {width:100px; height:100px; background:red; position:absolute; left:600px; top:50px;}  
+	#div2 {width:1px; height:300px; position:absolute; left:300px; top:0; background:black;}  
+	#div3 {width:1px; height:300px; position:absolute; left:100px; top:0; background:black;}  
+	</style>  
+	<script>  
+	/*  
+	    匀速运动的停止条件  
+	    距离足够近  
+	*/  
+	/*var timer=null;  
+	  
+	function startMove(iTarget)  
+	{  
+	    var oDiv=document.getElementById('div1');  
+	      
+	    clearInterval(timer);  
+	    timer=setInterval(function (){  
+	        var speed=0;  
+	          
+	        if(oDiv.offsetLeft<iTarget)  
+	        {  
+	            speed=7;  
+	        }  
+	        else  
+	        {  
+	            speed=-7;  
+	        }  
+	          
+	        if(Math.abs(iTarget-oDiv.offsetLeft)<=7)  
+	        {  
+	            clearInterval(timer);  
+	              
+	            oDiv.style.left=iTarget+'px';  
+	        }  
+	        else  
+	        {  
+	            oDiv.style.left=oDiv.offsetLeft+speed+'px';  
+	        }  
+	    }, 30);  
+	}*/  
+	window.onload = function(){  
+	    var oBtn1 = document.getElementById('btn1');  
+	    var oBtn2 = document.getElementById('btn2');  
+	    var oDiv = document.getElementById('div1');  
+	    var timer = null;  
+	  
+	    oBtn1.onclick = function(){  
+	        startMove(100);  
+	    };  
+	  
+	    oBtn2.onclick = function(){  
+	        startMove(300);  
+	    };  
+	  
+	    function startMove(iTarget){  
+	        var oDiv = document.getElementById('div1');  
+	        clearInterval(timer);  
+	        timer = setInterval(function(){  
+	            var speed = 0;  
+	            if(oDiv.offsetLeft < iTarget ){  
+	                speed = 7;  
+	            }else{  
+	                speed = -7;  
+	            }  
+	            if(Math.abs(iTarget - oDiv.offsetLeft)<=7){  
+	                clearInterval(timer);  
+	                oDiv.style.left = iTarget + 'px';  
+	            }else{  
+	                oDiv.style.left = oDiv.offsetLeft + speed + 'px';  
+	            }  
+	        },30);  
+	    };  
+	};  
+	</script>  
+	</head>  
+	  
+	<body>  
+	<!-- <input type="button" value="到100" onclick="startMove(100)" />  
+	<input type="button" value="到300" onclick="startMove(300)" /> -->  
+	<input id="btn1" type="button" value="运动到100" />  
+	<input id="btn2" type="button" value="运动到300" />  
+	<div id="div1"></div>  
+	<div id="div2"></div>  
+	<div id="div3"></div>  
+	</body>  
+	</html>  
+
+缓冲运动
+缓冲运动原理就是，改变速度的值。每次累加的速度值变小，就是会是整个物体看起来越来越慢，以至于最后停掉。
+
+	window.onload = function(){    
+	    var btn = document.getElementsByTagName('input')[0];    
+	    btn.onclick = function(){    
+	        startMove(300);    
+	    }    
+	}    
+	var timer = null;    
+	function startMove(iTarget){    
+	    var oDiv = document.getElementById('div1');    
+	    clearInterval(timer);    
+	    timer = setInterval(function(){    
+	        //求出带有变化的速度     
+	        var iSpeed = (iTarget - oDiv.offsetLeft) / 8;    
+	        if(oDiv.offsetLeft == iTarget){    
+	            clearInterval(timer);    
+	        }else{    
+	            oDiv.style.left = oDiv.offsetLeft + iSpeed + 'px';    
+	        }    
+	        document.title = oDiv.offsetLeft + '...' + iSpeed;    
+	    },30);    
+	}  
+
+上述方法可以得到缓冲运动，但是实际运行效果，物体并没有在 300的位置停掉，而是在 293的位置就停掉了。究其原因。因为当物体的速度小于1 的时候。物体位置为293。此时计算的速度是 0.875.通过 oDiv.style.left = oDiv.offsetLeft + iSpeed + 'px'; 物体的位置为 293.875.可是计算机不能识别小数，将小数省略了。此时的 位置offsetLeft仍然是 293.再计算一次，还是同样的结果。定时器没有关掉，但是物体的位置却再也无法改变，故停留在了 293的位置。解决方案，就是将速度进行向上取整。但是，像上述运动，速度是正的，可是，当速度是负的时候，就同样会有相同的结果，因此需要在速度为负的时候，向下取整。
+
+	function startMove(iTarget){    
+	    var oDiv = document.getElementById('div1');    
+	    clearInterval(timer);    
+	    timer = setInterval(function(){    
+	        var iSpeed = (iTarget - oDiv.offsetLeft) / 8;    
+	        //对正的速度向上取整，负的速度向下取整    
+	        iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);    
+	        if(oDiv.offsetLeft == iTarget){    
+	            clearInterval(timer);    
+	        }else{    
+	            oDiv.style.left = oDiv.offsetLeft + iSpeed + 'px';    
+	        }    
+	        document.title = oDiv.offsetLeft + '...' + iSpeed;    
+	    },30);    
+	}  
+
+1、当前值离目标值越近，速度越慢
+
+     当前值离目标值越远，速度越快
+
+     speed = (目标值－当前值)/10
+
+2、与目标点相差一点，需要进行判断
+
+　　目标值>当前值，需要对速度向上取整，即speed = Math.ceil(speed)
+
+　　目标值<当前值，需要对速度向下取整，即speed = Math.floor(speed)
+
+3、如果当前值＝目标值，清除动画
+
+完整缓冲运动demo
+
+	[html] view plain copy
+	<!DOCTYPE HTML>  
+	<html>  
+	<head>  
+	<meta charset="utf-8">  
+	<title>缓冲运动</title>  
+	<style>  
+	#div1 {width:100px; height:100px; background:red; position:absolute; left:600px; top:50px;}  
+	#div2 {width:1px; height:300px; background:black; position:absolute; left:300px; top:0;}  
+	</style>  
+	<script>  
+	window.onload = function(){  
+	    var oBtn = document.getElementById('btn1');  
+	    var oDiv = document.getElementById('div1');  
+	    var timer = null;  
+	  
+	    oBtn.onclick = function(){  
+	        startMove(300);  
+	    };  
+	  
+	    function startMove(iTarget){  
+	        var oDiv = document.getElementById('div1');  
+	        clearInterval(timer);  
+	        timer = setInterval(function(){  
+	            var speed = (iTarget - oDiv.offsetLeft)/10;  
+	            // 但凡用到缓冲运动，一定要用到向上/向下取整！  
+	            speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);  
+	            oDiv.style.left = oDiv.offsetLeft + speed + 'px';  
+	            document.title=oDiv.offsetLeft+','+speed;     
+	        },30);  
+	    }  
+	  
+	};  
+	</script>  
+	</head>  
+	  
+	<body>  
+	<input id="btn1" type="button" value="缓冲运动到300" />  
+	<div id="div1"></div>  
+	<div id="div2"></div>  
+	</body>  
+	</html>  
+
+多物体运动
+下一步，就是处理多物体运动，运动函数里面每次都要选取一个元素加事件。如果需要对多个物体进行同样的运动， 需要将运动对象作为参数传进来。
+
+	window.onload = function(){    
+	    var aDiv = document.getElementsByTagName('div');    
+	    for(var i=0;i<aDiv.length;i++){    
+	        aDiv[i].onmouseover = function(){    
+	            startMove(this,300);    
+	        }    
+	        aDiv[i].onmouseout = function(){    
+	            startMove(this,100);    
+	        }    
+	    }    
+	}    
+	var timer = null;    
+	function startMove(obj,iTarget){    
+	    clearInterval(timer);    
+	    timer = setInterval(function(){    
+	        var iSpeed = (iTarget - obj.offsetWidth) / 8;    
+	        iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);    
+	        if(obj.offsetWidth == iTarget){    
+	            clearInterval(timer);    
+	        }else{    
+	            obj.style.width = obj.offsetWidth + iSpeed + 'px';    
+	        }    
+	                                                                                                                                                           
+	    },30)    
+	}  
+
+通过循环物体，将物体的 this传给运动函数，使得多物体可以运动。但是这样有一个弊端，即当滑入第一个运动的时候，开启了定时器。如果此时，滑入另外一个物体，将会清理上一个定时器。这就造成了，上一次运动，很有可能还没完成结束，定时器就没关闭了。解决的方法，每个运动的物体，都能开了一个属于自己的定时器。因此，把定时器当成物体的属性。清理的时候也就是清理自己的定时器。
+
+	window.onload = function(){    
+	    var aDiv = document.getElementsByTagName('div');    
+	    for(var i=0;i<aDiv.length;i++){    
+	        aDiv[i].onmouseover = function(){    
+	            startMove(this,300);    
+	        }    
+	        aDiv[i].onmouseout = function(){    
+	            startMove(this,100);    
+	        }    
+	    }    
+	}    
+	function startMove(obj,iTarget){    
+	    //将定时器，变成物体的属性，类似给物体添加索引    
+	    clearInterval(obj.timer);    
+	    obj.timer = setInterval(function(){    
+	        var iSpeed = (iTarget - obj.offsetWidth) / 8;    
+	        iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);    
+	        if(obj.offsetWidth == iTarget){    
+	            clearInterval(obj.timer);    
+	        }else{    
+	            obj.style.width = obj.offsetWidth + iSpeed + 'px';    
+	        }    
+	                                                                                                                                               
+	    },30)    
+	}  
+
+多物体运动完整demo
+	[html] view plain copy
+	<!DOCTYPE HTML>  
+	<html>  
+	<head>  
+	<meta charset="utf-8">  
+	<title>多物体运动——改变物体宽度</title>  
+	<style>  
+	div {width:100px; height:50px; background:red; margin:10px; border:10px solid black;}  
+	</style>  
+	<script>  
+	window.onload = function(){  
+	    var aDiv = document.getElementsByTagName('div');  
+	  
+	    for( var i = 0; i < aDiv.length; i++){  
+	        aDiv[i].timer = null;  
+	          
+	        aDiv[i].onmouseover = function(){  
+	            startMove(this,400);  
+	        };  
+	  
+	        aDiv[i].onmouseout = function(){  
+	            startMove(this,100);  
+	        };  
+	    }  
+	  
+	    function startMove(obj,iTarget){  
+	        clearInterval(obj.timer);  
+	        obj.timer = setInterval(function(){  
+	            var speed = (iTarget - obj.offsetWidth)/6;  
+	            speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);  
+	            if( obj.offsetWidth == iTarget){  
+	                clearInterval(obj.timer);  
+	            }else{  
+	                obj.style.width = obj.offsetWidth + speed + 'px';  
+	            }  
+	        },30);  
+	    };  
+	};  
+	</script>  
+	</head>  
+	  
+	<body>  
+	<div></div>  
+	<div></div>  
+	<div></div>  
+	</body>  
+	</html>  
+
+多物体的淡入淡出的时候，也有类似的问题。因为修改透明度的时候，是先用一个变量保存透明度，必须针对每个物体设立透明度值属性。
+多物体运动透明度demo
+	[html] view plain copy
+	<!DOCTYPE HTML>  
+	<html>  
+	<head>  
+	<meta charset="utf-8">  
+	<title>多物体运动——改变物体透明度</title>  
+	<style>  
+	div {width:100px; height:50px; background:red; margin:10px; border:10px solid black; filter:alpha(opacity:30); opacity: .3;}  
+	</style>  
+	<script>  
+	window.onload = function(){  
+	    var aDiv = document.getElementsByTagName('div');  
+	  
+	    for( var i = 0; i < aDiv.length; i++){  
+	        aDiv[i].timer = null;  
+	        aDiv[i].alpha = 30;   
+	        aDiv[i].onmouseover = function(){  
+	            startMove(this,100);  
+	        };  
+	  
+	        aDiv[i].onmouseout = function(){  
+	            startMove(this,30);  
+	        };  
+	    }  
+	  
+	    function startMove(obj,iTarget){  
+	        clearInterval(obj.timer);  
+	        obj.timer = setInterval(function(){  
+	            var speed = (iTarget - obj.alpha)/6;  
+	            speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);  
+	            if( obj.alpha == iTarget){  
+	                clearInterval(obj.timer);  
+	            }else{  
+	                obj.alpha += speed;    
+	                obj.style.filter = 'alpha(opacity:'+obj.alpha+')';    
+	                obj.style.opacity = obj.alpha / 100;    
+	            }  
+	        },30);  
+	    };  
+	};  
+	</script>  
+	</head>  
+	  
+	<body>  
+	<div></div>  
+	<div></div>  
+	<div></div>  
+	</body>  
+	</html>  
+
+位置属性的bug
+offsetWidth 或者 offsetHeight 等位置属性，一旦给他们加上 border。则会有诡异的现象出现。
+
+	window.onload = function(){    
+	        var oDiv = document.getElementById('div1');    
+	        setInterval(function(){    
+	            oDiv.style.width = oDiv.offsetWidth - 1 + "px";    
+	        },30)    
+	    }    
+
+例如 oDiv.style.width = oDiv.offsetWidth - 1 + 'px'; 如果给 oDiv 的width 为一百，border 为 1.则这个物体的 width是100px；offsetWidth 为102px；带入公式之后，即减一之后。100 = 102 - 1 ，反而等于101；即 物体本来要减小，事实却增大了。解决的方案就是，加减的时候，必须使用物体的内联样式。但是 火狐 和 IE 又有兼容模式。解决方案如下：
+
+	window.onload = function(){    
+	        var oDiv = document.getElementById('div1');    
+	        setInterval(function(){    
+	                                                                                                                     
+	            oDiv.style.width = parseInt(getStyle(oDiv,'width')) - 1 + 'px';    
+	                                                                                                          
+	        },30)    
+	    }    
+	    function getStyle(obj,attr){    
+	        if(obj.currentStyle){    
+	            return obj.currentStyle[attr];    
+	        }else{    
+	            return getComputedStyle(obj,false)[attr];    
+	        }    
+	    }  
+
+其中，getStyle函数，传入一个元素对象，和其 css 属性，获取的是元素的样式，即 witdh 100px；因此需要parseInt转换
+任意值运动demo
+	[html] view plain copy
+	<!DOCTYPE HTML>  
+	<html>  
+	<head>  
+	<meta charset="utf-8">  
+	<title>JS任意值运动</title>  
+	<style>  
+	div {width:100px; height:100px; margin:20px; float:left; background: #ccc; border:10px solid black; font-size:14px;}  
+	</style>  
+	<script>  
+	window.onload=function ()  
+	{  
+	    var oDiv1=document.getElementById('div1');  
+	    oDiv1.onmouseover=function (){startMove(this, 'height', 400);};  
+	    oDiv1.onmouseout=function (){startMove(this, 'height', 200);};  
+	      
+	    var oDiv2=document.getElementById('div2');  
+	      
+	    oDiv2.onmouseover=function (){startMove(this, 'width', 400);};  
+	    oDiv2.onmouseout=function (){startMove(this, 'width', 200);};  
+	      
+	    var oDiv3=document.getElementById('div3');  
+	    oDiv3.onmouseover=function (){startMove(this, 'fontSize', 30);};  
+	    oDiv3.onmouseout=function (){startMove(this, 'fontSize', 14);};  
+	      
+	    var oDiv4=document.getElementById('div4');  
+	    oDiv4.onmouseover=function (){startMove(this, 'borderWidth', 100);};  
+	    oDiv4.onmouseout=function (){startMove(this, 'borderWidth', 10);};  
+	};  
+	  
+	function getStyle(obj, name)  
+	{  
+	    return obj.currentStyle ? obj.currentStyle[name] : getComputedStyle( obj ,false )[name];  
+	}  
+	  
+	function startMove(obj, attr, iTarget)  
+	{  
+	    clearInterval(obj.timer);  
+	    obj.timer=setInterval(function (){  
+	        var cur=parseInt(getStyle(obj, attr));  
+	          
+	        var speed=(iTarget-cur)/6;  
+	        speed=speed>0?Math.ceil(speed):Math.floor(speed);  
+	          
+	        if(cur==iTarget)  
+	        {  
+	            clearInterval(obj.timer);  
+	        }  
+	        else  
+	        {  
+	            obj.style[attr]=cur+speed+'px';  
+	        }  
+	    }, 30);  
+	}  
+	</script>  
+	</head>  
+	  
+	<body>  
+	<div id="div1">变高</div>  
+	<div id="div2">变宽</div>  
+	<div id="div3">safasfasd</div>  
+	<div id="div4"></div>  
+	</body>  
+	</html>  
+
+任意值完美版demo
+
+上述版本，还不能处理透明度的任意值，因此需要增加额外的兼容hack。
+
+	[html] view plain copy
+	<!DOCTYPE html>  
+	<html lang="en">  
+	<head>  
+	    <meta charset="UTF-8">  
+	    <title>JS任意值运动完美版</title>  
+	    <style>  
+	    #div1{ width: 100px; height: 100px; background: green; position: absolute; filter:alpha(opacity:30); opacity: .3;}  
+	    #div2{ width: 100px; height: 100px; background: green; position: absolute; top: 120px;}  
+	    </style>  
+	    <script>  
+	    window.onload = function(){  
+	        var aDiv = document.getElementsByTagName('div');  
+	        aDiv[0].onmouseover = function(){  
+	            startMove(this,'opacity',100);  
+	        }  
+	        aDiv[0].onmouseout = function(){  
+	            startMove(this,'opacity',30);  
+	        }  
+	  
+	        aDiv[1].onmouseover = function(){  
+	            startMove(this,'width','200');  
+	        }  
+	        aDiv[1].onmouseout = function(){  
+	            startMove(this,'width','100');  
+	        }  
+	    }  
+	  
+	    function getStyle(obj, attr){  
+	        if(obj.currentStyle)    {  
+	            return obj.currentStyle[attr];  
+	        }else{  
+	            return getComputedStyle(obj, false)[attr];  
+	        }  
+	    }  
+	    function startMove(obj,attr,iTarget){  
+	        clearInterval(obj.timer);  
+	        obj.timer = setInterval(function(){  
+	            var iCur = 0;  
+	            if(attr == 'opacity'){  
+	                iCur = parseInt(parseFloat(getStyle(obj, attr))*100);  
+	            }else{  
+	                iCur = parseInt(getStyle(obj,attr));  
+	            }  
+	            var iSpeed = (iTarget - iCur) / 8;  
+	            iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);  
+	            if(iCur == iTarget){  
+	                clearInterval(obj.timer);  
+	            }else{  
+	                if(attr=='opacity'){  
+	                    iCur += iSpeed  
+	                    obj.style.filter='alpha(opacity:' + iCur + ')';  
+	                    obj.style.opacity=iCur / 100;  
+	                }  
+	                else{  
+	                    obj.style[attr]=iCur+iSpeed+'px';  
+	                }  
+	                document.title = obj.style[attr];  
+	            }  
+	                                                                                      
+	        },30)  
+	    }  
+	    </script>  
+	</head>  
+	<body>  
+	    <div id="div1"></div>  
+	    <div id="div2"></div>  
+	</body>  
+	</html>  
+
+链式运动demo
+
+我们的运动框架到目前为止，基本功能都能实现了。现在拓展。所谓链式运动，即运动接着运动。当运动停止的时候，如果回调一个函数。回调一个运动函数，就能出现这样的效果。因此传入一个函数作为回调函数。
+
+	[html] view plain copy
+	<!DOCTYPE html>  
+	<html lang="en">  
+	<head>  
+	    <meta charset="UTF-8">  
+	    <title>JS运动——链式运动</title>  
+	    <style>  
+	    #div1{ width: 100px; height: 100px; background: green; position: absolute; filter:alpha(opacity:30); opacity: .3;}  
+	    </style>  
+	    <script>  
+	    window.onload = function(){  
+	        var oDiv = document.getElementById('div1');  
+	        oDiv.onclick = function(){  
+	            startMove(this,'width',300,function(){  
+	                startMove(oDiv,'height',300,function(){  
+	                    startMove(oDiv,'opacity',100)  
+	                })  
+	            })  
+	        }  
+	    }  
+	    function getStyle(obj,attr){  
+	        if(obj.currentStyle){  
+	            return obj.currentStyleattr[attr];  
+	        }else{  
+	            return getComputedStyle(obj, false)[attr];  
+	        }  
+	    }  
+	                                                                          
+	    function startMove(obj,attr,iTarget,fn){  
+	        clearInterval(obj.timer);  
+	        obj.timer = setInterval(function(){  
+	            var iCur = 0;  
+	            if(attr == 'opacity'){  
+	                iCur = parseInt(parseFloat(getStyle(obj, attr))*100);  
+	            }else{  
+	                iCur = parseInt(getStyle(obj,attr));  
+	            }  
+	            var iSpeed = (iTarget - iCur) / 8;  
+	            iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);  
+	            if(iCur == iTarget){  
+	                clearInterval(obj.timer);  
+	                //回调函数  
+	                if(fn) fn();  
+	            }else{  
+	                if(attr=='opacity'){  
+	                    iCur += iSpeed  
+	                    obj.style.filter='alpha(opacity:' + iCur + ')';  
+	                    obj.style.opacity=iCur / 100;  
+	                }  
+	                else{  
+	                    obj.style[attr]=iCur+iSpeed+'px';  
+	                }  
+	                document.title = obj.style[attr];  
+	            }  
+	                                                                            
+	        },30)  
+	    }  
+	    </script>  
+	</head>  
+	<body>  
+	    <h4>点击下面的方块试试链式运动的效果</h4>  
+	    <div id="div1"></div>  
+	</body>  
+	</html>  
+
+同时运动demo
+
+目前为止，我们的运动框架还有个小缺点，就是不能同时该两个属性进行运动，比如同时更改宽和高。这个要求传入的属性是不同的几个值。则考虑传入一个 json用来保存需要更改的属性。
+
+	[html] view plain copy
+	<!DOCTYPE html>  
+	<html lang="en">  
+	<head>  
+	    <meta charset="UTF-8">  
+	    <title>JS运动——同时运动(有bug)</title>  
+	    <style>  
+	    #div1{ width: 100px; height: 100px; background: green; position: absolute;}  
+	    </style>  
+	    <script>  
+	    window.onload = function(){  
+	        var oDiv = document.getElementById('div1');  
+	        oDiv.onclick = function(){  
+	            startMove(this,{'width':200,'height':500});  
+	        }  
+	    }  
+	    function getStyle(obj, attr){  
+	        if(obj.currentStyle)    {  
+	            return obj.currentStyle[attr];  
+	        }else{  
+	            return getComputedStyle(obj, false)[attr];  
+	        }  
+	    }  
+	    function startMove(obj,json,fn){  
+	        clearInterval(obj.timer);  
+	        obj.timer = setInterval(function(){  
+	         // 循环json   
+	         for(var attr in json){        
+	                var iCur = 0;  
+	                if(attr == 'opacity'){  
+	                    iCur = parseInt(parseFloat(getStyle(obj, attr))*100);  
+	                }else{  
+	                    iCur = parseInt(getStyle(obj,attr));  
+	                }  
+	                var iSpeed = (json[attr] - iCur) / 8;  
+	                iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);  
+	                if(iCur == json[attr]){  
+	                    clearInterval(obj.timer);  
+	                    if(fn) fn();  
+	                }else{  
+	                    if(attr=='opacity'){  
+	                        iCur += iSpeed  
+	                        obj.style.filter='alpha(opacity:' + iCur + ')';  
+	                        obj.style.opacity=iCur / 100;  
+	                    }  
+	                    else{  
+	                        obj.style[attr]=iCur+iSpeed+'px';  
+	                    }  
+	                    document.title = obj.style[attr];  
+	                }  
+	            }  
+	        },30)  
+	    }      
+	    </script>  
+	</head>  
+	<body>  
+	    <h4>点击下面的方块试试同时运动效果</h4>  
+	    <div id="div1"></div>  
+	</body>  
+	</html>  
+
+上述代码，可以解决了同时运动的问题。但是还是有一个bug。比如，同时运动的某个属性，如果变化很小，马上就停止了，即关掉了定时器。那么会造成其他属性的变化也停止。因为这些属性都共用了一个定时器。因此需要判断，假设有三个人要来，然后一起去爬山。三个人有的先来，有的后来，只要三个人都到齐了，才出发。也就是只有三个属性都到了目标值，才关定时器。一开始，设立一个检查量，为真。假设所有人都到了，然后循环，只有有一个人没有到，检查就为假。直到所有的都到了，检测为真。则停止定时器。
+同时运动完美版
+
+	[html] view plain copy
+	<!DOCTYPE html>  
+	<html lang="en">  
+	<head>  
+	    <meta charset="UTF-8">  
+	    <title>JS运动——同时运动完美版</title>  
+	    <style>  
+	    #div1{ width: 100px; height: 100px; background: green; position: absolute; filter:alpha(opacity:30); opacity: .3;}  
+	    </style>  
+	    <script>  
+	    window.onload = function(){  
+	        var oDiv = document.getElementById('div1');  
+	        oDiv.onclick = function(){  
+	            startMove(this,{'width':200,'height':200,'opacity':100});  
+	        }  
+	    }  
+	    function getStyle(obj, attr){  
+	        if(obj.currentStyle)    {  
+	            return obj.currentStyle[attr];  
+	        }else{  
+	            return getComputedStyle(obj, false)[attr];  
+	        }  
+	    }  
+	    function startMove(obj,json,fn){  
+	        clearInterval(obj.timer);  
+	        obj.timer = setInterval(function(){  
+	            var bStop = true;  
+	            for(var attr in json){    
+	                //取当前值    
+	                var iCur = 0;  
+	                if(attr == 'opacity'){  
+	                    iCur = parseInt(parseFloat(getStyle(obj, attr))*100);  
+	                }else{  
+	                    iCur = parseInt(getStyle(obj,attr));  
+	                }  
+	                //计算速度  
+	                var iSpeed = (json[attr] - iCur) / 8;  
+	                iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);  
+	                //检测停止  
+	                if(iCur != json[attr]){  
+	                    bStop = false;  
+	                }     
+	                if(attr=='opacity'){  
+	                    iCur += iSpeed  
+	                    obj.style.filter='alpha(opacity:' + iCur + ')';  
+	                    obj.style.opacity=iCur / 100;  
+	                }  
+	                else{  
+	                    obj.style[attr]=iCur+iSpeed+'px';  
+	                }  
+	            }  
+	            if(bStop){  
+	                clearInterval(obj.timer);  
+	                if(fn) fn();  
+	            }  
+	        },30)  
+	    }  
+	    </script>  
+	</head>  
+	<body>  
+	    <h4>点击下面的方块试试同时运动效果</h4>  
+	    <div id="div1"></div>  
+	</body>  
+	</html>  
+	
+再循环外定义一个 标志变量 bStop = true。用来表示所有属性到达目标值。等循环结束了，如果这个值是真的，则停止定时器。因为，每次运行定时器，都会初始化这个值。循环的过程中，只要有一个没有到，bStop就被设定为 false。如果某个到了，此时 iCur != json[attr]，表示速度为0 后面执行的结果，也不会有变化。只有所有的都达到目标值。循环则不再改变 bStop的值。此时，只要下一次运行定时器。就是初始化 bStop为真。而循环因为都到了，所以速度为0 也就再也没有变化。循环结束，sBstop还是真，表示所有都到了。因此此时结束定时器。
+最后附上完美运动框架，封装成 move.js 就可以调用了。
+
+
+	/**  
+	   * getStyle 获取样式  
+	   * startMove 运动主程序  
+	*/    
+	                     
+	  function getStyle(obj, attr){    
+	      if(obj.currentStyle)    {    
+	          return obj.currentStyle[attr]; //for ie   
+	     }else{    
+	         return getComputedStyle(obj, false)[attr];  // for ff  
+	     }    
+	 }    
+	 function Move(obj,json,fn){    
+	     //停止上一次定时器    
+	     clearInterval(obj.timer); //关闭前一个定时器，解决对同个对象同时调用多个Move()时，定时器叠加问题。使用obj.timer给每个调用Move()的对象赋予各自的定时器，防止多个对象同时调用Move()时，同用一个定时器，而导致相关干扰问题。   
+	     //保存每一个物体运动的定时器    
+	     obj.timer = setInterval(function(){    
+	         //判断同时运动标志    
+	         var bStop = true;    
+	         for(var attr in json){      
+	             //取当前值      
+	             var iCur = 0;  //创建一个变量，用于存储 attr属性每时每刻的值  
+	             if(attr == 'opacity'){    
+	              //针对在FF中opacity属性值为浮点数值问题，将属性值 四舍五入、转换成浮点型。乘以100，使opacity属性值与IE统一为百分数  
+	                 iCur = Math.round(parseFloat(getStyle(obj, attr))*100);    
+	             }else{    
+	                 iCur = parseInt(getStyle(obj,attr)); //将除opacity外的属性(width/fontSize/MarginLeft等)的初始值 转换为整型   
+	             }    
+	             //计算速度    
+	             var iSpeed = (json[attr] - iCur) / 8;  //创建 递减的速度speed变量。实现属性值的变速改变  
+	             iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);  //取整，解决浏览器忽略小于1px的数值 导致运动结束时，离目标值Itarget少几个像素的问题  
+	             //检测同时到达标志    
+	             if(iCur != json[attr]){    
+	                 bStop = false;    
+	             }       
+	             //更改属性，获取动画效果    
+	             if(attr=='opacity'){    
+	                 iCur += iSpeed    
+	                 obj.style.filter='alpha(opacity:' + iCur + ')';    
+	                 obj.style.opacity=iCur / 100;    
+	             }    
+	             else{    
+	                 obj.style[attr]=iCur+iSpeed+'px';    
+	             }    
+	         }    
+	         //检测停止    
+	         if(bStop){    
+	             clearInterval(obj.timer);    
+	             if(fn) fn();    
+	         }    
+	     },30)    
+	  }  

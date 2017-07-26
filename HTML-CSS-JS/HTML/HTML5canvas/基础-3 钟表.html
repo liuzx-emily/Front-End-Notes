@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>canvas钟表</title>
+    <style>
+    canvas {
+        border: 1px solid crimson;
+    }
+    </style>
+    <script>
+    var oCan = null;
+    var ctx = null;
+    var radialG = null;
+    window.onload = function() {
+        init();
+        clock(200);
+        setInterval(clock, 500, 200);
+
+
+    };
+
+    function init() {
+        oCan = document.querySelector('#myCanvas');
+        ctx = oCan.getContext('2d');
+        radialG = ctx.createRadialGradient(0, 0, 0, 0, 0, 300);
+        radialG.addColorStop(0, 'white');
+        radialG.addColorStop(1, '#eee');
+    }
+
+    function clock(radius) {
+        ctx.save();
+        ctx.translate(210, 210);
+        //表盘底色
+        ctx.beginPath();
+        ctx.fillStyle = radialG;
+        ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+        ctx.fill();
+
+        //画小刻度
+        ctx.beginPath();
+        ctx.lineWidth = 6;
+        ctx.strokeStyle = 'red';
+        for (var i = 0; i < 60; i++) {
+            ctx.moveTo(0, 0);
+            ctx.arc(0, 0, radius, i / 30 * Math.PI, (i + 1) / 30 * Math.PI);
+
+        }
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.fillStyle = radialG;
+        ctx.arc(0, 0, radius - 10, 0, 2 * Math.PI);
+        ctx.fill();
+
+        //画大刻度
+        ctx.beginPath();
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = 'coral';
+        for (var i = 0; i < 12; i++) {
+            ctx.moveTo(0, 0);
+            ctx.arc(0, 0, radius, i / 6 * Math.PI, (i + 1) / 6 * Math.PI);
+
+        }
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.fillStyle = radialG;
+        ctx.arc(0, 0, radius - 20, 0, 2 * Math.PI);
+        ctx.fill();
+        //画表盘圈
+        ctx.beginPath();
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = 'purple';
+        ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+        ctx.stroke();
+        //画指针：1 取时间
+        var t = new Date();
+        var iHour = t.getHours();
+        var iMinute = t.getMinutes();
+        var iSecond = t.getSeconds();
+        //画指针：2 取弧度（0为三点钟）
+        var curveHour = ((iHour + iMinute / 60) * 30 - 90) * Math.PI / 180;
+        var curveMinute = (iMinute * 6 - 90) * Math.PI / 180;
+        var curveSecond = (iSecond * 6 - 90) * Math.PI / 180;
+        //画指针：3 画时针
+        ctx.beginPath();
+        ctx.rotate(curveHour);
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 8;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(radius * 10 / 20, 0);
+        ctx.stroke();
+        ctx.rotate(-curveHour);
+        //画指针：4 画分针
+        ctx.beginPath();
+        ctx.rotate(curveMinute);
+        ctx.strokeStyle = 'blue';
+        ctx.lineWidth = 4;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(radius * 15 / 20, 0);
+        ctx.stroke();
+        ctx.rotate(-curveMinute);
+        //画指针：5 画秒针
+        ctx.beginPath();
+        ctx.rotate(curveSecond);
+        ctx.strokeStyle = '#abc';
+        ctx.lineWidth = 2;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(radius * 18 / 20, 0);
+        ctx.rotate(-curveSecond);
+        //画线
+        ctx.stroke();
+        ctx.restore();
+    }
+    </script>
+</head>
+
+<body>
+    <canvas id="myCanvas" width="500" height="500"></canvas>
+</body>
+
+</html>

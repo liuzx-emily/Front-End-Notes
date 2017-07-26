@@ -1,0 +1,509 @@
+-----------
+	*准备工作*
+1 服务器工具：安装wampserver 64位
+2 会在wamp安装路径下自动生成www文件夹，网站的东西以后都放在这里（除非手动改路径）
+3 通过服务器方式访问本地的文件：
+	在网址输入"localhost/文件路径"或"127.0.0.1/文件路径
+4 每次开wampserver前，最好不要开别的软件，因为可能会占用它的端口80（比如迅雷、迅雷看看），影响它的使用。开了wampserver之后再开就没问题了。
+
+
+-----------
+	*ajax概念*
+1 什么是ajax？
+ajax : Asynchronous JavaScript and XML，异步JavaScript和XML。
+用javascript异步形式去操作xml。
+只是用来做数据交互的，优点：
+	1 节省用户操作，时间，提高用户体验，减少数据请求
+	2 传输获取数据
+
+
+-----------
+	*插播知识点：form*
+
+表单：数据的提交
+  action : 数据提交的地址，默认是当前页面
+  method : 数据提交的方式，默认是get方式
+	1.get
+		把数据名称和数据值用=连接，如果有多个的话，那么他会把多个数据组合用&进行连接，然后把数据放到url?后面传到指定页面
+	    因为url长度有限制，所以通过get方式不能传递过多的数据。相对不安全。
+	2.post
+		数据放在请求头里。
+		理论上数据长度无限制，相对安全。
+  enctype : 提交的数据格式，默认application/x-www-form-urlencoded
+注：form中name属性是最重要的，后端服务器获取数据就是靠name
+例子：
+	<form action="1.post.php" method="post">
+		<input type="text" name="username" />
+	    <input type="text" name="age" />
+	    <input type="submit" value="提交" />
+	</form>
+
+
+-----------
+	*第一个ajax程序*
+备注：所有ajax测试都必须在服务器环境中（localhost），直接打开本地文件来测试无效。	
+	oBtn.onclick = function() {
+
+	   //创建对象(IE6-兼容问题，这里忽略)
+	   var xhr = new XMLHttpRequest();
+
+	   //open方法
+	   xhr.open('get', '1.txt', true);
+
+	   //上面都是准备工作，send才是发送请求
+	   xhr.send();
+
+	   //等待服务器返回内容
+	   	xhr.onreadystatechange = function() {
+		   	if (xhr.readyState == 4) {
+	          	if (xhr.status == 200) {
+	             	alert(xhr.responseText);
+	          	} else {
+	             	alert('出错了,Err：' + xhr.status);
+	          	}
+	        }
+	   	};
+
+	};
+只是个结构实例，没干什么有用的。下面解释具体的
+
+-----------
+	*open方法*
+	xhr.open('get', '1.txt', true);
+参数
+ 1.打开方式：get post
+ 2.地址
+ 3.是否异步
+	true 异步:非阻塞 前面的代码不会影响后面代码的执行
+	false同步:阻塞 前面的代码会影响后面代码的执行
+注：很少会用到true，会用到true的情况举例：
+	xhr.open('get', '1.txt', true);
+	xhr.send();
+	alert( xhr.responseText );//弹出空
+	解释：因为true异步，所以不阻塞后续进行。send之后立刻alert，而alert时xhr接收数据还没有完成呢。
+	这里只是说明情况，实际上很少会这么用，就算需要“阻塞”，一般就用回调函数了，也不会false同步。
+
+
+-----------
+	*等待服务器返回内容*
+1readyState属性：请求状态 是number类型
+	0（初始化）还没有调用open()方法
+	1（载入）已调用send()方法，正在发送请求
+	2（载入完成）send()方法完成，已收到全部响应内容
+	3（解析）正在解析响应内容
+	4（完成）响应内容解析完成，可以在客户端调用了
+
+2 onreadystatechange事件 : 当readyState改变的时候触发 
+
+3 responseText：属性 ajax请求返回的内容，以文本形式存放，是string类型
+  responseXML ：属性 ajax请求返回的内容，以XML形式存放
+
+4 status : 属性 服务器请求资源的状态（http状态码），是number类型。
+	例子：404Not Found。这里用200请求成功（比如所需文件服务器中没有就会不成功）
+
+	xhr.onreadystatechange = function() {
+	   	if (xhr.readyState == 4) {
+	      	if (xhr.status == 200) {
+	         	alert(xhr.responseText);
+	      	} else {
+	         	alert('出错了：' + xhr.status);
+	      	}
+	    }
+	};
+
+
+-----------
+	*发送数据：get的2个问题*
+get方式：数据名称和值用=连接，多个数据组用&进行连接，然后把数据放到url?后面传到指定页面。
+
+问题1：缓存
+缓存会以整体存（包括url和url？后面的所有内容）。如果整体名字不变，有缓存的时候它就会用缓存，后端文件更新了它也不会去读最新的。
+解决方法：让url?后面的内容每次都不一样，浏览器就没法去读缓存了。在url？后面连接一个随机数，时间戳
+  
+问题2：中文乱码
+解决方法：编码encodeURI
+
+	xhr.open('get', '2.get.php?username=' + '刘伟' + '&age=30&', true);
+	xhr.open('get', '2.get.php?username=' + '刘伟' + '&age=30&' + new Date().getTime(), true);
+	xhr.open('get', '2.get.php?username=' + encodeURI('刘伟') + '&age=30&' + new Date().getTime(), true);
+
+备注：getTime() 方法可返回距1970年1月1日之间的毫秒数。是number类型
+-----------
+	*发送数据：post的注意事项*
+post方式，数据放在send()里面作为参数传递
+
+注意事项：需要声明发送的数据类型
+（和form不同，form的enctype有默认值application/x-www-form-urlencoded）
+
+	xhr.open('post','2.post.php',true);
+	//申明发送的数据类型
+	xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+	xhr.send('username=刘伟&age=30');
+
+post没有缓存问题；不用额外处理中文编码问题（因为urlencoded已经解决了）
+
+
+-----------
+	*JSON对象的2个方法*
+（IE7-兼容问题：没有JSON对象。这里忽略）
+
+1 stringify : 可以把一个对象转成对应字符串
+   var arr = [1, 2, 3];
+   var j = {
+      left: 100
+   };
+   console.log(JSON.stringify(arr));	//[1,2,3]
+   console.log(JSON.stringify(j));		//{"left":100}
+
+2 parse : 可以把字符串转成对应对象
+  parse非常严格，key必须被双引号括起来（单引号不行，没有引号更不行）
+   var s1 = '[100,200,300]';
+   var a1 = JSON.parse(s1);
+   console.log(a1[0]); 		//100
+
+   var s2 = '{"left":100}';
+   var a2 = JSON.parse(s2);
+   console.log(a2.left); 	//100
+
+
+
+-----------
+	*接收数据修改html内容*
+xhr.responseText是string类型。所以要先用JSON.parse()处理，转换成数据或者json格式等对应对象。
+
+小例子：点击oBtn时，从后端接收新闻，在网页中显示。
+	oBtn.onclick = function() {
+	   var xhr = new XMLHttpRequest();
+	   xhr.open('get', 'getNews.php', true);
+	   xhr.send();
+	   xhr.onreadystatechange = function() {
+	      if (xhr.readyState == 4) {
+	         if (xhr.status == 200) {
+	            var data = JSON.parse(xhr.responseText);
+	            var oUl = document.getElementById('ul1');
+	            var sContent = '';
+	            for (var i = 0; i < data.length; i++) {
+	               sContent += '<li><a href="">' + data[i].title + '</a> [<span>' + data[i].date + '</span>]</li>';
+	            }
+	            oUl.innerHTML = sContent;
+	         } else {
+	            alert('出错了,Err：' + xhr.status);
+	         }
+	      }
+	   };
+	};
+
+注：getNews.php的内容：
+	<?php
+	header('content-type:text/html;charset="utf-8"');
+	error_reporting(0);
+
+	$news = array(
+		array('title'=>'德国女总理默克尔滑雪时摔倒','date'=>'2014-1-6'),
+		array('title'=>'中日驻英外交官撰文互称对方国家为"伏地魔"','date'=>'2014-1-6'),
+		array('title'=>'安倍:望与中国领导人会面','date'=>'2014-1-6'),
+		array('title'=>'揭秘台湾驻港间谍网运作','date'=>'2014-1-6'),
+		array('title'=>'嫦娥三号是货真价实的中国创造','date'=>'2014-1-6'),
+	);
+
+	echo json_encode($news);
+
+
+
+
+-----------
+	*封装一个ajax函数*
+ajax.js文件：
+	function ajax(ajaxInfo) {
+	   var url = ajaxInfo.url;
+	   var fn = ajaxInfo.fn;
+	   var method = ajaxInfo.method || 'get';
+	   var data = ajaxInfo.data || '';
+	   var xhr = null;
+	   try {
+	      xhr = new XMLHttpRequest();
+	   } catch (e) {
+	      xhr = new ActiveXObject('Microsoft.XMLHTTP');
+	   }
+
+	   if (method == 'get' && data) {
+	      url += '?' + data;
+	   }
+
+	   xhr.open(method, url, true);
+	   if (method == 'get') {
+	      xhr.send();
+	   } else {
+	      xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+	      xhr.send(data);
+	   }
+
+	   xhr.onreadystatechange = function() {
+
+	      if (xhr.readyState == 4) {
+	         if (xhr.status == 200) {
+	            fn && fn(xhr.responseText);
+	         } else {
+	            console.log('出错了,Err：' + xhr.status);
+	         }
+	      }
+	   };
+	}
+
+getNews.php文件：
+	<?php
+	header('content-type:text/html;charset="utf-8"');
+	error_reporting(0);
+
+	$news = array(
+		array('title'=>'德国女总理默克尔滑雪时摔倒 骨盆断裂','date'=>'2014-1-6'),
+		array('title'=>'中日驻英外交官撰文互称对方国家为"伏地魔"','date'=>'2014-1-6'),
+		array('title'=>'安倍:望与中国领导人会面 中方:你关闭了大门','date'=>'2014-1-6'),
+		array('title'=>'揭秘台湾驻港间谍网运作 湖北宜昌副市长被查','date'=>'2014-1-6'),
+		array('title'=>'习近平：嫦娥三号是货真价实的中国创造','date'=>'2014-1-6'),
+		array('title'=>'习近平：嫦娥三号是货真价实的中国创造','date'=>'2014-1-6'),
+		array('title'=>'中国长达13年游戏机禁令正式解除 外企可进入','date'=>'2014-1-6'),
+		array('title'=>'70种证件伴中国人一生:领养老金要办生存证明','date'=>'2014-1-6'),
+		array('title'=>'德国女总理默克尔滑雪时摔倒 骨盆断裂','date'=>'2014-1-6'),
+		array('title'=>'中日驻英外交官撰文互称对方国家为"伏地魔"','date'=>'2014-1-6'),
+		array('title'=>'安倍:望与中国领导人会面 中方:你关闭了大门','date'=>'2014-1-6'),
+		array('title'=>'揭秘台湾驻港间谍网运作 湖北宜昌副市长被查','date'=>'2014-1-6'),
+	);
+
+	echo json_encode($news);
+
+ajax封装测试.html文件：
+	<!DOCTYPE HTML>
+	<html>
+	<head>
+	   <meta charset="utf-8">
+	   <title>无标题文档</title>
+	   <script src="json2.js"></script>
+	   <script src="ajax.js"></script>
+	   <script>
+	   window.onload = function() {
+	      var oBtn = document.getElementById('btn');
+	      oBtn.onclick = function() {
+	         var ajaxInfo = {
+	            url: 'getNews.php',
+	            fn: function(sData) {
+	               var data = JSON.parse(sData);
+	               var oUl = document.getElementById('ul1');
+	               var html = '';
+	               for (var i = 0; i < data.length; i++) {
+	                  html += '<li><a href="">' + data[i].title + '</a> [<span>' + data[i].date + '</span>]</li>';
+	               }
+	               oUl.innerHTML = html;
+	            }
+	         };
+	         setInterval(function() {
+	            ajax(ajaxInfo);
+	         }, 1000);
+	      };
+	   };
+	   </script>
+	</head>
+	<body>
+	   <input type="button" value="按钮" id="btn" />
+	   <ul id="ul1"></ul>
+	</body>
+	</html>
+
+使用:必须要在服务器环境下测试（三个文件都放在www文件夹中，并且在浏览器地址栏中输入http://localhost/html文件名）。点击按钮。
+之后再修改php文件时，html中的新闻无需手动刷新就会自动更新。
+备注：
+ 1 考虑了ajax创建对象时，IE6-的兼容性问题。
+ 2 考虑了IE7-没有JSON对象的问题：<script src="json2.js"></script>。真的用的时候记得下载json2.js文件
+ 3 注意路径问题：假设这3个文件都在"www/ajax获取新闻"文件夹中；那么html代码中的链接：
+ 	1 <script src="ajax.js"></script>不用改
+ 	2 var ajaxInfo中的url: 'getNews.php'不需要改：
+	3 但是php文件在中文路径中读不出来？？
+
+
+
+
+
+-----------
+	*瀑布流布局*
+两种：
+  1 列数固定：
+  2 列数不固定：根据窗口大小而调整列数
+这里只说列数固定的，假设列数为4
+总体思路：
+  1 用ajax动态添加数据，滚动条不断下拉，才不断加载更多内容
+  2 所有内容都是通过ajax从后端获取、添加。最开始（ajax加载数据前），每一列中都没有内容，也就是列高为0。
+  3 每一块请求：利用ajax获取数据，然后添加到一列后面appendChild。
+  4 因为每块内容高度不确定，为了避免列高度相差太多。所以ajax添加块不是顺序依次加，而是计算列的高度，哪个列最“短”，就往它那加。
+html结构：
+  ul是整体,ul>li是一列,ul>li>div是一块内容
+  ul>li>div>img是图片，ul>li>div>p是文字说明
+	<ul>
+		<li>
+		   <div>
+		   	  <img>
+		      <p></p>
+		   </div>
+		</li>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+
+css样式：
+  1 用float最无脑，用position:absolute要自己算位置。
+    我自己写的用的是display:inline-block.
+  2 写css样式前，先在html中手动加上内容结构用来测试css。css写好后，再删掉。
+ajax：
+  1 利用自己之前封装好的ajax函数，引入：<script src="ajax.js"></script>
+
+  2 从后端拿数据：公司的后端会给前端提供数据获取接口。但如果没有提供，数据特别特别长，就要自己解决。
+ 	url?cpage=1：取url中的第一页
+ 	我们先看一下获取到的数据是什么样子的，先弹出page1的内容看看。
+	 	var ajaxInfo = {
+	 	   url: 'getPics.php',
+	 	   data: 'cpage=1',
+	 	   method: 'get',
+	 	   fn: function(data) {
+	 	      alert(data);
+	 	   }
+	 	};
+	 	ajax(ajaxInfo);
+	弹出的内容格式很乱，看着很烦。按F12——network，preview预览刚才请求的文件，可以看到浏览器帮你格式化好的内容。
+
+  3 preview看过发现getPics.php的page1有0-49共50块数据，包含属性:height id image等等。需要逐条取出来，添加到height最小的列中。（别忘了先用parse转换格式）
+    要先找出height最小的列：
+		//找最矮的列
+	   	function findShortest() {
+	      var index = 0;
+	      var iHeight = aLi[0].offsetHeight;
+	      for (var i = 1; i < aLi.length; i++) {
+	         if (aLi[i].offsetHeight < iHeight) {
+	            iHeight = aLi[i].offsetHeight;
+	            index = i;
+	         }
+	      }
+	      return index;
+	   	}
+
+  4 把ajax得到的数据添加到html中,修改ajaxInfo中定义的回调函数fn：
+
+  	fn: function(data1) {
+  	   //data是string类型，必须先转换
+  	   var data = JSON.parse(data1);
+  	   if (data.length === 0) {
+  	      return;
+  	   }
+  	   for (var i = 0; i < data.length; i++) {
+  	      var oImg = document.createElement('img');
+  	      oImg.src = data[i].image;
+  	      var oP = document.createElement('p');
+  	      oP.innerText = data[i].title;
+  	      var oDiv = document.createElement('div');
+  	      oDiv.appendChild(oImg);
+  	      oDiv.appendChild(oP);
+  	      aLi[findShortest()].appendChild(oDiv); //塞到最矮的列里
+  	   }
+  	   bFinish = true;
+  	}
+
+ 5 这样写还是有问题：由于图片加载有延时，没有把列的高度撑起来
+   解决方法：用递归|给img设置宽高(需要后端支持，提供图片宽高数据).这里还没有学递归，so用第二种方法。
+   列是固定宽度的，我们在css中已经设置了img的width:100%.
+   不可以不设定高度，不能让它自动缩放（因为图片加载需要时间问题，没加载好时高度是0）,所以自己根据比例提前算一下高度。
+	//188=800/4-（5+1）*2，是oImg的宽度
+	oImg.style.height = data[i].height / data[i].width * 188 + 'px';	
+
+ 6 上面的没问题了。接着添加功能：滚动时，不断加载内容。
+   加载新内容的条件：最短的那一列的底部，已经出现在可视区里了。
+   获取每一列的高度（相对于整个html页面）：
+   
+  	var iTopDistance = getPos(aLi[0]).top;
+  	//以前写的getPos函数，放到这里直接用
+	function getPos(obj) {
+		var pos = {
+		   left: 0,
+		   top: 0
+		};
+		while (obj) {
+	    	pos.left += obj.offsetLeft;
+	    	pos.top += obj.offsetTop;
+	    	obj = obj.offsetParent;
+		}
+	 	return pos;
+	}
+
+   添加全局变量 var iPage;初始化为1。封装一个getMore()函数。
+  	var iPage = 1;
+    function getMore() {
+       ajaxInfo.data = 'cpage=' + iPage;
+       ajax(ajaxInfo);
+       iPage++;
+    }
+
+    添加窗口滚动事件：
+    window.onscroll = function() {
+
+      	var iLi = iTopDistance + aLi[findShortest()].offsetHeight;
+      	var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
+     	var iWin = document.documentElement.clientHeight + scrollTop;
+     	if (iLi - iWin <= 200) { //差200px就开始加载新内容
+      	  	getMore();
+      	}
+
+    };
+
+  7 还有问题：滚动加载内容是需要时间的。如果前面一批还没有加载完（列的高度没有被撑开时），又滚动，那么又会触发加载。这样会连着加载很多page。
+  解决：添加全局变量来监控
+	var bFinish = true; //判断当前cpage是否加载完成
+
+	window.onscroll = function() {
+      	var iLi = iTopDistance + aLi[findShortest()].offsetHeight;
+      	var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
+     	var iWin = document.documentElement.clientHeight + scrollTop;
+     	if (iLi - iWin <= 200 && bFinish) {
+        	bFinish = false;
+      	  	getMore();
+      	}
+    };
+
+  在ajaxInfo的回调函数fn中最后添加：
+	for (var i = 0; i < data.length; i++) {
+		...
+	}
+	bFinish = true;;//新加：这一page加载完成时改为true，允许加载新的
+
+   8 还有问题：数据全部加载完了，要处理一下
+   	在ajaxInfo的回调函数fn开头：
+   		var data = JSON.parse(data);
+   		//新加：
+   		if (data.length === 0) {
+   		   //后续没有数据了
+   		   return;
+   		}
+
+详情见：D:\wamp64\www\2 waterfall(记得测试一定要在服务器环境下：打开wampserver，输入localhost)
+		（里面的waterfall.html是学完自己模仿写的）
+
+-----------
+
+
+
+
+
+
+-----------
+
+
+
+
+-----------
+
+
+
+
+-----------
+
+
+
+
+-----------

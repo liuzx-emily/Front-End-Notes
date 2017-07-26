@@ -1,0 +1,49 @@
+undefined==false	//false
+false==false 	//true
+
+	
+$('#div1').css('background','red');
+$('#div1').html('hello');
+
+1 选择器 $()
+	1 因为每个$()返回不同的东西，所以不是公用的，是定义在构造函数中的。
+	2 因为.css()函数可以操作它们，所以必须是属性，不能是构造函数中的普通变量。
+	3 所以设置一个elements属性，用来存$()。在构造函数中给elements属性赋值。
+	4 elements属性的类型定为array。即使是$('#div1')，也是只有一项的数组。
+
+2 操作函数 .css()  .html()
+	1 .css()这种一看就是object的方法。
+	2 因为是所有$()都有的函数，是公用的通用的。所以方法是在原型下定义的。
+
+3 事件函数 
+	不能是obj.onclick=fn1;这种形式，因为这样只能绑定一个函数。必须用obj.attachEvent('onclick',fn1)和obj.addEventListener('click',fn1,false)兼容。
+
+----------------
+	选择器 $(selector)
+1 判断类型:3种方法
+	1 if(typeof selector=='function')
+		typeof返回类型是string,所以function两边加引号
+		function开头f是小写
+	2 if (/Function/.test(selector.constructor.toString()))
+		/Function/，/function/i不行。因为构造函数是个函数，toString()后是有function xx(){}，肯定有function
+	3 if (selector instanceof Function)
+		Function必须是大写
+		缺点：'a' instanceof String //false
+
+
+----------------
+	事件绑定
+function bindEvent(obj, evName, fn) {
+   if (obj.attachEvent) {
+      obj.attachEvent('on' + evName, function() {
+         fn.call(obj);	//改变this指向
+      });
+   } else {
+      obj.addEventListener(evName, fn, false);
+   }
+}
+
+
+----------------
+	待完善
+show():怎么解决block/inline/inline-block?

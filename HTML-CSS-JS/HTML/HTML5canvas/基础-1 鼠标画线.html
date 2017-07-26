@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>鼠标画线</title>
+    <style>
+    body {
+        width: 2000px;
+        height: 3000px;
+    }
+    
+    div {
+        position: fixed;
+        left: 40%;
+        top: 20%;
+    }
+    
+    canvas {
+        vertical-align: middle;
+        border: 1px solid crimson;
+    }
+    </style>
+    <script>
+    var oCan = null;
+    var ctx = null;
+    var oPickColor = null;
+    var oClear = null;
+    window.onload = function() {
+        oCan = document.querySelector('#myCanvas');
+        ctx = oCan.getContext('2d');
+        oPickColor = document.querySelector('[type="color"]');
+        oClear = document.querySelector('[type="button"]');
+        ctx.strokeStyle = oPickColor.value;
+        ctx.lineWidth = 10;
+        oCan.onmousedown = draw;
+        oPickColor.onchange = function() {
+            ctx.strokeStyle = oPickColor.value;
+        };
+        oClear.onclick = function() {
+            ctx.clearRect(0, 0, oCan.width, oCan.height);
+        };
+    };
+
+    function draw(ev) {
+        var L = ev.clientX - oCan.getBoundingClientRect().left;
+        var T = ev.clientY - oCan.getBoundingClientRect().top;
+        ctx.beginPath();
+        ctx.moveTo(L, T);
+        document.onmousemove = function(ev) {
+            L = ev.clientX - oCan.getBoundingClientRect().left;
+            T = ev.clientY - oCan.getBoundingClientRect().top;
+            document.title = L + ',' + T;
+            ctx.lineTo(L, T);
+            ctx.stroke();
+        };
+        document.onmouseup = function() {
+            document.onmousemove = document.onmouseup = null;
+        };
+    }
+    </script>
+</head>
+
+<body>
+    <div>
+        <input type="color" value="#aabbcc">
+        <canvas id="myCanvas" width="400" height="200"></canvas>
+        <input type="button" value='清空画布'>
+    </div>
+</body>
+
+</html>

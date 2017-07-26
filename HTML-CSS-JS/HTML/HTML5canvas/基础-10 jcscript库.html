@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>jcscript库</title>
+    <style>
+    canvas {
+        border: 1px solid black;
+        vertical-align: top;
+    }
+    </style>
+    <script src='jCanvaScript.1.5.18.min.js'></script>
+    <script>
+    var oCanvas;
+    var ctx;
+    var aBtn;
+
+    window.onload = function() {
+        init();
+        jc.start('myCanvas', true);
+
+        jc.rect(50, 50, 20, 20).mouseover(function() {
+            this.fadeOut(1000, function() {
+                this.fadeIn(1000);
+            });
+        });
+        jc.rect(100, 100, 80, 80, '#aabbcc', 1).id('rect1').draggable();
+
+
+
+        jc.start('myCanvas');
+        aBtn[0].onmouseover = function() {
+            var color = aBtn[1].value;
+            jc('#rect1').color(color).animate({
+                x: 150,
+                y: 150,
+                width: 150,
+                height: 200
+            }, 3000);
+        };
+
+
+    };
+
+    function init() {
+        oCanvas = document.querySelector('canvas');
+        ctx = oCanvas.getContext('2d');
+        aBtn = document.querySelectorAll('input');
+    }
+    </script>
+</head>
+
+<body>
+    <input type="button" value="换颜色+动起来">
+    <input type="color" value='#ccbbaa'>
+    <canvas id="myCanvas" width="500" height="400"></canvas>
+</body>
+
+</html>

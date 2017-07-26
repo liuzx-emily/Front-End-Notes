@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>拖拽购物车</title>
+    <style>
+    figure {
+        display: inline-block;
+        border: 1px solid coral;
+    }
+    
+    img {
+        width: 150px;
+        height: 100px;
+    }
+    
+    figcaption {
+        font-size: 30px;
+    }
+    
+    aside {
+        border: 1px dashed lightcoral;
+        width: 300px;
+        margin-left: 400px;
+    }
+    
+    aside>h2 {
+        text-align: center;
+        margin: 0;
+        font: 40px '华文彩云';
+    }
+    </style>
+    <script>
+    var json = {};
+    window.onload = function() {
+        var aFigure = document.querySelectorAll('figure');
+        var oShop = document.querySelector('aside');
+        for (let i = 0; i < aFigure.length; i++) {
+            aFigure[i].ondragstart = function(ev) {
+                ev.dataTransfer.setData('index', i);
+            };
+        }
+        oShop.ondragover = function(ev) {
+            ev.preventDefault();
+        };
+        oShop.ondrop = function(ev) {
+            ev.preventDefault();
+            var index = ev.dataTransfer.getData('index');
+            add(index);
+        };
+
+        function add(index) {
+            var oCap = aFigure[index].querySelector('figcaption');
+            if (json[index]) {
+                json[index]++;
+                var aSpan = oShop.querySelectorAll('span');
+                for (var i = 0; i < aSpan.length; i++) {
+                    if (aSpan[i].index === index) {
+                        aSpan[i].innerText = '*' + json[index];
+                    }
+                }
+            } else {
+                json[index] = 1;
+                var oDiv = document.createElement('div');
+                oDiv.innerText = oCap.innerText;
+                var oSpan = document.createElement('span');
+                oSpan.style.float = 'right';
+                oSpan.innerText = '*1';
+                oSpan.index = index;
+                oDiv.appendChild(oSpan);
+                oShop.appendChild(oDiv);
+            }
+        }
+    };
+    </script>
+</head>
+
+<body>
+    <article>
+        <figure>
+            <img src="1.jpg" alt="">
+            <figcaption>天气好呀</figcaption>
+        </figure>
+        <figure>
+            <img src="2.jpg" alt="">
+            <figcaption>银之匙</figcaption>
+        </figure>
+        <figure>
+            <img src="3.jpg" alt="">
+            <figcaption>德云社</figcaption>
+        </figure>
+        <figure>
+            <img src="4.jpg" alt="">
+            <figcaption>坂田银时</figcaption>
+        </figure>
+    </article>
+    <aside>
+        <h2>购物车</h2>
+    </aside>
+</body>
+
+</html>

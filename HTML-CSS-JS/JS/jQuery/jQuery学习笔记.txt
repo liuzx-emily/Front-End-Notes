@@ -1,0 +1,1029 @@
+只有1.xx版本支持IE8-，2和3都是IE9+
+
+什么是JQ？
+	一个优秀的JS库，大型开发必备
+JQ的好处？
+	1.简化JS的复杂操作
+	2.不再需要关心兼容性
+	3.提供大量实用方法
+如何学习JQ？
+	JQ只是辅助工具，要正确面对
+	需要分阶段学习
+
+----------------------
+	JQ设计思想
+ 1 选择网页元素
+	1.模拟CSS选择元素
+	2.独有表达式选择
+	3.多种筛选方法
+ 2 JQ写法
+	1.方法函数化 
+	  例子1：
+	  	//原生JS:
+		window.onload = function(){
+			var oDiv = document.getElementById('div1');	
+			oDiv.onclick = function(){
+				alert( this.innerHTML );
+			};	
+		};
+		//jQuery中：
+		$(function(){	
+			$('#div1').click(function(){		
+				alert( $(this).html() );		
+			});	
+		});
+	  例子2：
+		$('ul').children.css('background','red');	//错
+		$('ul').children().css('background','red');	//对
+	2.链式操作：
+		$('#div1').html('hello').css('background', 'red').click(fn1);
+	3.取值赋值合体：根据参数不同来区分。例：				
+		写：css('width','200px')	
+		读：css('width')
+	  【注意】对一组元素进行操作时
+	  	alert( $('li').html() );  	//读：一组中的第一个,text()是例外	
+	  	$('li').html('hello');  	//写：一组中的所有元素
+
+ 3 JQ与JS关系：可以共存，不能混用。例：
+ 	$('#div1').click(function() {
+ 	   alert($(this).html()); 		//ok
+ 	   alert(this.innerHTML); 		//ok
+ 	   alert($(this).innerHTML); 	//弹出undefiend
+ 	   alert(this.html()); 			//报错：this.html is not a function
+ 	});
+
+
+------------------------
+	【学习笔记1】
+题目：循环下面的<li>内容
+	<ul>
+	    <li>test1</li>
+	    <li>test2</li>
+	    <li>test3</li>
+	    <li>test4</li>
+	    <li>test5</li>
+	    <li>test6</li>
+	</ul>
+
+解答1:
+  【要点】text()能读所有，而不像其他方法，只读第一个
+	<script>
+	$(function() {
+	    var str = $('ul li').text();
+	    console.log(str);
+	});
+	</script>
+	结果：test1test2test3test4test5test6
+
+解答2:
+  【要点】使用回调函数（text、html、val、attr都可以有回调函数）
+	<script>
+	$(function() {
+		var str = '';
+		$('ul li').text(function(index, originalText) {
+			str += originalText + '-';
+			return originalText;
+		});
+		console.log(str);
+	});
+	</script>
+	结果：test1-test2-test3-test4-test5-test6-
+
+------------------------
+	【学习笔记2】
+问题：在Jquery中被誉为工厂函数的是？
+
+工厂函数：（面向对象里的“工厂方式”）
+	1 它是一个函数。
+	2 它用来创建对象。
+	3 它像工厂一样，“生产”出来的对象都是“标准件”（拥有同样的属性和方法）
+
+答  ：$()
+
+----------------------
+	*文档就绪事件
+以下两种写法等价，都是在dom文档树加载完之后执行一个函数。
+	$(document).ready(function(){});
+	$(function(){});
+
+----------------------
+	*选择器
+$("*")					选取所有元素
+$(this)					选取当前 HTML 元素
+$("p.intro")			选取 class 为 intro 的 <p> 元素
+$("p:first")			选取第一个 <p> 元素
+$("ul li:first")		选取第一个 <ul> 元素的第一个 <li> 元素
+$("ul li:first-child")	选取每个 <ul> 元素的第一个 <li> 元素
+$("[href]")				选取带有 href 属性的元素
+$("a[target='_blank']")	选取所有 target 属性值等于 "_blank" 的 <a> 元素
+$("a[target!='_blank']")	选取所有 target 属性值不等于 "_blank" 的 <a> 元素
+$(":button")			选取所有 type="button" 的 <input> 元素 和 <button> 元素
+$("tr:even")			选取偶数位置的 <tr> 元素
+$("tr:odd")				选取奇数位置的 <tr> 元素
+
+
+----------------------
+	*组合元素 add()
+例子：
+	var elem = $('div');
+	var elem2 = elem.add('span'); //elem2包含所有div和span元素
+	elem2.css('background','yellow'); 
+
+
+----------------------
+	*slice()
+$('li').slice(1,4).css('background','red');
+选中1，2，3 不包括0和4
+
+
+----------------------
+	*jQuery事件
+1 常见 DOM 事件	
+	鼠标事件：click dblclick mouseenter mouseleave
+	键盘事件：keypress keydown keyup blur
+	表单事件：submit change focus unload
+	文档/窗口事件：load resize scroll
+2 常用的 jQuery 事件方法
+  在 jQuery 中，大多数 DOM 事件都有一个等效的 jQuery 方法。
+  1 $(document).ready(fn1) 在文档完全加载完后执行函数
+  2 click()
+	dblclick() 双击
+  	$("p").click(fn1);
+  	$("p").dblclick(fn1);
+  3 mouseenter() 当鼠标指针穿过元素时
+	mouseleave() 当鼠标指针离开元素时
+  	$("#p1").mouseenter(fn1);
+  	$("#p1").mouseleave(fn1);
+  4 mousedown() 当鼠标指针移动到元素上方，并按下鼠标按键时
+    mouseup() 当在元素上松开鼠标按钮时
+  5 hover() 
+	当鼠标移动到元素上时，会触发指定的第一个函数(mouseenter);
+	当鼠标移出这个元素时，会触发指定的第二个函数(mouseleave)。
+  	$("#p1").hover(fn1,fn2);
+  6 focus() 当元素获得焦点时
+	blur()  当元素失去焦点时
+	【复习】改变焦点的方法：1 鼠标 2 tab 3函数
+
+
+----------------------
+	*jQuery效果-隐藏和显示
+hide show toggle
+1 hide show
+	  $(selector).hide(speed,callback);
+	  $(selector).show(speed,callback);
+  可选的 speed 参数规定隐藏/显示的速度，可以取以下值："slow"、"fast" 或毫秒。
+  可选的 callback 参数是隐藏或显示完成后所执行的函数名称。
+  例子：
+  	$("button").click(function(){
+  	  $("p").hide(1000,function(){alert(1);});
+  	});
+  效果：如果选中了2个p，那么会弹两次
+2 toggle：切换 hide() 和 show()
+  显示被隐藏的元素，并隐藏已显示的元素：
+  	$(selector).toggle(speed,callback);
+  例子：
+	$("button").click(function(){
+	    $("p").toggle(1000,function(){alert(1);});
+	});
+  注意：不能写成
+  	$("p").toggle(1000,alert(1));//弹窗会立刻执行
+
+
+----------------------
+	*jQuery效果-淡入淡出
+fadeIn fadeOut fadeToggle fadeTo 
+speed 参数规定效果的时长。它可以取以下值："slow"、"fast" 或毫秒。
+1 fadeIn
+  淡入已隐藏的元素
+	$(selector).fadeIn(speed,callback);
+  实例
+	$("button").click(function(){
+	  $("#div1").fadeIn();
+	  $("#div2").fadeIn("slow");
+	  $("#div3").fadeIn(3000);
+	});
+2 fadeOut
+  淡出可见元素
+	$(selector).fadeOut(speed,callback);
+3 fadeToggle
+  在 fadeIn() 与 fadeOut() 方法之间进行切换
+	$(selector).fadeToggle(speed,callback);
+  实例
+	$("button").click(function(){
+	  $("#div1").fadeToggle();
+	  $("#div2").fadeToggle("slow");
+	  $("#div3").fadeToggle(3000);
+	});
+4 fadeTo
+  允许渐变为给定的不透明度（值介于 0 与 1 之间）
+	$(selector).fadeTo(speed,opacity,callback);其中speed和opacity是必须的
+	实例
+	$("button").click(function(){
+	  $("#div1").fadeTo("slow",0.15);
+	  $("#div2").fadeTo("slow",0.4);
+	  $("#div3").fadeTo("slow",0.7);
+	});
+
+----------------------
+	*jQuery效果-滑动
+slideDown slideUp slideToggle 
+1 slideDown 向下滑动元素
+	$(selector).slideDown(speed,callback);
+2 slideUp 向上滑动元素
+	$(selector).slideUp(speed,callback);
+3 slideToggle 向下滑动元素
+	$(selector).slideToggle(speed,callback);
+实例：
+  	$("#flip").click(function(){
+  	    $("#panel").slideToggle("slow");
+	});
+
+----------------------
+	*jQuery效果- 动画 animate()
+animate() 方法用于创建自定义动画。
+	$(selector).animate(params,[speed],[easing],[fn]);
+	params:一组包含作为动画属性和终值的样式属性和及其值的集合
+	speed:三种预定速度之一的字符串("slow","normal", or "fast")或毫秒值，默认是400ms
+	运动方式:linear(匀速)和 swing(慢快慢)
+	fn:在动画完成时执行的函数，每个元素执行一次。
+例子1：
+	$("button").click(function(){
+	  $("div").animate({
+	    left:'250px',
+	    opacity:'0.5',
+	    height:'150px',
+	    width:'150px'
+	  },2000);
+	});
+备注：
+1 如需对位置进行操作，要记得首先把元素的 CSS position 属性设置为 relative、fixed 或 absolute！
+2 必须用驼峰:paddingLeft，而不是padding-left
+3 animate() 方法可以用来操作几乎所有 CSS 属性。不过，色彩动画并不包含在核心jQuery库中。如果需要生成颜色动画，您需要从jquery.com下载颜色动画插件。
+
+例子2：使用相对值 用+= 或者-=
+	$("button").click(function(){
+	  $("div").animate({
+	    left:'250px',
+	    height:'+=150px',
+	    width:'+=150px'
+	  });
+	});
+例子3：使用预定义的值
+	$("button").click(function(){
+	  $("div").animate({
+	    height:'toggle'
+	  });
+	});
+例子4：使用预定义的值
+  可以把属性的动画值设置为 "show"、"hide" 或 "toggle"
+	$("button").click(function(){
+	  $("div").animate({
+	    height:'toggle'
+	  });
+	});
+例子5：使用队列功能
+  默认地，jQuery 提供针对动画的队列功能。
+  这意味着如果您在彼此之后编写多个 animate() 调用，jQuery 会创建包含这些方法调用的"内部"队列。然后逐一运行这些 animate 调用。
+  	$("button").click(function(){
+  	  var div=$("div");
+  	  div.animate({height:'300px',opacity:'0.4'},"slow");
+  	  div.animate({width:'300px',opacity:'0.8'},"slow");
+  	  div.animate({height:'100px',opacity:'0.4'},"slow");
+  	  div.animate({width:'100px',opacity:'0.8'},"slow");
+  	});
+  下面的例子把 <div> 元素往右边移动了 100 像素，然后增加文本的字号：
+  	$("button").click(function(){
+  	  var div=$("div");
+  	  div.animate({left:'100px'},"slow");
+  	  div.animate({fontSize:'3em'},"slow");
+  	});
+例子6：
+	$(this).animate({width:300},2000).delay(1000).animate({height:300},2000);
+	宽边完了，等1000后，再变高
+
+
+----------------------
+	*jQuery延时动画delay
+delay():设置一个延时来推迟执行队列中之后的项目。
+	delay(duration,[queueName])
+	参数：duration:延时时间，单位：毫秒
+		  queueName:队列名词，默认是Fx，动画队列。
+例子1 ：
+	$('#foo').slideUp(300).delay(800).fadeIn(400);
+
+例子2：
+	$(this).animate({
+	   width: 300
+	}, 2000).delay(1000).animate({
+	   height: 300
+	}, 2000);
+
+
+----------------------
+	*jQuery停止动画 stop finish
+1 stop() 停止所有在指定元素上正在运行的动画。如果队列中有等待执行的动画(并且clearQueue没有设为true)，他们将被马上执行
+	$(selector).stop([queue],[clearQueue],[jumpToEnd])
+	queue:用来停止动画的队列名称
+	clearQueue:默认false。如果true，则清空队列。可以立即结束动画。
+	jumpToEnd:默认false。如果true，则完成队列。可以立即完成动画。
+因此，默认地，stop() 会清除在被选元素上指定的当前动画。
+
+2 finish():立即停止所选元素的当前正在运行的动画，和所有排队的动画（如果有的话），并且他们的CSS属性设置为它们的目标值（所有动画的目标值）。所有排队的动画将被删除。
+
+例子：
+	$("#stop").click(function(){
+	  $("#panel").stop();
+	});
+
+	$('#div1').stop();   	//默认 : 只会阻止当前运动
+	$('#div1').stop(true); 	//阻止后续所有的运动
+	$('#div1').stop(true,true); //可以立即停止到当前指定的目标点
+	$('#div1').finish(); //立即停止到所有指定的目标点
+
+
+----------------------
+	*jQuery - 链(Chaining)
+通过 jQuery，可以把动作/方法链接在一起。Chaining 允许我们在一条语句中运行多个 jQuery 方法（在相同的元素上）。
+例子1：#p1首先会变为红色，然后向上滑动，再然后向下滑动：
+	$("#p1").css("color","red").slideUp(2000).slideDown(2000);
+
+提示：当进行链接时，代码行会变得很差。不过，jQuery语法不是很严格；您可以按照希望的格式来写，包含换行和缩进。如下书写也可以很好地运行：
+例子2
+	$("#p1").css("color","red")
+	  .slideUp(2000)
+	  .slideDown(2000);
+jQuery 会抛掉多余的空格，并当成一行长代码来执行上面的代码行。
+
+
+----------------------
+	*DOM操作-读写内容和属性
+text()、html()、val()、attr()都可以有回调函数。回调函数有两个参数：被选元素列表中当前元素的下标，以及原始（旧的）值。然后以函数新值返回您希望使用的字符串
+
+1 读写内容 - text()、html() 以及 val()
+	text() - 文本内容。
+		1 读：读到所有的文本内容，而不像其它的函数读的时候，只读第一个的。结果是由所有匹配元素包含的文本内容组合起来的文本
+		2 写：$('div').text('<h3>h3</h3>')也不会生成h3标签，会全部当成文本
+	html() - 内容（包括 HTML 标记）
+	val() -  表单字段的值
+  例子1：读
+	$("#test").text()/html()/val()
+  例子2：写
+	$("#test1").text("Hello world!"); 
+	$("#test2").html("<b>Hello world!</b>");
+	$("#test3").val("RUNOOB");
+  例子3：回调函数
+  	$("#btn1").click(function(){
+  	    $("#test1").text(function(i,origText){
+  	        return "旧文本: " + origText + " 新文本: Hello world! (index: " + i + ")"; 
+  	    });
+  	});
+  	 
+  	$("#btn2").click(function(){
+  	    $("#test2").html(function(i,origText){
+  	        return "旧 html: " + origText + " 新 html: Hello <b>world!</b> (index: " + i + ")"; 
+  	    });
+  	});
+
+2 读写属性 - attr()
+  例子1：读
+	$("#runoob").attr("href")
+	$('div').attr('title')
+  例子2：写
+    $("#runoob").attr({
+        "href" : "http://www.runoob.com/jquery",
+        "title" : "jQuery 教程"
+    });
+  	$(this).attr('class', 'active')
+  例子3：回调函数
+  	$("button").click(function(){
+  	  $("#runoob").attr("href", function(i,origValue){
+  	    return origValue + "/jquery"; 
+  	  });
+  	});
+
+
+
+----------------------
+	*DOM操作-创建节点：
+$('div')	选择div标签
+$('<div>')	创建div标签，内容为空
+var a=$('<div><p>段落</p></div>');	//创建元素，把div对象返回给变量a
+
+
+----------------------
+	*DOM操作-复制节点clone()
+clone() : 可以接收一个参数 ，true:可以复制之前的操作行为
+	$('div').appendTo( $('span') ); 是剪贴过去
+	$('div').clone().appendTo( $('span') ); 复制过去，但是不复制事件函数
+	$('div').clone(true).appendTo( $('span') ); 事件函数也复制了
+
+
+----------------------
+	*DOM操作-包装wrap
+wrap() : 包装
+wrapAll() : 整体包装 【小心，可能会改变DOM结构！】
+wrapInner() : 内部包装
+unwrap() : 删除包装，也就是删除父级 ( 父级是body的话删不掉body )
+例1：
+	$('span').wrap('<div>');
+	span~span变为(div>span)~(div>span)
+例2：
+	$('span').wrapAll('<div>');
+	span~span变为div>(span~span)
+	span~p~span变为(div>(span~span))~p【改变了DOM结构】
+例3：
+	$('span').wrapInner('<div>');
+	span~span变为(span>div)~(span>div)
+例4：
+	$('span').unwrap()
+	(div>span)~(div>span)变为span~span
+
+
+----------------------
+	*DOM操作-添加元素
+append() - 在被选元素的结尾插入内容
+prepend() - 在被选元素的开头插入内容
+after() - 在被选元素之后插入内容
+before() - 在被选元素之前插入内容
+例子1：
+	$("p").append("追加文本");
+	$("p").prepend("在开头追加文本");
+	$("img").after("在后面添加文本");	 
+	$("img").before("在前面添加文本");
+
+这4个方法能够通过参数接收无限数量的新元素。
+在下面的例子中，我们创建若干个新元素。这些元素可以通过 text/HTML、jQuery 或者 JavaScript/DOM 来创建。然后我们通过这4个方法把这些新元素追加到文本中
+
+例子2：
+	function appendText()
+	{
+	    var txt1="<p>文本。</p>";              // 使用 HTML 标签创建文本
+	    var txt2=$("<p></p>").text("文本。");  // 使用 jQuery 创建文本
+	    var txt3=document.createElement("p");
+	    txt3.innerHTML="文本。";               // 使用 DOM 创建文本
+	    $("body").append(txt1,txt2,txt3);        // 追加新元素
+	}
+
+	function afterText()
+	{
+	    var txt1="<b>I </b>";                    // 使用 HTML 创建元素
+	    var txt2=$("<i></i>").text("love ");     // 使用 jQuery 创建元素
+	    var txt3=document.createElement("big");  // 使用 DOM 创建元素
+	    txt3.innerHTML="jQuery!";
+	    $("img").after(txt1,txt2,txt3);          // 在图片后添加文本
+	}
+
+其他：
+	insertBefore()  before()
+	insertAfter()   after()
+	appendTo()   append()
+	prependTo()   prepend()
+
+1 insertBefore   insertAfter   appendTo   prependTo
+  例子：把div~span
+	$('span').insertBefore( $('div') );	//变为span~div
+	$('div').appendTo( $('span') );		//变为span>div
+
+2 before  after  append  prepend
+  例子：
+  	$('div').before($('span')	//把div~span变为span~div
+
+1和2的区别:
+	$('span').insertBefore( $('div') ).css('background','red');
+	insertBefore看作动词：把span放到div前面。然后把span变成红色
+	$('div').before($('span')).css('background', 'red');
+	before看作名词：确定div的前面是span。然后把div变成红色
+
+
+----------------------
+	*DOM操作-删除元素
+remove() - 删除被选元素（及其子元素）
+detach() - 跟remove方法一样，只不过会保留删除这个元素的操作行为
+empty() - 从被选元素中删除子元素
+	$("#div1").remove();
+	var oDiv = $('div').remove();	//删除div,并其存到oDiv中。div绑定的事件函数不保存。
+	$("#div1").empty();				//div1的innerHTML=''
+	var oDiv = $('div').detach();	//删除div,并其存到oDiv中。div绑定的事件函数也一起存。
+remove()方法也可接受一个参数，允许您对被删元素进行过滤。该参数可以是任何 jQuery 选择器的语法。
+例子：删除 class="italic" 的所有 <p> 元素
+	$("p").remove(".italic");
+
+----------------------
+	*DOM操作-读写CSS类
+addClass() - 向被选元素添加一个或多个类（不会重复添加）
+removeClass() - 从被选元素删除一个或多个类（一次全删）
+toggleClass() - 对被选元素进行添加/删除类的切换操作
+	$("h1,h2,p").addClass("blue");
+  	$("#div1").addClass("important blue");
+  	$("h1,h2,p").removeClass("blue");	
+  	$("h1,h2,p").toggleClass("blue");
+css() - 读写css样式
+  	$("p").css("background-color");
+	$("p").css("background-color","yellow");
+	$("p").css({"background-color":"yellow","font-size":"200%"});
+
+
+----------------------
+	*DOM操作-jQuery尺寸
+width innerWidth outerWidth
+	$('div').css('width') 		//有单位 w
+	$('div').width()			//无单位 w
+	$('div').innerWidth()		//无单位 w+p
+	$('div').outerWidth()		//无单位 w+p+b
+	$('div').outerWidth(true)	//无单位 w+p+b+m
+
+和原生js的比较：
+1 style.width : 有单位 w
+2 clientWidth : 无单位 w+p
+3 offsetWidth : 无单位 w+p+b
+
+jq的和js的区别：
+	jq的可以获取display:none的元素的值，
+	原生js的不能
+
+
+----------------------
+	*遍历-找祖先
+parent() 返回直接父元素。
+parents() 返回所有祖先元素，它一路向上直到文档的根元素 (->body->html)。
+closest() : 获取最近的指定的祖先节点(包括当前元素自身),必须要写筛选的参数,只能找到一个元素
+parentsUntil() 返回介于两个给定元素之间的所有祖先元素。
+offsetParent() : 获取定位父级
+例子：
+	$("span").parent() 返回每个 <span> 元素的的直接父元素
+  	$("span").parents() 返回所有 <span> 元素的所有祖先
+	$("span").parents("ul") 返回所有 <span> 元素的所有祖先，并且它是 <ul> 元素：
+	$("span").parentsUntil("div"); 返回介于 <span> 与 <div> 元素之间的所有祖先元素，不包括div
+	$('#div2').closest('.box')
+
+
+----------------------
+	*遍历-找后代
+children() 返回被选元素的所有直接子元素。
+find() 返回被选元素的后代元素，一路向下直到最后一个后代。
+例子：
+	$("div").children() 返回每个 <div> 元素的所有直接子元素
+  	$("div").children("p.a")  返回类名为 "a" 的所有 <p> 元素，并且它们是 <div> 的直接子元素：
+  	$("div").find("span") 返回属于 <div> 后代的所有 <span> 元素
+  	$("div").find("*") 返回 <div> 的所有后代
+
+
+----------------------
+	*遍历-找同胞(siblings)
+siblings() 找所有的兄弟节点
+next() 找下一个兄弟节点
+prev()
+nextAll() 找之后的所有兄弟节点。
+prevAll()
+nextUntil() 返回介于两个给定参数之间的所有兄弟节点
+prevUntil()
+例子：
+	$("h2").siblings();返回 <h2> 的所有同胞元素：
+	$("h2").siblings("p");返回属于 <h2> 的同胞元素的所有 <p> 元素：
+	$("h2").next();返回 <h2> 的下一个同级
+	$("h2").nextAll();返回 <h2> 之后的所有同级元素
+	$("h2").nextUntil("h6")返回介于 <h2> 与 <h6> 元素之间的所有同胞元素
+
+index：索引 返回当前元素在所有兄弟节点中的位置，从0开始
+	$('#h').index()
+
+----------------------
+	*遍历-过滤：缩小搜索元素的范围
+first last eq：可以基于位置来选择一个特定的元素。
+	first() 
+	last()
+	eq() 索引号从 0 开始，可以为负数
+filter() 和 not()：选取匹配或不匹配某项指定标准的元素。
+	filter() 方法允许您规定一个标准。不匹配这个标准的元素会被从集合中删除，匹配的元素会被返回。
+	not() 方法返回不匹配标准的所有元素。
+例子：	
+	$("div p").first(); 选取首个 <div> 元素内部的第一个 <p> 元素
+	$("div p").last(); 选择最后一个 <div> 元素中的最后一个 <p> 元素
+	$("p").eq(1); 选取第二个p
+  	$('div').eq(-2) 选择倒数第2个div
+	$("p").filter(".url"); 返回带有类名 "url" 的所有 <p> 元素：
+	$("p").not(".url"); 返回不带有类名 "url" 的所有 <p> 元素：
+
+filter not has的区别：
+	filter not：针对当前元素
+	has：针对子孙元素
+  例子：
+	$('div').filter('.box') 能选中div.box2.box
+	$('div').not('.box')  	有class box的都不选
+	$('div').has('span')	能选中div>p>span的div、div>span的div
+
+----------------------
+	*AJAX load() 方法
+载入远程 HTML 文件代码并插入至 DOM 中。默认GET,传递附加参数时自动转换为POST。
+	$(selector).load(URL,data,callback);
+例：把"demo.txt"的内容加载到#div1中。在load()方法完成后，根据是否成功弹出不同内容。
+	$("button").click(function(){
+	  $("#div1").load("demo.txt",function(responseTxt,statusTxt,xhr){
+	    if(statusTxt=="success")
+	      alert("外部内容加载成功!");
+	    if(statusTxt=="error")
+	      alert("Error: "+xhr.status+": "+xhr.statusText);
+	  });
+	});
+
+
+----------------------
+	*AJAX get() 和 post() 
+请求成功时可调用回调函数。如果需要在出错时执行函数，请使用 $.ajax。
+1 get：$.get(URL,callback);
+例：
+	$("button").click(function(){
+	  $.get("demo_test.php",function(data,status){
+	    alert("数据: " + data + "\n状态: " + status);
+	  });
+	});
+
+2 post：$.post(URL,data,callback);
+例：
+	$("button").click(function(){
+	    $.post("test.php",
+	    {
+	        name:"菜鸟教程",
+	        url:"http://www.runoob.com"
+	    },function(data,status){
+	        alert("数据: \n" + data + "\n状态: " + status);
+	    });
+	});
+
+----------------------
+	*AJAX相关 JSONP
+1. 服务端JSONP格式数据
+	如客户想访问 : http://www.runoob.com/try/ajax/jsonp.php?jsonp=callbackFunction。
+	期望返回JSON数据：["jsonData1","jsonData2"]。
+	真正返回的数据显示为: callbackFunction(["jsonData1","jsonData2"])。
+2. 使用 jQuery 代码：
+	<body>
+	<div id="divCustomers"></div>
+	<script>
+	$.getJSON("http://www.runoob.com/try/ajax/jsonp.php?jsoncallback=?", function(data) {	    
+	    var html = '<ul>';
+	    for(var i = 0; i < data.length; i++)
+	    {
+	        html += '<li>' + data[i] + '</li>';
+	    }
+	    html += '</ul>';
+	    
+	    $('#divCustomers').html(html); 
+	});
+	</script>
+	</body>
+
+----------------------
+	*AJAX相关 数据串联*
+$(selector).serialize()
+$(selector).serializeArray()
+可以选择一个或多个表单元素（如输入和/或文本区），或表单元素本身。
+例：
+	<input type="text" name="a" value="1">
+	<input type="text" name="b" value="2">
+	<input type="text" name="c" value="3">
+	console.log($('form').serialize());  
+		结果：a=1&b=2&c=3
+	console.log( $('form').serializeArray() );
+		结果：
+		[
+			{ name : 'a' , value : '1' },
+			{ name : 'b' , value : '2' },
+			{ name : 'c' , value : '3' }
+		]
+
+----------------------
+	*绑定事件函数 on()
+在jQuery1.7中，.on()方法提供绑定事件处理函数所需的所有功能。
+不要再使用bind unbind live die delegate undelegata了。
+	on(events,[childSelector],[data],fn)
+参数:
+	events:一个或多个用空格分隔的事件，如"click mouseover"
+	selector:事件委托功能。
+	data:当一个事件被触发时要传递event.data给事件处理函数。
+	fn:该事件被触发时执行的函数。 false 值也可以做一个函数的简写，返回false。
+
+要删除.on()绑定的事件，用.off()。
+要附加一个事件，只运行一次，然后删除自己，使用.one()
+
+例1：
+	$('div').on('click mouseover',fn1);	
+	$('div').on({
+		'click' : fn1,
+		'mouseover' : fn2
+	});
+
+例子2：
+	$("p").on("click", {foo: "bar"}, function(event) {
+		alert(event.data.foo);
+	})
+
+例3：事件委托 
+	结构：ul>(li*3)
+	$('li').on('click',function(){
+		$(this).css('background-color', 'blue');
+	});
+
+	$('ul').on('click', 'li', function() {
+		$(this).css('background-color', 'blue');
+		//这里的this指点击的li
+	});	
+
+例4：阻止提交和冒泡
+	$("form").on("submit", false)
+
+例5：阻止默认事件
+	$("form").on("submit", function(event) {
+	  event.preventDefault();
+	});
+
+例：阻止冒泡
+	$("form").on("submit", function(event) {
+	  event.stopPropagation();
+	});
+
+----------------------
+	*取消事件函数off
+	events,[selector],[fn]
+参数：
+	events:比如"click mouseover"
+	selector:一个最初传递到.on()事件处理程序附加的选择器。
+	fn:事件处理程序函数以前附加事件上，或特殊值false.
+
+例1：
+	$('div').on('click mouseover', function() {
+	   alert(123);
+	   $('div').off('mouseover');
+	});
+  效果：第一次click或mouseover时，弹出123，并且取消mouseover事件的所有绑定函数。之后只有click才弹123.
+
+例2：
+	$("p").off();	移除p的所有
+	$("p").off( "click") 移除p的click的所有
+
+例3：事件委托和取消
+	$("body").on("click", "p", fn1);
+	$("body").off("click", "p", fn1); 
+
+例4：在事件触发某一确定次数后移除事件处理程序。
+	var x=0;
+	$("p").click(function(ev){
+		$("p").animate({fontSize:"+=5px"});
+		x++;
+		if (x>=2)
+		{
+			$(this).off(ev);
+		}
+	});
+
+----------------------
+	*主动触发事件*
+	trigger(type,[data])
+	triggerHandler(type, [data])
+参数:
+	type:一个事件对象或者要触发的事件类型
+	data:传递给事件处理函数的附加参数，是array类型
+区别：
+	1 trigger引起事件的浏览器默认行为（比如表单提交）；后者不引起
+	2 trigger会操作jQuery对象匹配的所有元素；后者只影响第一个匹配元素。
+	3 trigger触发的事件会冒泡；后者不冒泡。
+
+例1：
+	$('#div1').on('click',fn1);	
+	$('#div1').trigger('click');
+
+例2：提交第一个表单，但不用submit()
+	$("form:first").trigger("submit")
+
+例3：
+	$("p").click( function (event, a, b) {
+	  // 如果通过鼠标点击触发，那么a和b是undefined类型
+	  // 如果用下面的trigger语句触发，那么a指向"foo",而b指向"bar"
+	} ).trigger("click", ["foo", "bar"]);
+
+例4：自定义事件，弹出"Hello World"
+	$("p").on("myEvent", function (event, message1, message2) {
+	  alert(message1 + ' ' + message2);
+	});
+	$("p").trigger("myEvent", ["Hello","World!"]);
+
+例5：自定义事件，先弹123 再456
+	$('#div1').on('show',function(){
+		alert(123);
+	});	
+	$('#div1').on('show',function(){
+		alert(456);
+	});	
+	$('#div1').trigger('show');
+
+
+----------------------
+	*事件对象
+
+	$('div').click(function(ev){
+		...
+	});
+
+1 event对象：ev（名字随便，是第一个参数就行）
+2 ev.pageX:鼠标相对于文档的左边缘的位置(可视区+滚动条) ev.pageY
+	注意区分：原生js中的clientX是相对于可视区
+3 ev.which : 监视输入。针对键盘和鼠标事件，这个属性能确定你到底按的是哪个键或按钮。
+4 ev.preventDefault();  //阻止默认事件
+  ev.stopPropagation(); //阻止冒泡的操作
+  return false;   		//阻止默认事件 + 阻止冒泡的操作
+5 event.currentTarget 在事件冒泡阶段中的当前DOM元素
+6 event.target:最初触发事件的DOM元素。通常用于比较event.target和this来确定事件是不是由于冒泡而触发的。经常用于事件冒泡时处理事件委托。
+7 event.data
+8 event.type 事件的类型
+	$('#div1').on('click', {name: 'hello'}, function(ev) {
+		alert(ev.data.name);
+		alert(ev.target);
+		alert(ev.type);	//click
+	});
+
+
+----------------------
+	*offset()和position()
+返回值都是：Object{top,left}
+1 offset():相对于整个文档的偏移（不是相对于可视区）
+  会算上元素的left和margin，不算元素的padding和border
+2 position():
+  不管元素有没有定位，把它当成有定位来看。然后计算到它定位父级的偏移（如果没有就相对于document）
+  position()没弄懂，简直有毒。。。
+例子：body>#div1>#div2
+  body有默认8margin
+  #div1有设定的20margin，无定位
+  #div2有设定的30margin，无定位
+	alert($('#div2').position().left); 	//28=20+8
+	alert($('#div2').offset().left); 	//58=30+20+8
+  现在给外层的#div1加上position:relative
+	position().left变为0
+	offset().left还是58
+  再给内层的#div2加上position: absolute;left: 50px;
+  	position().left变为50
+  	offset().left  变为108
+
+
+----------------------
+	*size() each()
+size() 像length
+each() 像for循环，函数的第一个参数：下标，第二个参数，每个元素
+	$('li').size()
+	$('li').each(function(index,elem){		
+		$(elem).html(index);		
+	});
+
+
+----------------------
+	*jQuery转成原生js：get()
+jQuery和javascript不能混用。利用get()函数可以把jQ转成原生js。
+例1：
+	$('#div1').innerHTML	不行。虽然$('#div1')只有1个元素，但也是“集合”形式
+	$('#div1').get(0).innerHTML ok
+例子2：
+	for(var i=0;i<$('li').get().length;i++){	//或者用$('li').size()
+		$('li').get(i).style.background = 'red';
+	}
+例子3：
+	for(var i=0;i<$('li').length;i++){
+		$('li')[i].style.background = 'red';
+	}
+  说明：
+	1 $('li').length也行，是因为这里的length不是原生的，而是jq里的length
+	2 方括号下标也会将jq转成原生js。$('li')[i]和$('li').get(i)一样
+
+
+----------------------
+	*工具方法
+$().css()  $().html()  $().val()：只能给JQ对象用
+
+$.xxx()  $.yyy()  $.zzz()：不仅可以给JQ对象用，也可以给原生DOM对象用 : 叫做工具方法
+
+1 $.type(obj) 判断类型。返回更细，能分出array等object
+	$.type(true)		//"boolean"
+	$.type(3) 			//"number"
+	$.type("test") 		//"string"
+	$.type(fn1)			//"function"
+	$.type([]) 			//"array"
+	$.type(new Date()) 	//"date"
+	$.type(/test/) 		//"regexp"
+
+2 $.trim() 去掉string的首尾所有空格，中间的空格不管
+	var str = '   hello  ';	
+	alert('('+$.trim(str)+')');
+
+3 $.inArray(value,array,[fromIndex]) 确定value在数组中的位置
+  例：
+  	var arr = [ 4, "Pete", 8, "John" ];
+  	$.inArray("John", arr);  		//3
+  	$.inArray(4, arr);  			//0
+  	$.inArray("David", arr);  		//-1
+  	$.inArray("Pete", arr, 2);		//-1
+
+4 $.proxy(function,context) 返回一个新函数，并且这个函数始终保持了特定的作用域。
+	函数没有参数：
+		function show(){
+			console.log(this);
+		}
+		show();						//window
+		$.proxy(show , oDiv);		//什么都不干，这行白写了
+		var a=$.proxy(show,oDiv);	//把这个改了this指向的show函数存起来
+		a();						//oDiv
+		$.proxy(show , oDiv)(); 	//oDiv
+		show();						//window  直接调用show不会受影响
+	函数有参数：
+		function show(n1,n2){
+			alert(n1);
+			alert(n2);
+			alert(this);
+		}
+		$.proxy(show , oDiv)(3,4);	//直接运行了
+		var a=$.proxy(show , oDiv,3,4);	//不会运行
+		//以上2种都行 都是n1=3 n2=4
+
+5 $.noConflict()
+将变量$的控制权让渡给第一个实现它的那个库。
+注意：这个函数必须在你导入jQuery文件之后，并且在导入另一个导致冲突的库之前使用。
+
+  例子1：释放$ 只能用jQuery
+	$.noConflict();
+	jQuery(document).ready(function(){
+	  jQuery("button").click(function(){
+	    jQuery("p").text("jQuery 仍然在工作!");
+	  });
+	});
+  例子2：noConflict() 可返回对 jQuery 的引用，您可以把它存入变量
+	释放$，可以用jQuery和liuzx
+	var liuzx = $.noConflict();
+	liuzx(document).ready(function(){
+	  liuzx("button").click(function(){
+	    liuzx("p").text("jQuery 仍然在工作!");
+	  });
+	});
+
+  例子3：把 $ 符号作为变量传递给 ready 方法。这样就可以在函数内使用 $ 符号了 - 而在函数外，依旧只能使用 "jQuery"：
+	$.noConflict();
+	jQuery(document).ready(function($){
+	  $("button").click(function(){
+	    $("p").text("jQuery 仍然在工作!");
+	  });
+	});
+
+6 $.parseJSON(str)
+	var str = '{"name":"hello"}';
+	var a=$.parseJSON(str));
+	console.log(a);
+
+7 $.makeArray(aDiv) 把类数组对象转成真正的数组
+	例子：
+		var aDiv = document.getElementsByTagName('div'); //类数组
+		var a = $.makeArray(aDiv);
+		console.log(aDiv);	//aDiv是HTMLCollection
+		console.log(a);		//a是array
+
+
+--------------
+	jQuery插件
+1 $.extend : 扩展工具方法下的插件形式  $.xxx() $.yyy()
+  
+	$.extend({
+		leftTrim : function(str){
+			return str.replace(/^\s+/,'');
+		},
+		rightTrim : function(){},
+		aaa : function(){
+			alert(1);
+		},
+		bbb : function(){}
+	});
+  调用：
+	$.aaa();  //弹出1
+
+2 $.fn.extend  :  扩展JQ对象下的插件形式  $().xxx()  $().yyy()
+	$.fn.extend({		
+		drag : function(){
+			var disX = 0;
+			var disY = 0;			
+			var This = this;			
+			this.mousedown(function(ev){				
+				disX = ev.pageX - $(this).offset().left;
+				disY = ev.pageY - $(this).offset().top;				
+				$(document).mousemove(function(ev){					
+					This.css('left' , ev.pageX - disX);
+					This.css('top' , ev.pageY - disY);					
+				});
+				
+				$(document).mouseup(function(){
+					$(this).off();
+				});
+				
+				return false;				
+			});			
+		},
+		aaa : function(){
+			alert(2);
+		}		
+	});
+  调用：
+  	$('#div1').drag();
+  	$().aaa();  //弹出2

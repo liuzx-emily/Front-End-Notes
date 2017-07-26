@@ -1,0 +1,413 @@
+HTML5<canvas> 标签用于绘制图像。不过canvas本身并没有绘制能力，它仅仅是图形的容器。必须使用js来完成实际的绘图任务。
+
+
+1 IE8-不支持canvas标签，会显示canvas标签里面的内容。
+	(标准浏览器不会显示canvas里面的内容。)
+	<canvas>~不支持canvas的IE8-中会显示这行文字~</canvas>
+
+2 canvas元素的宽高
+	默认为宽300px,高150px。
+	不要在<style>里设置宽高。在行间属性里设置width和height，单位是px
+	<canvas id="myCanvas" width="400" height="200"></canvas>
+
+3 getContext()方法；
+  返回一个对象，该对象提供了用于在画布上绘图的方法和属性。
+  	var oCanvas = document.getElementById('myCanvas');  	
+  	var ctx = oCanvas.getContext('2d');
+  之后利用ctx来画画，而不是oCanvas
+
+
+----------------
+	*颜色、样式和阴影
+一.以下六种属性都可写、可读，style、颜色默认都是黑，number默认都是0
+  1 fillStyle
+  		context.fillStyle=color|gradient|pattern;	
+  2 strokeStyle
+  3 shadowColor
+  		context.shadowColor=color;
+  4 shadowBlur	阴影的模糊级别
+  		context.shadowBlur=number;
+  5 shadowOffsetX	阴影与形状的水平距离
+  		context.shadowOffsetX=number;
+  6 shadowOffsetY
+
+二.方法：
+  1	createLinearGradient(x0,y0,x1,y1)：
+		x0y0渐变开始点，x1y1渐变结束点
+	createRadialGradient(x0,y0,r0,x1,y1,r1)：
+		x0y0r0	渐变的开始圆的坐标、半径
+		x1y1r1	渐变的结束圆的坐标、半径
+	addColorStop()	规定渐变对象中的颜色和停止位置	
+  	例1：
+	var linearG = ctx.createLinearGradient(0, 0, 0, 200);
+	linearG.addColorStop(0, 'white');
+	linearG.addColorStop(1, 'lightcoral');
+	ctx.fillStyle = linearG;
+  	例2：
+	var radialG = ctx.createRadialGradient(75, 50, 0, 100, 70, 100);
+	radialG.addColorStop(0, 'white');
+	radialG.addColorStop(1, 'lightcoral');
+	ctx.fillStyle = radialG;
+
+  2 createPattern()	在指定的方向内重复指定的元素。
+	元素可以是图片、视频，或其他canvas元素。被重复的元素可用于绘制/填充矩形、圆形或线条等等。
+		createPattern(image,"repeat|repeat-x|repeat-y|no-repeat")
+	默认是repeat
+  图片也是要new Image,然后用onload事件
+
+
+----------------
+	*线条
+以下四个属性，都是可读、可写
+1 lineCap		线条的结束端点样式
+	context.lineCap="butt|round|square";
+	butt	默认。平直
+	round	圆形（round和square会使线条略微变长）
+	square	正方形
+
+2 lineWidth	当前的线条宽度 单位为px 默认1px(注意1px变为2px的问题)
+	context.lineWidth=number; 
+
+3 lineJoin	两条线相交时，所创建的拐角类型
+	context.lineJoin="miter|bevel|round";
+	miter	默认 尖角
+	bevel	斜角
+	round	圆角
+
+4 miterLimit 最大斜接长度（为了避免斜接长度过长）
+  斜接长度:两条线交汇处内角和外角间的距离。角度越小，斜接长度越大。  
+	context.miterLimit=number;
+  number：正数。如果斜接长度超过miterLimit的值，边角会以lineJoin的bevel类型来显示。
+  只有当lineJoin属性为"miter"时，miterLimit才有效。
+
+----------------
+	*边框1px变2px问题*
+1px向两个方向延伸，每个方向延伸0.5px，但是不接受0.5px这种
+如果在(10,10)画边框，那么边框宽2px(每个方向的边框由0.5px拓展到1px)
+如果在(10.5,10.5)画边框，那么边框宽1px
+
+----------------
+	*
+fill()	填充当前绘图（路径）。如果路径未关闭，那么会添线以关闭，然后填充。
+stroke() 会实际地绘制出通过moveTo()和lineTo()定义的路径
+
+beginPath()	开始一条路径，或重置当前路径
+moveTo(x,y)	把路径移动到画布中的指定点，不创建线条
+lineTo(x,y) 添加一个新点，并创建线条
+closePath() 创建从当前点到开始点的路径。
+	
+----------------
+	*画弧*
+1 context.arc(x,y,r,sAngle,eAngle,counterclockwise);
+	x y r ：圆心坐标、半径
+	sAngle eAngle：起始、结束角，以弧度计（0对应3点钟）
+	counterclockwise：默认false顺时针
+  画圆：起始角为 0，结束角为 2*Math.PI
+  例：
+	ctx.beginPath();
+	ctx.moveTo(80, 80);
+	ctx.arc(80, 80, 80, 0, 1.5 * Math.PI);
+	ctx.fill();
+
+曲线的开始点是当前路径中最后一个点。如果路径不存在，那么请使用 beginPath() 和 moveTo() 方法来定义开始点：
+2 context.arcTo(x1,y1,x2,y2,r);创建二次贝塞尔曲线
+  例：线的起始点是(0,0)，线的终点是(100,20)
+      弧的起始点是(0,80)，弧的终点是(100,20)      
+  	ctx.beginPath();
+  	ctx.moveTo(0, 0);
+  	ctx.arcTo(100, 0, 100, 100, 20);
+  	ctx.stroke();
+3 context.quadraticCurveTo(cpx,cpy,x,y);创建三次贝塞尔曲线  
+	cpx cpy：控制点
+	x y：结束点
+  例：
+  	ctx.beginPath();
+  	ctx.moveTo(100, 100);
+  	ctx.quadraticCurveTo(200, 100, 200, 200);
+  	ctx.stroke();
+4 context.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,x,y);
+  例：	
+	ctx.beginPath();
+    ctx.moveTo(100, 100);
+    ctx.bezierCurveTo(200, 100, 100, 200, 200, 200);
+    ctx.stroke();
+
+弧度 = 角度 * Math.PI / 180
+
+
+----------------
+	*变换
+1 scale() 缩放 
+	context.scale(scalewidth,scaleheight); 0.5代表50%
+  之后所有的绘图都会被缩放。定位也会被缩放
+	ctx.strokeRect(5, 5, 25, 15);
+	ctx.scale(2, 2);
+	ctx.strokeRect(5, 5, 25, 15);
+
+2 rotate()	旋转画布，绕画布的(0,0)位置
+	context.rotate(angle); 
+  例：
+  	ctx.rotate(20 * Math.PI / 180);
+  	ctx.strokeRect(0, 0, 100, 50);
+
+3 translate()	重新映射画布上的 (0,0) 位置
+	context.translate(x,y);
+  例：
+  	ctx.strokeStyle = 'cyan';
+  	ctx.lineWidth = 2;
+  	ctx.strokeRect(0, 0, 100, 50);
+  	ctx.translate(70, 70);
+  	ctx.strokeStyle = 'hotpink';
+  	ctx.strokeRect(0, 0, 100, 50);
+  	ctx.translate(-70, -70);	//映回真正的(0,0)
+  	ctx.strokeStyle = 'coral';
+  	ctx.strokeRect(0, 0, 50, 100);
+
+4 transform()	替换绘图的当前转换矩阵
+
+5 setTransform()	将当前转换重置为单位矩阵。然后运行 transform()。
+
+
+----------------
+	*添加图片 视频*
+1 定位图像（高宽可不写）
+	context.drawImage(img,x,y,width,height);	
+2 剪切图像，并在画布上定位被剪切的部分：
+	context.drawImage(img,sx,sy,swidth,sheight,x,y,width,height);
+
+预加载：
+	var myPic=new Image();
+	myPic.onload=function(){
+		ctx.drawImage(this,0,0);
+	};
+	myPic.src='1.jpg';
+
+
+
+----------------
+	*clip save restore
+clip()方法从原始画布中剪切任意形状和尺寸。
+	context.clip();
+  一旦剪切了某个区域，则之后所有的绘图都会被限制在被剪切的区域内（不能访问画布上的其他区域）。可以在使用clip前通过使用 save() 方法对当前画布区域进行保存，并在以后的任意时间对其进行恢复（通过 restore() 方法）。
+
+save()	保存当前环境的状态
+restore()	返回之前保存过的路径状态和属性
+例：
+	ctx.save();
+	ctx.fillStyle = 'coral';
+	ctx.fillRect(0, 0, 50, 50);		//矩形1 coral色
+	ctx.restore();
+	ctx.fillRect(60, 60, 50, 50);	//矩形2 黑色
+  如果去掉save和restore，那么两个矩形都是coral色
+
+----------------
+	*文本
+1 属性
+  1 font：可写可读（设置和css中的font相同）
+  其中font-size和font-family是必须的
+  2 textAlign：可写可读 默认start
+  	start|end|left|center|right 
+  	(start和left一样，end和right效果一样，好像是)
+  3 textBaseline：可写可读 默认alphabetic
+  	alphabetic|top|hanging|middle|ideographic|bottom
+  	（一般用top）
+
+2 方法
+  fillText(text,x,y,maxWidth);
+  	maxWidth可选。文字过长>maxWidth，会被横向压缩（字都变得瘦高）
+  strokeText(text,x,y,maxWidth);
+  measureText()	测量文本宽度
+  	context.measureText(text).width;
+  	(只有宽，没有高。高度就是字体高/行高)
+
+
+----------------
+	*画矩形*
+1 rect 创建矩形(rect只是创建矩形，之后必须用stroke或fill实际地绘制矩形)
+	context.rect(x,y,width,height);
+2 fillRect	(相当于rect+fill)
+3 strokeRect(相当于rect+stroke)
+4 clearRect		在给定的矩形内清除指定的像素。
+
+例1：rect和fill||stroke
+	var ctx = document.querySelector('#myCanvas').getContext('2d');
+	ctx.rect(10, 20, 50, 30);
+	ctx.fill();
+
+例2：strokeRect
+	var ctx = document.querySelector('#myCanvas').getContext('2d');
+	ctx.strokeRect(10, 20, 50, 30);	//边框实际宽2px	
+	//ctx.strokeRect(10.5, 20.5, 50, 30);	//这样边框才是真的1px
+
+例3：clearRect
+	var oCan = document.querySelector('#myCanvas');
+	var ctx = oCan.getContext('2d');
+	ctx.fillStyle = "crimson";
+	ctx.fillRect(0, 0, oCan.width, oCan.height); //画一个矩形填满整个canvas
+	ctx.clearRect(20, 20, 100, 50); 
+
+----------------
+	*实例：1 鼠标画线
+1 使用getBoundingClientRect
+2 使用<input type="color">取色
+3 使用clearRect清空画布
+
+
+----------------
+	*实例：2 小方块移动
+画新的之前，先清空画布：
+	ctx.clearRect(0, 0, oCan.width, oCan.height);
+	ctx.fillRect(num, num, 50, 50);
+
+----------------
+	*实例：3 钟表
+1 怎么画刻度？
+2 clock函数前后要保存、恢复环境：
+	function clock(radius) {
+		ctx.save();
+		...
+		ctx.restore();
+	}
+  用途：清除所有变换效果，颜色设置等
+  		不能清空画布
+3 清空画布？
+	每次画新的之前没有用clearRect清空画布，save restore也没有清空画布的效果。
+	之所以之前画的钟表对新的没影响，是因为新的能完全覆盖住旧的。
+
+----------------
+	*实例：4 旋转、缩放的小方块
+难点：绕中心点旋转
+1 square2(): 对照组
+	清空画布+画对照组
+2 square():
+    ctx.strokeRect(25, 50, 150, 50);
+  小方块的中心点为(100,75)
+  所以在画小方块前，先绕着(100,75)rotate：
+	ctx.translate(100, 75);
+    ctx.rotate(iAngle / 5);
+    ctx.translate(-100, -75);
+  旋转完了之后，画小方块之前，要把原点再挪回去
+3 给小方块加scale变换：
+	if (iScale >= 150) {
+	    iNum = -10;
+	} else if (iScale <= 0) {
+	    iNum = 10;
+	}
+	iScale += iNum;
+	ctx.scale(iScale / 100, iScale / 100);
+  注意：scale语句要在translate1和translate2之间
+
+----------------
+	*实例：5 旋转图片
+1 引入图片：new Image()和onload事件
+2 绕中心旋转
+
+----------------
+	*实例：6 阴影
+
+----------------
+	*实例：7 文字
+1 让文字在画布居中の两种方法：
+   1.文字定位起点为左上角：
+	ctx.textBaseline = 'top';
+	ctx.textAlign='left';//默认start，效果和left一样，所以可以不写这句
+	ctx.fillText(text, (oCanvas.width - ctx.measureText(text).width) / 2, (oCanvas.height - 100) / 2);
+	//100是字体大小，也就是文字高度
+
+   2.文字定位起点为正中心：
+	ctx.textBaseline = 'middle';
+	ctx.textAlign = 'center';
+	ctx.fillText(text, oCanvas.width / 2, oCanvas.height / 2);
+
+--------------
+	*合成*
+1 globalAlpha：可读可写 透明度
+	context.globalAlpha=number;
+  number在0.0(完全透明)与1.0(不透明)之间
+  
+2 globalCompositeOperation：可读可写
+  如何将一个源（新的）图像绘制到目标（已有的）的图像上。
+	context.globalCompositeOperation="source-in";
+  默认source-over，其他见图片：globalCompositeOperation.png
+
+--------------
+	*保存为图片：toDataURL()*	
+var sUrl=canvas对象.toDataURL();返回一个string
+例：
+    var sUrl = oCanvas.toDataURL();
+    var oImg = new Image();
+    oImg.src = sUrl;
+    document.body.appendChild(oImg);
+
+----------------
+	*isPointInPath(x,y)
+判断特定点是否在当前路径中，只能测试最新的路径
+这样画的检测不到：
+	ctx.fillRect(50, 50, 100, 80);
+这样画的才能检测：
+	ctx.rect(50, 50, 100, 80);
+	ctx.fill();
+
+---------------
+	*实例：8 点最新方块才alert*
+isPointInPath只能检测最新的路径
+	ctx.beginPath();
+	ctx.rect(50, 50, 100, 80);
+	ctx.fill();
+	ctx.beginPath();
+	ctx.rect(150, 150, 100, 80);	//只检测这个
+	ctx.fill();
+这时，isPointInPath只检测后画的方块
+
+---------------
+	*实例：9 路径能检测所有*
+为了能让路径检测所有，要把之前所有画过的东西都重新画一遍。每画一个，就检测一个。
+所以，使用面向对象：
+构造函数：
+	function Rect(x, y, w, h, alertT) {
+	    this.x = x;
+	    this.y = y;
+	    this.width = w;
+	    this.height = h;
+	    this.alertText = alertT || 'hiahia';
+	    ctx.beginPath();
+	    ctx.rect(this.x, this.y, this.width, this.height);
+	    ctx.fill();
+	}
+添加reDrawAndCheck方法：
+	Rect.prototype.reDrawAndCheck = function(point) {
+	    ctx.beginPath();
+	    ctx.rect(this.x, this.y, this.width, this.height);
+	    ctx.fill();
+	    if (ctx.isPointInPath(point.x, point.y)) {
+	        alert(this.alertText);
+	    }
+	};
+创建新Rect对象：
+	rect1 = new Rect(50, 50, 100, 80, '银之匙');
+	rect2 = new Rect(150, 150, 100, 80);
+在每次点击时:
+	function check(ev) {
+	    var point = {
+	        x: ev.clientX - oCanvas.getBoundingClientRect().left,
+	        y: ev.clientY - oCanvas.getBoundingClientRect().top
+	    };
+	    rect1.reDrawAndCheck(point);
+	    rect2.reDrawAndCheck(point);
+	}
+
+-----------------
+	*jcscript库*
+http://jcscript.com/documentation/
+非常好用：专门用来操作canvas的js库，用起来方式和jQuery很像
+使用jc
+1 利用id来选择canvas，在开始、结束时都要用start
+	jc.start('myCanvas');
+	//画画
+	jc.start('myCanvas');
+2 要想使用动画等，必须开启“重绘”：
+	jc.start('myCanvas',true); 	//加上第二个参数
+  Initialise canvas and set frames per second to auto-redrawing it. Use it, if you need animation.
+  	jc.start('myCanvas',true);
+  	//画画
+  	jc.start('myCanvas');

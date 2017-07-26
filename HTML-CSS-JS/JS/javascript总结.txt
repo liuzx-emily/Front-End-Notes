@@ -1,0 +1,1776 @@
+-----------------------
+	*匈牙利命名法*
+1 	前缀 类型 例子
+	数组	a 	aItems
+	布尔	b 	bIsComplete
+	浮点	f 	fPrice
+	函数	fn 	fnHandler
+	整型	i 	iItemCount
+	对象	o 	oDiv1
+	正则	re 	reEmailCheck
+	字符串	s 	sUserName
+2 首字母大写
+
+--------------------
+	*焦点*
+1 焦点
+	当一个元素获得焦点的时候,它就可以接收用户的输入。
+  	使元素获取焦点：1.点击 2.tab键切换 3.焦点函数
+	不是所有元素都能够接收焦点的.能够响应用户操作的元素才有焦点，比如：form表单元素,a
+	
+2 焦点事件
+	onfocus:当元素获取到焦点的时候触发
+	onblur:当元素失去焦点的时候触发（用途：注册时验证用户名能否使用）
+	例子1：
+		oText.onfocus = function() {			
+			if ( this.value == '请输入内容' ) {
+				this.value = '';
+			}			
+		};
+	例子2；
+		oText.onblur = function() {			
+			if ( this.value == '' ) {
+				this.value = '请输入内容';
+			}			
+		};
+
+3 焦点函数
+	obj.focus():给指定的元素设置焦点
+	obj.blur():取消指定元素的焦点
+	obj.select():选择指定元素里面的文本内容,同样也是只能操作可交互性元素。(用途举例: 浏览器不允许网页操作user的剪切板。user想要复制什么内容时,帮它全选上。)
+	例子1：
+		oText.focus();	
+	例子2：	
+		var oBtn = document.getElementById('btn');		
+		oBtn.onclick = function() {			
+			oText.select();			
+		};
+
+----------------------
+   *数据类型*
+1 '初学者分类5+1'：根据typeof
+  1 number 
+  2 string 
+  3 boolean 
+  4 object  包括{}、[]、Date、null、DOM和BOM对象等
+  5 function 
+  6 undefined
+  备注：区分null和undefined
+   var a = undefined;            //相当于var a;
+   var b = null;
+   console.log(a+ ',' +typeof a);   //undefined,undefined
+   console.log(b+ ',' +typeof b);   //null,object
+   console.log(a == b);       //true
+   console.log(a === b);         //false
+
+2 '进阶版分类'：“值类型”+“引用类型”
+  注意，传参的时候，如果传的是“引用类型”，那么函数里面的修改会影响外面的全局变量。
+  值类型：赋值的时候只传值；比较的时候只比较值
+  引用类型：赋值的时候传地址；比较的时候比较地址
+  1 值类型：number string boolean null undefined
+   	其中的number string boolean我们叫它“基本类型”，有对应的包装对象Number String Boolean
+   		var str1 = 'hello';
+   		var str2 = new String('hello');	//不推荐这么写
+   		alert(typeof str1);	//string
+   		alert(typeof str2);	//object
+
+   		var str='Phil';
+   		str.length		//4
+   		str.charAt(0)	//P
+   	基本类型不是对象，那么为什么和对象一样有属性和方法呢？
+   	调用属性、方法时：找到对应的包装对象类型，然后包装对象把所有的属性和方法给了基本类型，然后包装对象消失
+   		String.prototype.liuzx=function(){
+   			alert('所有string类型和String对象都可以调用这个');
+   		}
+   		var s1 = 'phil';
+   		s1.liuzx();		//弹'所有...'
+   		var s2 = new String('aaa');
+   		s2.liuzx();		//弹'所有...'
+   	题目：
+   		var str='Dunphy';
+   		str.abc=123;
+   		alert(str.abc);	//undefined
+   		原因:
+   			第1行：str是基本类型string。
+   			第2行：新建属性abc：新建了一个包装对象S1，给S1赋属性S1.abc=123。然后包装对象S1消失。
+   			第3行：又新建了一个包装对象S2,S2下没有属性abc，是undefined。
+
+  2 引用类型：
+ 	例子1：
+		var a = {name: 'Phil'};
+		var b = a;
+		b.name = 'Alex';
+		alert(a.name);	//Alex
+	例子2：
+		var a = [1, 2, 3];
+		var b = a;
+		b.push(4);
+		alert(a);	//1,2,3,4
+	例子3：
+		var a=[1,2,3];
+		var b=[1,2,3];
+		alert(a==b);	//false 比较的是地址
+  想要不互相影响：
+	例子1：
+		var a = {name: 'Phil'};
+		var b = {};
+		for(var attr in a){
+			b[attr] = a[attr];
+		}
+		b.name = 'Alex';
+		alert( a.name ); 	//Phil
+	例子2：
+		var a = [1, 2, 3];
+		var b = [];
+		for (var i = 0; i < a.length; i++) {
+		   b[i] = a[i];
+		}
+		b.push('ha');
+		alert(a);	//1,2,3
+  区分重新赋值和修改：
+		var a = [1, 2, 3];
+		var b = a;
+		b = [1, 2, 3, 4]; //给b重新赋值，b指向存放[1,2,3,4]的新地址，从此和a没关系
+		alert(a);	//1,2,3
+
+3 查看数据类型的方法
+  1 typeof:返回类型是string，可能的值有5+1 
+   缺点：[]、Date等object无法细分，都返回object
+
+  2 constructor属性：什么都可以查看
+  	其中：number boolean string类型也可以用constructor，是因为调用了包装对象
+  	而null和undefined没有包装类型，所以使用null.constructor会报错
+   返回实例化对象的构造函数,返回类型是function，可以配合用toString()
+   console.log('1'.constructor);       //[Function: String]
+   console.log(true.constructor);         //[Function: Boolean]
+   console.log(function() {}.constructor);   //[Function: Function]
+   console.log(oDiv.constructor);         //[Function: HTMLDivElement]
+   console.log({}.constructor);        //[Function: Object]
+   console.log([].constructor);        //[Function: Array]
+   console.log(new Date().constructor);   //[Function: Date]
+   //console.log(null.constructor);    报错
+   //console.log(undefined.constructor);  报错
+
+  3 instanceof:只能查看object
+   var a = [1, 3, 'a'];
+   console.log(a instanceof Array); //true
+   console.log(a instanceof Object);   //true，因为Object是最高级父类
+   console.log(a instanceof Date);     //false
+   【易错：】
+   	'a' instanceof String 	//false 因为这里'a'是字面值常量，不是String对象
+  4 利用toString()来判断：
+  	Object.prototype.toString.call(a)=='object Array'	//判断变量a是不是数组
+  题：判断变量a是不是数组的方法？
+  	1 a.constructor===Array
+  	2 a instanceof Array
+  	3 Object.prototype.toString().call(a)==='object Array'
+  	最好的方法3，因为1、2在iframe下会失效。
+
+
+-----------------------
+   *运算符
+1 typeof
+2 instanceof：
+  使用：对象 instanceof 构造函数
+	a instanceof Aaa 测试对象a和原型对象Aaa.prototype是否在一个原型链中
+3 in：测试一个对象中是否存在一种属性。（可以不是自己的，是顺着原型链找到的）
+  使用：属性 in 对象
+	'name' in a1 测试a1对象中是否包含属性name
+
+
+-----------
+	浅、深度克隆
+1 浅克隆：
+	for(var attr in a){
+		b[attr] = a[attr];
+	}
+	如果b[attr]不是字面值，是对象，那么a[attr]和b[attr]还是相互影响。
+
+2 深度克隆：(IE7-没有JSON对象)
+	无论如何都不会相互影响
+	var a = {
+		name : { age : 100 }
+	};
+	var str = JSON.stringify(a);
+	var b = JSON.parse(str);
+	b.name.age = 200;
+	alert(a.name.age);
+	
+
+	
+-----------------------
+   *浮点数使用注意*
+JavaScript 中的所有数据都是以 64 位浮点型数据(float) 来存储。
+所有的编程语言,包括 JavaScript,对浮点型数据的精确度都很难确定：
+   var a = 0.1,b = 0.2;
+   var c = a + b;
+   console.log(c);         //0.30000000000000004
+   console.log(c == 0.3);  //false
+
+涉及到小数，要注意：0.07*100!==7   //true	
+   parseInt尝试拯救世界（失败）：
+      parseInt(0.07*100);  //7
+      parseInt(0.57*100);  //56，拯救失败
+      parseInt(0.29*100);  //28，拯救失败
+   Math.round拯救世界：
+      Math.round(0.57*100);//57
+      Math.round(0.27*100);//27
+      Math.round(0.07*100);//7
+
+-----------------------
+	*this*
+this: 指的是调用当前方法的object
+	function fn1() {
+		alert(this);
+	}
+1 通过()直接调用fn1： this -> window
+	fn1();
+	oDiv.onclick = function() {
+		fn1();
+	};
+	<div onclick="fn1();"></div>
+	
+2 通过事件来调用fn1： this -> oDiv
+	oDiv.onclick = fn1;
+
+-----------------------
+	*函数定义*	
+1 函数声明：function myFunction() {}
+  函数声明不是一个可执行语句,所以：
+  1 因为分号用来分隔可执行语句,所以函数声明不以分号结束
+  2 不会改变变量
+	var a = 3;
+	function a() {}
+	a(); 	//TypeError: a is not a function
+		
+2 函数表达式
+  JavaScript 函数可以通过一个表达式定义,函数表达式可以存储在变量中：
+	var x = function() {};
+	console.log(typeof x);	//function
+	x();
+  实际上是将一个匿名函数存储在x中
+
+3 自调用函数
+  通过添加括号,来说明它是一个函数表达式，如果表达式后面紧跟 () ,则会自动调用。
+  例子1：匿名函数的自我调用
+  	(function() {
+		console.log(1); 
+	})();
+  例子2：
+  	(function fn(a,b) {
+  	   console.log(a*b);
+  	})(5,6);
+
+4 函数是对象
+  在JavaScript中使用 typeof 操作符判断函数类型将返回 "function" 。
+  但是JavaScript函数描述为一个对象更加准确,JavaScript函数有属性和方法，比如：call和apply。
+
+5 函数如果用于创建新的对象,称之为对象的构造函数。
+
+-----------------------
+	*函数调用*
+JavaScript函数有4种调用方式,每种方式的不同方式在于this的初始化。
+注意：this是保留关键字，你不能修改this的值。
+1 作为一个函数调用
+	function myFunction() { return this;}
+	myFunction();	// this -> window
+  以上函数不属于任何对象。但ECMAScript中将window设定为最顶级对象，所有的全局变量都是它的attr和method。所以myFunction()和window.myFunction() 是一样的。
+
+2 作为对象的方法调用：this的值为对象本身
+	var myObject = {
+	    firstName:"John",
+	    fullName: function () {
+	        return this;
+	    }
+	}
+	myObject.fullName();	//返回[object Object]
+
+3 使用构造函数调用函数
+  构造函数中this没有任何的值,this的值在使用构造函数时创建
+	function myFunction(arg1, arg2) {
+	    this.firstName = arg1;
+	    this.lastName  = arg2;
+	}
+	var x = new myFunction("John","Doe");	
+
+4 作为函数方法调用函数:call apply
+  两个方法的第一个参数都是用来修改this的对象，区别在于之后的参数。
+  1 apply传入的是一个参数数组
+  2 call传入参数（从第二个参数开始）
+  例子：
+	function myFunction(a, b) {
+	    return a * b;
+	}
+	myObject1 = myFunction.apply(myObject, [10, 2]); 	//返回20
+	myObject2 = myFunction.call(myObject, 5, 7); 		//返回35
+
+---------------------
+	*作用域*
+1 变量提升：函数和变量声明会被解释器悄悄地“提升”到方法体的最顶部。
+	先提升var，值为undefined。
+	再提升function，值为function(){内容}
+	提升时重名的话：只留一个。
+2 ECMA5只有两种作用域:全局、函数作用域
+3 块中的function不能正常提升：
+	块中所有（var和function）都是undefined
+
+
+-----------------------
+	*函数参数*
+1 显式参数(Parameters)与隐式参数(Arguments)可以共存
+2 函数调用时，什么都不检查：个数+类型
+3 默认参数：如果函数在调用时未提供实参,则形参为undefined
+	a = a || 5;				
+		(有问题：当实参a=0时，a也会变为5)
+	a = (a !== undefined ? a : 5);	
+		(用!==undefined，这样就没问题了)
+  ECMA6支持默认参数：function myFunction(x, y=5) {}
+4 传递参数：
+  1 值类型：不会修改外部的全局变量
+  2 引用类型：在函数的内部修改对象的属性attr，会作用于外部的全局变量
+  	例子：
+  		var arr1 = [2];
+  		f1(arr1);
+  		console.log(arr1);		//[2]
+  		f2(arr1);
+  		console.log(arr1); 		//[ 2, 3 ]
+  		function f1(arr) {arr = [3, 5];}
+  		function f2(arr) {arr[1] = 3;}
+  
+
+-----------------------
+	*闭包*
+闭包是可访问上一层函数作用域里变量的函数,即便上一层函数已经关闭。
+
+	var add = (function () {
+	    var counter = 0;
+	    return function () {return counter += 1;}
+	})();
+
+	add();
+	add();
+	add();	// 计数器为 3
+
+实例解析：
+	变量 add 指定了函数自我调用的返回字值。
+	自我调用函数只执行一次。设置计数器为 0。并返回函数表达式。
+	add变量可以作为一个函数使用。非常棒的部分是它可以访问函数上一层作用域的计数器。
+	这个叫作 JavaScript 闭包。它使得函数拥有私有变量变成可能。
+	计数器受匿名函数的作用域保护,只能通过 add 方法修改。
+
+
+-----------
+	*JSON对象的2个方法*
+（IE7-没有JSON对象）
+1 stringify : 可以把一个对象转成对应字符串
+   var arr = [1, 2, 3];
+   var j = {
+      left: 100
+   };
+   console.log(JSON.stringify(arr));	//[1,2,3]
+   console.log(JSON.stringify(j));		//{"left":100}
+
+2 parse : 可以把字符串转成对应对象
+  parse非常严格，key必须被双引号括起来（单引号不行，没有引号更不行）
+   var s1 = '[100,200,300]';
+   var a1 = JSON.parse(s1);
+   console.log(a1[0]); 		//100
+
+   var s2 = '{"left":100}';
+   var a2 = JSON.parse(s2);
+   console.log(a2.left); 	//100
+
+-----------
+	*try catch throw*
+代码尝试执行try中的内容,如果有错误，则会执行catch{}，并且传入错误信息参数。
+
+	try {
+		throw new Error('一些错误代码');
+	} catch (err) { //err随便起，叫什么都行
+	   console.log(err);
+	}
+
+输出：Error: 一些错误代码
+    at Object.<anonymous> (F:\web\test\testJS.js:5:13)
+    at Module._compile (module.js:570:32)
+    at Object.Module._extensions..js (module.js:579:10)
+    at Module.load (module.js:487:32)
+    at tryModuleLoad (module.js:446:12)
+    at Function.Module._load (module.js:438:3)
+    at Module.runMain (module.js:604:10)
+    at run (bootstrap_node.js:393:7)
+    at startup (bootstrap_node.js:150:9)
+    at bootstrap_node.js:508:3
+
+-----------------------
+	*HTML加载*
+回答二:
+	浏览器这边做的工作大致分为以下几步:
+	加载:根据请求的URL进行域名解析,向服务器发起请求,接收文件(HTML、JS、CSS、图象等)。
+	解析:对加载到的资源(HTML、JS、CSS等)进行语法解析,建议相应的内部数据结构(比如HTML的DOM树,JS的(对象)属性表,CSS的样式规则等等)
+	渲染:构建渲染树,对各个元素进行位置计算、样式计算等等,然后根据渲染树对页面进行渲染(可以理解为“画”元素)
+	这几个过程不是完全孤立的,会有交叉,比如HTML加载后就会进行解析,然后拉取HTML中指定的CSS、JS等。
+
+-----------------------
+typeof document.title;		//string
+document.title = 123;				
+
+-----------------------
+	*难题*
+随机产生 100 个从 0 ~ 1000 之间不重复的整数
+
+   var num;
+   var arr = [];
+   for (let i = 0; i < 100; i++) {
+	  //i只控制新生成num个数
+      num = Math.round(Math.random() * 1000);
+      for (let j = 0; j < arr.length; j++)
+         if (arr[j] == num) {
+            arr.splice(j, 1); 
+            i--;
+            break;
+         }
+      arr.push(num);
+   }
+
+	arr从空开始可以,从[3,99]开始也可以,关键是初始arr中不能有重复的。如果初始arr有重复的话,需要先把重复的干掉。
+	自己写的一个去重函数：
+	function quChong(arr) {
+	   for (let i = 0; i < arr.length - 1; i++)
+	      for (let j = i + 1; j < arr.length; j++)
+	         if (arr[i] === arr[j]) {
+	            arr.splice(j, 1);
+	            j--;
+	         }
+	}
+注:这个函数会修改原来的数组
+	var arr = [1,9,5,50,4,1,3,9,5,-2,6,3,3,2,7,1,5,11,11];
+	quChong(arr);
+	console.log(arr);	//[1,9,5,50,4,3,-2,6,2,7,11]
+
+-----------------------
+	*正0和负0*
+var a = +0;
+var b = -0;
+console.log(a); 		//0
+console.log(b); 		//-0
+console.log(a == b); 	//true
+console.log(a === b); 	//true
+
+个人备注:不懂分这个有什么意义。。
+现在找到的唯一区别:
+	console.log(Math.sign(+0)); 	//0
+	console.log(Math.sign(-0)); 	//-0
+
+-----------------------
+	*一些math函数*
+向下取整 Math.floor()
+取绝对值 Math.abs()
+向上取整 Math.ceil()
+四舍五入 Math.round()
+伪随机数 Math.random()：返回一个浮点,  范围[0,1)
+	0~1:
+	   Math.round( Math.random() );
+	0~10
+	   Math.round( Math.random()*10 );
+	20~100
+	   Math.round( Math.random()*80 + 20 ) ;
+	x ~ y
+	   Math.round( Math.random()*(y-x) + x ) ;
+	0~x
+	   Math.round( Math.random()*x ) ;
+	1~x
+	   Math.ceil( Math.random() * x);
+	   备:上式有可能取到0(当Math.random()恰好=0时),though几率很小
+
+Math.pow(a,b) 返回a^b(b可以为小数、负数)
+Math.sqrt(x)  返回x开平方
+
+
+-----------------------
+	*一个生成随机数的函数*
+调用rand(num)获得0-num之间的随机数（num可以为负）
+
+    function rand(number) {
+        var seed = new Date().getTime();
+        return Math.round(rnd() * number);
+        function rnd() {
+            seed = (seed * 9301 + 49297) % 233280;
+            return seed / (233280.0);
+        }
+    }
+注：getTime:返回距1970年1月1日的毫秒数
+
+问：为什么用9301 49297 233280这三个数？
+答：统计学上的一些原因,不必深究
+
+----------------------
+	*设置时间*
+1 数字形式:
+	new Date(2017,3,18,23,3,0);//注意月份0-11
+2 字符串形式:
+	new Date('April 18,2017 23:3:0');
+都代表2017-4-18-23:03:00
+
+----------------------
+	*系统时间*
+function fnTime() {
+	var myTime = new Date();			//参数为空时，返回当前系统时间
+	var iYear = myTime.getFullYear();
+	var iMonth = myTime.getMonth() + 1;	//月份0-11
+	var iDate = myTime.getDate();
+	var iWeek = myTime.getDay();		//星期0-6
+	var iHours = myTime.getHours();
+	var iMin = myTime.getMinutes();
+	var iSec = myTime.getSeconds();
+	iWeek = '星期' + '日一二三四五六' [iWeek];	//很巧妙的转换！！
+	var str = iYear+'年'+toTwo(iMonth)+'月'+toTwo(iDate)+'日'+iWeek+''+toTwo(iHours)+':'+toTwo(iMin)+':'+toTwo(iSec);
+	return str;
+	//toTwo(n)：统一格式，3s显示03s
+	function toTwo(n) {
+		return n < 10 ? '0' + n:'' + n;
+	}
+}
+
+----------------------
+	*倒计时*
+两个Date可以相减,得到的差是number类型,以ms为单位
+
+	var time1 = new Date(2017, 3, 18, 23, 3, 0); 
+	var time2 = new Date('April 18,2017 24:0:0');
+	var t = Math.floor(time2 - time1/ 1000);	//将ms转为s，同时转成整数
+
+再进一步,转为天-小时-分-秒:
+	天:Math.floor(t/86400)
+	时:Math.floor(t%86400/3600)
+	分:Math.floor(t%3600/60)
+	秒:t%60
+
+综合起来：
+	var str = Math.floor(t/86400) + '天' + Math.floor(t%86400/3600) + '时' 
+			+ Math.floor(t%86400%3600/60) + '分' + t%60 + '秒';
+
+----------------------
+	*设置css值 写*
+方法一:obj.style.属性 	针对行间style中的属性值
+	obj.style.width='100px';
+	相当于给元素添加/修改行间样式style="width:100px",而行间样式的优先级最高
+	
+方法二:obj.style.cssText	针对行间style中的所有内容。
+	obj.style.cssText='width:350px;'
+	会将原来的style内容换成'width:350px;'.所以原先行间style中设置的所有值都被覆盖掉了，只留下一个新加的width:350px。
+以上两种方法都是针对行间样式，所以读的时候不好用。
+
+----------------------
+	*获取css值 读*
+方法一:getComputedStyle(obj).width【只读,不能写】
+	1:IE6 7 8不能用，没有这个函数，会报错
+	2:可以获取伪类window.getComputedStyle("元素", "伪类");
+	3:得到计算后的值,比如2em经过计算会得到对应的px
+
+方法二:obj.currentStyle.width【只读,不能写】
+	1:只有IE能用(所有IE)
+	2:不能获取伪类
+	3:不会计算,2em还是2em
+兼容:
+	1 var oStyle = oSpan.currentStyle? oSpan.currentStyle:getComputedStyle(oSpan);	
+	2 var oStyle = window.getComputedStyle ? getComputedStyle(oSpan) : oSpan.currentStyle;
+	3 //错误：var oStyle = getComputedStyle ? getComputedStyle(oSpan) : oSpan.currentStyle;
+	  在IE6 7 8中会报错，“getComputedStyle”未定义。判断条件必须写成window.getComputedStyle
+	4 问题：方法1 2虽然能解决兼容问题，但是返回的值有可能不同。比如一个div设置width: 20%; 用getComputedStyle()得到的oStyle是270px，用currentStyle得到的oStyle是20%. 
+注意:
+	1 不要获取复合样式,各浏览器返回不同。
+		如background: chrome会返回一长串,FF和IE9+会返回空,IE8-返回undefined
+	2 不要用返回的color做判断，各浏览器返回不同。
+		black rgb(0,0,0) #000000
+	3 不能用-,用驼峰:backgroundColor来替代background-color
+	4 不要获取未设置的值
+		比如一个div没有设置margin：想要返回margin值:chrome返回0px,FF和IE9+返回空,IE8-返回auto
+more information:
+http://www.zhangxinxu.com/wordpress/2012/05/getcomputedstyle-js-getpropertyvalue-currentstyle/
+
+
+----------------------
+	*annoying的cssFloat与styleFloat问题*
+读写float值,使用xxxx.float不行。需要判断浏览器,IE使用styleFloat,非IE用cssFloat。
+1 读：完美兼容所有(自己测过了)
+		var oStyle = oSpan.currentStyle? oSpan.currentStyle.styleFloat:getComputedStyle(oSpan).cssFloat;	
+		说明：currentStyle能用，说明一定是IE,所以用styleFloat。非IE用cssFloat
+2 写：要修改float的时候:
+	obj.style.cssFloat ="left";	//兼容火狐
+	obj.style.styleFloat ="left";	//兼容IE
+
+----------------------
+	*if条件的真假*
+真:
+	非0的数字
+	非空字符串
+	true
+	存在的函数
+	存在的对象
+假:
+	0和NaN
+	空字符串''
+	false
+	不存的函数
+	不存在的对象和空对象null
+	undefined
+易错：空array是true，空str是false
+
+----------------------
+	* 与&& 或|| *
+&&和||都是先左后右,没必要看右时根本不看
+
+	var a = 12 < 90 && 20;	//20(number)
+	var a = 12 > 90 && 20;	//false(boolean)
+	var a = 5 > 10 || 7;	//7(number)
+	var a = 5 < 10 || 7;	//true(boolean)
+
+使用回调函数时:endFn&&endFn();
+
+	var a = 0 || 1 || 2;	// a = 1
+	var b = 1 || 0 || 3;	// b = 1
+	var c = 0 || 0 || 0;	// c = 0
+	var a = 0 && 1 && 2;	// a = 0
+	var b = 1 && 0 && 3;	// b = 0
+	var c = 0 && 0 && 0;	// c = 0
+	var d = 1 || 2 || 4;	// d = 1
+更多参考：http://www.cnblogs.com/moqing/p/6714085.html【待补充】
+
+----------------------
+	*switch*
+注意:switch使用恒等===来比较
+	var x = '10';
+	switch (x) {
+	   case 10:
+	      console.log(1);
+	      break;
+	   case '10':
+	      console.log(2);
+	      break;
+	}	//输出:2
+
+----------------------
+	*条件表达式?: *
+例： alert(120 < 450 ? '120<450':'120不小于450');
+右结合:
+	var a = 1,b = 2,c = 3,d = 4;
+	var x = a < b ? a:c < d ? c:d;
+	console.log(x); //1
+
+
+-----------------------
+	*关键字 保留字*
+关键字:var function等
+保留字:Javascript保留字也不可以用作变量,函数名,对象名等,其中有的保留字是为以后Javascript扩展用的。
+  例子：class 	=> className
+	float => styleFloat cssFloat
+
+
+-----------------------
+	*连续赋值*
+赋值运算符：从右向左 
+	a=b=5;相当于a=(b=5)，而b=5返回b
+
+例子1：
+	 	function f(){  
+	 	    var a = b = 5;	//只声明了a
+	 	}
+	 	alert(a); 	//报错
+	 	alert(b); 	//报错
+	 	f();  
+	 	alert(a); 	//报错
+	 	alert(b); 	//5
+  分析：跟连续赋值的“奥秘”没关系。f()中的b在使用前没有声明,被提升为全局变量。
+
+例子2：【难点】
+	1-	var a = {n:1};  
+	2-	var b = a;
+	3-	a.x = a = {n:2};  
+	4-	alert(a.x);		//undefined
+	5-	alert(b.x);		//[object Object]
+  关键点：
+	1 运算符.的优先级比=的优先级高【关键点还是这里】
+		所以在赋值前,先进行a.x,即给a新加一个属性x,x为undefined
+		之后才进行连续赋值操作
+	2 =赋值运算符：从右向左
+  分析：
+	1 定义a,赋值为{n:1},假设指向存储地址为add_1
+	2 定义b,赋值为a,指向同一存储地址add_1  
+	3 	
+	4 现在a的存储地址add_2,内容为{n:2},其中并不存在a.x属性,所以为undefined 
+	5 现在b的存储地址add_1,内容为{n:1,x:{n:2}},所以b.x为{n:2} 
+  如果接着：
+  	a.n="haha";
+  	alert(b.x.n);	//haha
+  说明a和b.x指向相同
+
+例子3：
+	1-	var a = {n:1};  
+	2-	var b = a;
+	3-	a = a.x = {n:2};  
+	4-	alert(a.x);		//undefined
+	5-	alert(b.x);		//[object Object]
+  分析：和例子2只有第三行不同,输出结果没有差别。
+
+
+-----------------------
+	*js什么都能干*
+html中的任何元素都可以在js中操作。举例：
+1 网页换肤：换css样式表
+  通过tag、id等选中需要替换的link，然后修改它的href
+	document.getElementsByTagName('link')[0].href = 'b.css';
+
+2 修改标题
+	document.title='可以这么修改';
+	document.getElementsByTagName('title')[0].innerHTML = '或者这么修改';
+
+3 添加<style>（只是说明可以这样，不代表真的要这么干。。）
+	var style = document.createElement('style');
+   	style.innerText = 'div{width: 200px;height: 100px;}';
+	document.body.appendChild(style);
+
+4 jsonp：动态添加<script>
+
+-----------------------
+	*分号*
+在JavaScript中,分号是可选的。如果是一个不完整的语句,JavaScript 将尝试读取第二行的语句。如果读到一个完整的语句,
+JavaScript 将自动关闭语句。
+看一个例子：
+	function myFunction(a) {
+	1 	var
+	2 	power = 10;  
+	3 	return
+	4 	a * power;
+	}
+读到第1行时,var是一个不完整的语句,JavaScript 将尝试读取第2行：power = 10。
+读到第3行时,由于只有一个return也是完整的语句,所以JavaScript 将自动关闭语句:return;。
+所以不会读到第4行,在第3行时就返回undefined
+
+-----------------------
+	*void*
+void 是 JavaScript 中非常重要的关键字,该操作符指定要计算一个表达式但是不返回值。
+例子：
+	var a, b, c;
+	a = void(b = 5, c = 7);
+	console.log(a);	//undefined
+href="#"与href="javascript:void(0)"的区别：
+	# 包含了一个位置信息,默认的锚是#top 也就是网页的上端。
+	而javascript:void(0), 仅仅表示一个死链接。
+	在页面很长的时候会使用 # 来定位页面的具体位置,格式为：# + id。
+	如果你要定义一个死链接请使用 javascript:void(0) 。
+
+-----------------------
+	*<script>*
+有多个<script>时,从上到下依次处理。处理完一个,才去处理下一个。
+所以,使用js库时,要把引用的的写在前面,自己的写在后面:
+	<script src='jquery.js'></script>
+	<script> ...使用jquery </script>
+
+例子1:
+	<script>
+		var a=33;
+	</script>
+	<script>
+		alert(a);		//33
+	</script>
+
+例子2:
+	<script>
+		alert(a);		//报错:ReferenceError: a is not defined
+	</script>	
+	<script>
+		var a=33;	
+	</script>
+
+-----------------------
+	*显式(强制)类型转换*
+Number()、parseInt()、parseFloat()等
+
+	*隐式类型转换*
+1 +	转string
+	200 + '3'		结果：'2003',
+  备注：算术运算符里只有+特殊，是转成string。其他运算符都是转成number。这是因为只有+有两重作用：加法和连接字符串。
+
+2 -*/%	转num(自动用Number()来转)
+	'200' * 3   	结果：600  
+	'…'-9       	结果：NaN,因为Number('…')->NaN，NaN-9还是NaN
+
+3 ++ --	转num(自动用Number()来转)
+	var a='5';a++	结果：6
+
+4 > <	有num时转num(自动用Number()来转)
+	'100'>9       	结果：true,转num
+	'100'>'9'     	结果：false,不转num
+	'100px' > 9  	结果：false  
+	'100px' < 9  	结果：false
+	'100px' == 9   	结果：false
+	'100px' !== 9  	结果：true
+	Number('100px')->NaN, NaN和9不能说谁打谁小,只能说不等。
+
+5 !	转boolean
+	!5   			结果：false
+	!0    			结果：true
+
+6 == 把等号两边转成同样类型
+	'2'==2.0    	结果：true
+  备注：这就是==和===有区别的原因：==进行隐式类型转换后，转成同一类型再比较值；===不进行类型转换
+
+-----------------------
+	*NaN*:not a number 不是个数字的number类型
+1 var a = Number('abc');	// NaN
+  alert( typeof (a) );	// NaN的类型是number
+
+2 一旦写程序中出现:NaN  肯定进行了非法的运算操作
+	alert( '200px' -  100 );
+	//-减号,转num,Number("200px")->NaN
+
+3 NaN是false
+
+4 NaN和自己不相等：可以用来判断是不是NaN
+	var a1 = undefined; 
+	var a2 = null; 
+	var a3 = NaN; 
+	console.log(a1 === a1);	//true
+	console.log(a2 === a2);	//true
+	console.log(a3 === a3);	//false
+	console.log(a3 == a3);	//false
+
+-----------------------
+	*isNaN()函数*
+判断是不是数字(不是判断数字类型),会自动先用Number()进行转换
+
+isNaN(function(){});//不是num->true
+isNaN('250');	//Number('250')=250->是num->false
+isNaN([])		//Number([])=0->是num->false
+
+注意isNaN和typeof的区别:
+一、type=number的					isNaN 		typeof
+	①-50 3.5这种普通数字			是数字		number
+	②NaN这个特殊的数字				不是数字	number
+二、type!=number的
+	①由Number()可转成number,如'12'	是数字		不是number
+	②由Number()不可以转成number的	不是数字	不是number
+
+isNaN的一个用法:
+	检查<input type="text">中输入的值是不是数字。
+	如果输入123,虽然看着是数字,但value="123",是一个string。
+	所以不能用typeof,要用isNaN。
+
+-----------------------
+	*转数字* Number() parseInt() parseFloat()
+1 Number():隐式类型转换中需要转换成number的，都是自动调用Number()的。
+	Number('+100')	//100
+2 parseInt()：忽略开始的空格或tab，until读到不是数字的停。
+	parseInt('	3.59px');		//3
+	parseInt('  a3.59');		//NaN
+
+例子：        Number  parseInt parseFloat
+  a='    '		0		NaN 	NaN
+  a=true		1		NaN 	NaN
+  a=[3.5]		3.5		3 		3.5
+  a=[3.5,5]		NaN		3 		3.5
+  a=null		0		NaN 	NaN
+  a=' 2.9px 2'	NaN		2 		2.9
+  a={}			NaN 	NaN 	NaN
+  a=undefined 	NaN 	NaN 	NaN
+
+判断整数or小数：
+	var num = '200.45';
+	if( parseInt(num) == parseFloat(num) ){
+		alert( num + '是整数' );
+	}else{
+		alert( num + '是小数' );
+	}
+
+
+-----------------------
+	*定时器*
+异步，不阻塞。
+先计时：也就是第一次函数执行前,也要先等xx毫秒	
+	var timer1 = setInterval( 函数, 毫秒，参数);	//重复执行
+	clearInterval( timer1 );
+	var timer2 = setTimeout( 函数, 毫秒，参数 );	//执行一次
+	clearTimeout( timer2 );
+
+例子1：
+	var a = 5;
+	var timer = setInterval(show, 300);
+	function show() {
+	   alert(a);
+	   a += 5;
+	   if (a === 15) {
+	      clearInterval(timer);
+	   }
+	}
+  结果：
+	（等300ms）弹出5,a变为10
+	（等300ms）弹出10,a变为15,定时器被停掉
+
+例子2：需要传参
+	setTimeout(hello,1000,'hi');
+	function hello(word){
+		alert(word);
+	}
+  结果:
+  	（等1s）弹出hi
+
+另一个setTimeout小例子：qq info
+	<style>
+	   #qq {width: 200px;height: 100px;background-color: coral;}	   
+	   #info {width: 100px;height: 80px;background-color: lightcoral;display: none;position: relative;left: 50px;top: 20px;}
+   	</style>
+	<body>
+	   <div id="qq"></div>
+	   <div id="info"></div>
+	</body>
+	<script>
+		qq.onmouseover = info.onmouseover = show;
+		qq.onmouseleave = info.onmouseleave = hide;
+		function show() {
+			clearTimeout(info.timer);	//一定要先关定时器
+			info.style.display = 'block';
+		}
+		function hide() {
+			info.timer = setTimeout(function() {
+				info.style.display = 'none';
+			}, 500);
+		}
+	</script>
+
+定时器的第一个参数可以是字符串类型的函数语句：
+  例子1：
+	function fn1() {
+	    console.log('hahah!~~');
+	}
+	setTimeout("fn1();", 1000);
+  例子2：
+	var num = 0;
+	function fn1(n) {
+	    console.log(n);
+	}
+	setInterval("num++;fn1(num);", 1000);
+
+运动框架、拖拽、模拟滚动条见“Javascript\运动”
+
+--------------------
+	*DOM*
+DOM:document object model 文档对象模型
+	标准：W3C标准
+	顶级对象：document
+浏览器会根据DOM模型,将HTML文档解析成一系列的节点,再由这些节点组成一个树状结构。
+DOM的最小组成单位叫做节点(node),节点有12种。（元素节点的nodeType为1）
+
+一般地,节点至少拥有nodeType、nodeName和nodeValue这三个基本属性。
+节点类型不同,这三个属性的值也不相同
+
+--------------------
+	*DOM：创建、添加、替换、删除、克隆*
+1 创建：document.createElement(标签名称);
+	1 什么都可以动态创建：link script style..
+	2 标签名字叫什么都ok。
+	3 创建完的标签浏览器就认得了，HTML5新标签兼容就是这么解决的
+
+2 添加：         
+	1 父级.appendChild(要添加的元素)
+		加在最后面
+	2 父级.insertBefore(新元素,指定元素)	
+		在指定元素前面插入新元素
+		第二个参数的节点不存在时，会以appendChild的形式进行添加
+        (IE8-下如果第二个参数的节点不存在,会报错)
+3 替换：父级.replaceChild(新节点,被替换节点)
+
+备注：appendChild,insertBefore,replaceChild都可以操作动态创建出来的节点,也可以操作已有节点。而且是将已有的元素移动，而不是复制一份进行操作。
+
+4 克隆：var cElement=元素.cloneNode(true); 
+	在克隆的时候，默认参数为false只克隆元素本身，不会克隆该元素的所有子节点。如果true，那么克隆所有子节点。
+	事件是不会被克隆的。
+
+5 删除：父级.removeChild(要删除的元素);
+
+解决IE8-中，insertBefore的兼容问题：
+     if (oUl.children[0]) {
+        oUl.insertBefore(oLi, oUl.children[0]);
+     } else {
+        oUl.appendChild(oLi);
+     }
+
+--------------------
+	*文档碎片*
+本意：减少页面渲染次数，提升性能。
+	var oFrag = document.createDocumentFragment();
+	for (let i = 0; i < 10000; i++) {
+	   var oLi = document.createElement('li');
+	   oFrag.appendChild(oLi);
+	}
+	oUl.appendChild(oFrag);
+
+问题：1 没有人会一次性加那么多元素进去，加1w个元素进去，经测试也只需要300ms
+	  2 只是理论上会优化性能，经测试反而慢了
+所以，没意义
+
+--------------------
+	*DOM: 找所有子节点*
+两种方法：childNodes和children，都是只找子节点,不找孙节点
+
+第一种：childNodes【不推荐】
+  1 childNodes：只读属性,是子节点列表的集合
+  2 标准下：会包含所有类型的节点（12种）
+	非标准下：只包含元素节点
+  3 不管麻烦，非要使用的话：
+      for (var i=0; i<oUl.childNodes.length; i++) {      	
+      	if ( oUl.childNodes[i].nodeType === 1 ) {
+      		//元素节点的nodeType是1
+      		oUl.childNodes[i].style.background = 'red';
+      	}      	
+      }
+
+第二种：children【推荐】	
+  1 元素.children:只读属性 子节点列表集合
+  2 标准+非标准：都是只包含元素节点
+  3 例子：
+	for (var i = 0; i < oUl.children.length; i++) {
+		oUl.children[i].style.background = 'red';
+	}
+
+--------------------
+	*DOM: 找特定子节点*
+标准(IE9+)：
+  1 找元素子节点
+	父.firstElementChild
+	父.lastElementChild
+	子.nextElementSibling
+	子.previousElementSibling
+  2 找子节点（包含所有类型节点）
+ 	父.firstChild
+ 	父.lastChild
+ 	子.nextSibling
+ 	子.previousSibling
+
+IE8-：只能找到元素节点（没有firstElementChild等属性）
+	父.firstChild（找到第一个元素子节点）
+	父.lastChild
+	子.nextSibling
+	子.previousSibling
+
+兼容：
+	var oFirst = oUl.firstElementChild || oUl.firstChild;
+  	但是,这样写有问题[A]：当oUl元素没有元素子节点,但是有其它子节点时。标准下会找到其他子节点，IE8-找不到。
+  注：这些找子节点、兄弟节点,都一样存在问题[A]
+
+--------------------
+	*DOM: 找父节点*
+1 元素.parentNode
+2 元素.offsetParent:找到定位父级
+	如果没有定位父级,默认是body（不是document）
+	document.body.offsetParent===null(说明body没有offsetParent)
+
+--------------------------
+	offsetLeft和offsetTop
+
+元素.offsetLeft:只读 
+  当前元素外边框到定位父级的内边框的距离
+  (元素的left和margin会影响，元素的border和padding、定位父级的padding没影响）
+  如果没有定位父级,offsetLeft是到document的距离
+
+用途举例：封装一个定位函数(相对于body)，没考虑border
+	function getPos(obj) {		
+		var pos = {left:0, top:0};	
+		while (obj) {
+			pos.left += obj.offsetLeft;
+			pos.top += obj.offsetTop;
+			obj = obj.offsetParent;
+		}		
+		return pos;		
+	}
+  使用：var iLeft = getPos(oDiv1).left;
+
+
+--------------------------
+	getBoundingClientRect
+用法：oDiv.getBoundingClientRect().left
+	获取某个元素的信息（left,top,bottom,rigit,width,height）
+	元素的外边框到当前视窗的距离（不算滚动条的距离）
+非常强大，很好用
+
+ --------------------
+ 	*区别*
+1 这样加的index是div1的行间样式：
+ 	<div id="div1" index='aa'></div>
+
+2 不是行间样式 	：
+ 	<div id="div1"></div>
+ 	div1.index='aa';
+ 	这样添加的index不是div1的行间样式，在DOM结构中看不到它，用getAttribute取不到
+
+
+ --------------------
+ 	*操作属性*
+都是针对行间样式的：
+	<div id="div1"></div>
+1 获取	elem.getAttribute('id')	
+2 设置	elem.setAttribute('index','aaa')	
+	这样设置到行间样式中，在DOM中可以看到	
+3 删除	elem.removeAttribute('index')
+
+特点：
+	1 想要在js中给elem添加行间的自定义属性，就需要用elem.setAttribute('index','aaa')
+	  用elem.index='aaa'设置的不是行间的，在DOM中看不到
+	2 getAttribute可以获取src href的相对地址，可以来做判断
+		img.src 返回的是绝对地址，而且不同浏览器格式可能不同
+		if(oImg.getAttribute('src') == '1.jpg') 可以
+		if(oImg.src == '1.jpg') 不可以
+
+ --------------------
+	*元素宽高*
+1 style.width : 样式宽   有单位 width
+2 clientWidth : 可视区宽 无单位 width+padding
+3 offsetWidth : 占位宽   无单位 width+padding+border
+4 scrollWidth ：实际宽度 无单位 content+padding
+ 	1 内容无溢出时，=clientWidth
+ 	2 内容溢出时，把溢出的也算上，但是有兼容问题：
+	  chrome:padding算2次
+	  火狐 IE:padding算1次
+  所以根本用不上：不溢出时用clientWidth代替；溢出时由于兼容问题用不了
+
+--------------------
+	*JS组成* 
+1 javascript组成：ECMAScript + DOM + BOM
+	ECMAScript 	
+	DOM接口		document 	遵从W3C标准
+	BOM接口		window   	各浏览器自己的标准
+
+2 window对象的双重身份
+	1 window是BOM的顶层对象，特指【当前】窗口
+
+	2 window不是javascript对象。但是在ECMAScript中将window设定为Global对象，所以全局作用域中的任何东西都在window之下。
+    	在纯js文件中：
+    		console.log(window);	//报错window is not defined
+    	在浏览器环境中：
+	    	console.log(typeof window);		//object
+	    	console.log(window);			//Window {…}
+	    	console.log(window.constructor);	//Window() { [native code] }
+	    	console.log(typeof Window);		//function
+	    	console.log(Window);			//Window() { [native code] }
+	3 所以，window中的内容，有的是因为BOM，有的是因为ECMASctipt 。
+			window.open()		//BOM中定义的open方法
+			window.document 	//因为ECMAScript将window定为全局变量
+
+
+--------------------
+	*BOM*
+BOM:Browser Object Model
+BOM中的顶层对象是window,是特指【当前】窗口。
+同时window也是ECMAScript中设定的Global对象，所以全局作用域中的任何东西都在window之下。（双重身份）
+
+1 方法method：open close alert confirm prompt
+	1 open(url,打开方式)
+		打开一个新窗口,返回新开页面的Window对象
+		url默认是空白页面,打开方式默认新窗口
+
+	    	var opener = window.open('http://www.baidu.com', '_self');
+	        alert(opener == window)		//false
+
+	2 close方法：
+	  关自己：window.close();
+			ff chrome:无法关闭,点了没反应
+			ie:问客户是否关闭
+			涉及浏览器设置,无法做兼容（不过我们一般也不会去主动关自己的窗口。。）
+	  关别人：可以关闭本窗口中用window.open方法打开的新窗口
+			opener.close(); 
+			所有浏览器中都能关掉
+
+	3 alert confirm prompt
+		var a = window.alert('这是警示框');     //undefined
+		var c = window.confirm('你确认吗?');    //true或者false
+		var p = window.prompt('输入信息');  	//返回一个string
+
+2 属性attribute：
+	1 navigator.userAgent: 浏览器信息,是string
+		可以用它来查看浏览器的版本，内核等等信息
+	2 location: 浏览器地址 虽然长得像string,但是typeof是一个object
+		因为是object,所以有属性href search hash等（更多可以自己用for in查看）
+		location.href = location内容
+	   	location.search = url?后面的内容
+	   	location.hash = url#后面的内容
+	3 status： 可读可写的字符串,声明了要在窗口状态栏中显示的一条消息。
+		大部分浏览器已经关闭了脚本化它们的状态栏的功能,所以没用。
+
+4 window对象常用事件
+	1 onscroll 当滚动条滚动的时候触发
+	2 onresize 当窗口大小发生变化的时候触发
+  备注：事件都是按时间间隔来算的,不是px一变就触发：假设时间间隔为1ms,那么1ms内滚动条动1下,触发一次；1ms内滚动条动2下,还是只触发一次。 举例：
+	var i = 0;
+	window.onscroll = function() {
+		document.title = i++;
+	}
+	window.onresize = function() {
+      document.title = i++;
+   }
+   相同的距离,你拉的越慢,i最终越大
+
+备注：【个人理解】	
+	BOM中定义的Window对象的属性和方法，是所有Window对象都能用的。
+		window.alert();		//在当前窗口里弹
+		opener.alert();		//在新窗口里弹
+		alert();			//等价于window.alert(),在当前窗口里弹
+	但是，很多情况下，新窗口有“跨域”问题，出于安全考虑，跨域的opener很多属性、方法不允许操作。
+		opener.alert();			//新窗口如果跨域会报错：Uncaught SecurityError
+		window.alert(opener.location)	//跨域会报错：Uncaught SecurityError
+	当然，也有跨域了还不报错的：close（暂时只发现了一个）
+		opener.close();	//跨域也能关掉
+
+--------------------
+	*窗口尺寸与大小*
+1 可视区尺寸 可读 不可写（是number类型）
+	document.documentElement.clientWidth/clientHeight	
+
+2 滚动条滚动距离：可读 可写（是number类型）
+	document.body.scrollTop/scrollLeft
+	document.documentElement.scrollTop/scrollLeft
+	其他所有浏览器：body的恒为0  documentElement的是所要
+	只有chrome是：	body的是所要 documentElement的恒为0
+	兼容：
+		var doc = document[document.body.scrollTop ? 'body' : 'documentElement'];
+	可读：alert(doc.scrollTop);
+	可写：doc.scrollTop = 500;
+	备注：如果写成var scrollTop = document.body.scrollTop ||document.documentElement.scrollTop;
+		则scrollTop是number，不会“实时变化”。
+		而前面的方法中，doc是object类型，是引用（存的地址），会实时变化。
+
+3 文档高度 （是number类型）
+	document.documentElement.offsetHeight //IE10及以下有兼容问题,返回的值和大家不一样
+	document.body.offsetHeight	//没有兼容问题,用这个
+  这两个的值可能不一样的原因就在body默认有margin值。不过我们一般都会清掉body的margin,所以无所谓
+
+
+--------------------
+	*事件对象event*
+1 event 事件对象
+  当一个事件发生的时候,这个事件的详细信息都会被临时保存到一个指定地方-event对象,供我们在需要的调用。(飞机 黑匣子)
+  事件对象必须在一个事件函数里面使用才有内容.
+
+2 事件函数：事件调用的函数。
+  一个函数是不是事件函数,不在定义时决定,而是在函数调用时决定。
+  例子：
+  		function fn1(ev) {
+			alert( event );
+		}
+		fn1();	//不是事件函数
+		document.onclick = fn1;	//是事件函数,所以event有内容
+
+3 兼容性：	
+	1 ie/chrome:event是一个内置全局对象,可以直接用
+	2 标准:事件对象是通过事件函数的第一个参数传入（ie/chrome也可以这样用）
+		   如果一个函数是被事件调用的,那么这个函数定义的第一个参数就是事件对象
+		   IE8-不支持
+  	处理兼容问题：（比如IE8-只认window.event，FF只认第一个参数）
+	  	function fn1(ev) {
+	  		ev = ev || window.event;
+	  	}
+
+4 clientX[Y]属性:当一个事件发生的时候,鼠标到页面可视区的距离。
+  例子1：
+	function fn1(ev) {
+		var ev = ev || event;
+		alert(ev.clientX);
+	}
+	
+  例子2：跟随鼠标移动的div
+	(这里oDiv是fixed的)
+	var oDiv = document.getElementById('div1');	
+	document.onmousemove = function(ev) {		
+		var ev = ev || event;
+		oDiv.style.left = ev.clientX +'px';
+		oDiv.style.top = ev.clientY + 'px';
+	};
+
+--------------------
+	*事件绑定/取消的2种方式*
+1 事件函数绑定，比如：oDiv1.onclick = fn1;  
+  我们以前会说“给oDiv1加事件”,但其实这样说不准确，事件一直都在，应该是：“给oDiv1的onclick事件（的冒泡阶段）添加事件处理函数fn1”：告诉div1,如果它接收到了一个点击事件,那么它（在冒泡阶段）就去执行fn1
+
+第1种：一个事件只能绑定一个函数
+	obj.onclick = fn1;
+	obj.onclick = fn2;	//fn2会覆盖前面绑定的fn1	
+	1 没有捕获，只能冒泡。阻止冒泡用：
+		ev.cancelBubble = true;
+		ev.stopPropagation();	//if(ev.stopPropagation)
+	2 阻止默认事件用return false
+	3 取消绑定用obj.onclick = null;
+
+第2种：一个事件可以绑定多个函数
+ (1)obj.attachEvent('onclick', fn1);
+	obj.attachEvent('onclick', fn2);
+	obj.detachEvent('onclick', fn1); //fn2还在
+  	  	1 IE10-(经测试IE edge中不可用)
+  	  	2 没有捕获，只能冒泡
+  	  		阻止冒泡用ev.cancelBubble=true;
+  	  	3 绑定多个事件函数时执行的顺序：
+  			IE7 8：倒序
+  			IE9 10：正序
+  		  例子：
+			oDiv.attachEvent('onclick', function() {alert(1);});
+			oDiv.attachEvent('onclick', function() {alert(2);});
+			oDiv.attachEvent('onclick', function() {alert(3);});
+  			结果：1 2 3（ie9 10）
+  				  3 2 1（ie6 7 8）
+  	  	4 this指向window
+  		  解决：函数的call方法
+  			obj.attachEvent('onclick', function() {
+  				fn1.call(obj);
+  			});
+  	  	5 阻止默认事件用return false
+  	  	6 取消绑定用detachEvent
+
+ (2)obj.addEventListener('click', fn1, false);
+	obj.removeEventListener('click', fn1, true);	//没取消上面的
+	obj.removeEventListener('click', fn1, false);	//这才取消了
+		1 标准(IE8-不支持)
+		2 true捕获 false冒泡。默认为false	
+		3 绑定多个事件函数 执行的顺序：正序
+	  		oDiv3.addEventListener('click', function() {alert(1);}, false);
+	  		oDiv3.addEventListener('click', function() {alert(2);}, false);
+	  		oDiv3.addEventListener('click',f function() {alert(3);}, false);
+	  	  结果：1 2 3
+		   oDiv.addEventListener('click',function(){alert(1);},true);
+		   oDiv.addEventListener('click',function(){alert(2);},false);
+		   oDiv.addEventListener('click',function(){alert(3);},true);
+		   oDiv.addEventListener('click',function(){alert(4);},false);
+		  结果：1 2 3 4(直接点自己的时候，顺序和true false没关系)
+		4 this指向触发该事件的对象
+		5 阻止默认事件用preventDefault()
+		6 取消绑定用removeEventListener
+
+ (3)封装一个兼容的函数：
+  	function bind(obj, evname, fn) {
+  		if (obj.addEventListener) {
+  			obj.addEventListener(evname, fn, false);
+  		} else {
+  			obj.attachEvent('on' + evname, function() {
+  				fn.call(obj);
+  			});
+  		}
+  	}
+  	使用：bind(document, 'click', fn1);
+  		  bind(document, 'click', fn2);
+  	备注：有"执行顺序不一致"的问题，不过一般不care。
+  	      只能是冒泡
+
+--------------------
+	*冒泡与捕获*
+更多参考：http://blog.jobbole.com/39446/
+1 问题：里外层div都绑定了事件，点击里层div后，哪个事件先触发
+	<div>
+	    <div></div>
+	</div>
+
+2 历史回顾
+	Netscape主张：外层优先 捕获
+	微软主张：内层优先 冒泡
+
+3 W3C规范：先进入捕获阶段，直到达到目标元素，再进入冒泡阶段
+	捕获阶段：外->里
+		标准：addEventListener( , , true);
+	冒泡阶段：里->外
+		obj.onclick = fn;
+		IE：attachEvent
+		标准：addEventListener( , , false);
+例子：
+  结构：div1>div2>div3 点击div3
+  函数为：function fn1() {alert(this.id);}
+
+  1 oDiv1.onclick = fn1;
+	oDiv2.onclick = fn1;
+	oDiv3.onclick = fn1;
+ 	冒泡。结果：弹出3 2 1
+
+  2 oDiv1.addEventListener('click', fn1, false);
+	oDiv2.addEventListener('click', fn1, false);
+	oDiv3.addEventListener('click', fn1, false);
+ 	false=冒泡。结果：3 2 1
+
+  3 oDiv1.addEventListener('click', fn1, true);
+	oDiv2.addEventListener('click', fn1, true);
+	oDiv3.addEventListener('click', fn1, true);
+ 	true=捕获。结果：1 2 3
+
+  4 oDiv1.addEventListener('click',弹1,false);
+	oDiv1.addEventListener('click',弹2,true);
+	oDiv3.addEventListener('click',弹3,false);
+ 	结果：2 3 1（通过oDiv3的点击事件传到oDiv1）
+
+  5 oDiv1.addEventListener('click',弹1,true);
+ 	oDiv1.addEventListener('click',弹2,false);
+ 	oDiv1.addEventListener('click',弹3,true);
+ 	oDiv1.addEventListener('click',弹4,false);
+ 	结果：1 3 2 4
+
+  6 oDiv3.addEventListener('click',弹1,true);
+    oDiv3.addEventListener('click',弹2,false);
+    oDiv3.addEventListener('click',弹3,true);
+    oDiv3.addEventListener('click',弹4,false);
+  	结果：1 2 3 4
+	点自己触发事件时，true和false不影响顺序,只和代码中的顺序有关
+
+
+--------------------
+	*冒泡*
+1 不单独说捕获，把冒泡拿出来单独说的原因：
+  实际中绑定事件很多都用obj.onclick = fn;，而这种方法是在冒泡阶段绑定事件。
+
+2 利用冒泡（冒泡的好处）：
+	左侧“分享栏”效果：
+	<style>
+		#div1 {width: 100px; height: 200px; background: red; position: absolute; left: -100px; top: 100px;}
+		#div2 {width: 30px; height: 60px; position: absolute; right: -30px; top: 70px; background: black; color: white; text-align: center;}
+	</style>
+
+  	<div id="div1">
+      	<div id="div2">分享到</div>
+    </div>
+
+    var oDiv1 = document.getElementById('div1');    
+    oDiv1.onmouseover = function() {
+    	this.style.left = '0px';
+    };    
+    oDiv1.onmouseout = function() {
+    	this.style.left = '-100px';
+    };
+
+  目的：鼠标移入div2时，显示div1.
+  		鼠标移出div1或div2时，隐藏div1.
+  利用冒泡机制，我们只需要给div1加事件函数。div2触发mouseover/out事件时，虽然没有处理函数，div2本身不会有任何反应。但是div2会将这一事件传给父级div1，div1有处理函数。
+
+3 冒泡带来的问题 ：
+	oBtn.onclick = function() {
+		oDiv.style.display = 'block';
+	}
+	document.onclick = function() {
+		oDiv.style.display = 'none';
+	}
+  本意：想要点一下按钮，显示div。点其他地方，隐藏。但是因为冒泡，点击事件会一直往上传，传到document时会将div隐藏。
+  可以做个延时，看得更清楚：
+	document.onclick = function() {
+		setTimeout(function() {
+			oDiv.style.display = 'none';
+		}, 1000);
+	}
+	
+4 阻止冒泡：
+  微软的模型中：event.cancelBubble = true
+  w3c模型中：event.stopPropagation()
+  兼容：
+  	oBtn.onclick = function(ev) {
+  		var ev = ev || event;  		
+  		
+  		...
+  		ev.cancelBubble = true;
+		if (ev.stopPropagation) ev.stopPropagation();
+  	};
+
+
+--------------------
+	*默认事件*
+1 默认事件：也叫“事件默认行为”，当一个事件发生的时候浏览器默认做的事情。比如：
+	点击一个a链接：跳转到对应页面
+	点击form内的submit：向后端提交数据
+	在一段文字上点击并移动鼠标：选中文字
+	js中运行到oBtn.focus()：光标移到oBtn中
+	右键单击：弹出右键菜单
+	按空格：页面下滚
+	鼠标滚轮：页面滚动
+
+2 怎么阻止？
+  1 思路：首先确定当前这个行为是什么事件触发的，然后在这个事件的处理函数中阻止它。
+  2 具体方法：
+	  1 obj.onclick = fn和attachEvent用return false
+	  2 addEventListener用ev.preventDefault()
+    例子1：阻止了oncontextmenu的默认事件"弹出浏览器默认菜单"
+  	document.oncontextmenu = function() {return false;};
+  	document.attachEvent('oncontextmenu', function() {return false;});
+  	document.addEventListener('contextmenu', function(ev) {ev.preventDefault();});
+
+	例子2：阻止了keydown的all默认事件，比如：页面有滚动条时，按space不会下滚了。
+  	document.onkeydown = function() {return false;};
+
+	例子3：
+	document.oncontextmenu = function() {  
+		document.title='哈哈';
+		return false;		
+	};
+
+
+--------------------
+	*鼠标事件 -> 滚轮事件*
+1 标准: wheel(mousewheel已废弃)
+	(IE8-用不了)
+ (1)oDiv.onwheel = fn;	//只有非IE中可以用
+	oDiv.addEventListener("wheel",fn);	
+	IE中不能用obj.onwheel=fn和attachEvent，只能用addEventListener。所以IE8-用不了这个事件(因为它的DOM对象中没有onwheel属性)
+ (2)ev.deltaX ev.deltaY
+	上滚 <0  -100/-200/-300..
+	下滚 >0   100/ 200/ 300..
+
+3 实例：用滚轮控制div的高度	
+	oDiv.addEventListener("wheel", function(ev) {
+	    ev.preventDefault();	//防止页面滚动
+	    var w = parseInt(getComputedStyle(oDiv).width);
+	    if (ev.deltaY > 0) {
+	        oDiv.style.width = w - 1 + 'px';
+	    } else {
+	        oDiv.style.width = w + 1 + 'px';
+	    }
+	}, false);
+
+--------------------
+	*鼠标事件 ->右键*
+1 oncontextmenu：右击鼠标时触发，默认行为：打开右键菜单。
+2 自定义右键菜单（非常基本，待完善）
+  思路：把浏览器默认的右键菜单阻止掉
+  		把自己的自定义菜单显示出来
+  		把自定义菜单显示在鼠标出现位置
+  	oDiv是fixed定位：
+  	document.oncontextmenu = function(ev) {
+        ev = ev || window.event;
+        oDiv.style.display = "block";
+        oDiv.style.left = ev.clientX - 10 + 'px';
+        oDiv.style.top = ev.clientY - 10 + 'px';
+        document.onclick = function() {
+            oDiv.style.display = "none";
+
+        };
+        return false;
+    };
+
+
+--------------------
+	*键盘事件*
+首先要注意：不是所有元素都能够接收键盘事件。能够响应用户输入的元素，能够接收焦点的元素才能够接收键盘事件。所以oDiv.onkeydown=..是没有用的。
+键盘事件：keypress keydown keyup
+	keypress:字母数字键(大小写一个值，大小键盘的数值一个值)
+	keydown/up:所有键（字母数字键+功能键）
+	触发顺序：down - press - up
+
+1) keydown事件：按下时触发。如果按下不抬起，那么会连续触发。
+2) keyup事件：抬起时触发
+3) 属性：
+	1 event.keyCode : 是number类型。
+	  键盘按键的值，简称‘键值’。是对应的ASCII码，比如按下字母a，返回的是a的ASCII码。相同按键的键值一样，左CTRL和右CTRL的值一样
+
+	2 event.ctrlKey,shiftKey,altKey:是boolean类型
+	  当一个事件（不一定是键盘事件）发生的时候，如果ctrl、shift、alt 是按下的状态，返回true，否则返回false
+
+例子1：ctrl+回车留言  enter的键值是13	
+  	oText.onkeyup = function(ev) { //这里用up down press都可以
+  		var ev = ev || event;		
+  		if ( this.value != '' ) {
+  			if (ev.keyCode == 13 && ev.ctrlKey) {
+  				var oLi = document.createElement('li');
+  				oLi.innerHTML = this.value;
+  				oUl.appendChild( oLi );
+  			}			
+  		}		
+  	};
+
+
+例子2：键盘控制div移动
+	注意普通div是不能接收键盘事件的
+  	document.onkeydown = function(ev) {	
+  		switch(ev.keyCode) {
+  			case 37:	//左
+  				oDiv.style.left = oDiv.offsetLeft - 10 + 'px';
+  				return false;//只有上下左右阻止了默认事件
+  			case 38:	//上
+  				oDiv.style.top = oDiv.offsetTop - 10 + 'px';
+  				return false;
+  			case 39:	//右
+  				oDiv.style.left = oDiv.offsetLeft + 10 + 'px';
+  				return false;
+  			case 40:	//下
+  				oDiv.style.top = oDiv.offsetTop + 10 + 'px';
+  				return false;
+  		}
+  		//return false; //阻止所有keydown默认事件,包括F5刷新、空格下滚等
+  		
+  	}
+   注意：onkeydown如果按下不抬起，那么会连续触发。但是【连续按的时候，接受第一个响应之后会停一下，是计算机设计中人性化的考虑：害怕使用者不小心按久了一点。所以上面这么写，每次重新按都会“傻”一下，可以用定时器来解决，见“各种小效果 031”
+
+
+--------------------
+	*cookie*
+注：chrome不允许js在本地文件中操作cookie。要放在服务器端测试才行
+	用file://不行，用loaclhost或者127.0.0.1可以
+
+cookie : 存储数据，当用户访问了某网站（网页）的时候，可以通过cookie在访问者的电脑上存储数据。可以设置存储时长。
+    1.不同的浏览器存放的cookie位置不一样（存在用户电脑中的不同位置），所以是不能通用的
+    2.cookie的存储是以域名区分的，不同域名的网站存在不同位置（文件夹）中
+    3.cookie的数据可以设置名字的    
+    4.一个域名下存放的cookie的个数是有限制的，不同的浏览器存放的个数不一样
+    5.每个cookie存放的内容大小也是有限制的，不同的浏览器存放大小不一样
+    
+1 写：document.cookie = '名字=值';
+	document.cookie = 'username=emily';
+	document.cookie = 'age=8';
+
+2 读：
+	我们通过document.cookie来获取当前网站下的cookie的时候，得到的字符串形式的值，他包含了当前网站下所有的cookie。他会把所有的cookie通过"分号+空格"的形式串联起来
+	alert(document.cookie)
+	//"username=emily; age=8"（分号后面有空格）
+
+3 存储时长：
+  cookie默认是临时存储的，当浏览器关闭进程的时候自动销毁。
+  可以给cookie设置过期的时间：document.cookie = '名称=值;expires=时间';
+  时间必须是字符串格式的，用函数 toUTCString()：可根据世界时 (UTC) 把 Date 对象转换为字符串,并返回结果。  
+
+4 内容用编码存放、读取（避免特殊字符有的浏览器存储出问题,如\n换行符） 
+	encodeURI：函数可把字符串作为 URI 进行编码
+	decodeURI
+	存：document.cookie = 'username=' + encodeURI('emily\n你好');
+   	读：alert(decodeURI(document.cookie));
+
+5 封装函数：
+	function setCookie(key, value, t) {
+	   var oDate = new Date();
+	   oDate.setDate(oDate.getDate() + t);
+	   document.cookie = key + '=' + encodeURI(value) + ';expires=' + oDate.toUTCString();
+	}
+	setCookie('性别','男', 10);
+
+	function getCookie(key) {
+	   var arr1 = document.cookie.split('; ');
+	   for (var i = 0; i < arr1.length; i++) {
+	      var arr2 = arr1[i].split('=');
+	      if (arr2[0] == key) {
+	         return decodeURI(arr2[1]);
+	      }
+	   }
+	}
+	alert( getCookie('性别') );
+
+	function removeCookie(key) {
+	   setCookie(key, '', -1);	//将expires设置为前一天，来立刻删除cookie
+	}
+	removeCookie('性别');
+
+6 小应用：记录用户名（用上面三个封装好的函数）
+	<body>
+		<input type="text" id="username" />
+	    <input type="button" value="登陆" id="login" />
+	    <input type="button" value="删除" id="del" />
+	</body>
+
+	<script>
+		if ( getCookie('username') ) {
+			oUsername.value = getCookie('username');
+		}	
+		oLogin.onclick = function() {			
+			alert('登陆成功');
+			setCookie('username', oUsername.value, 5);	
+		};	
+		oDel.onclick = function() {
+			removeCookie('username');
+			oUsername.value = '';
+		};
+	</script>
+
+
+
+--------------
+	*自定义事件
+1 自定义事件 : 让函数能够具备事件的某些特性
+  用途：有利于多人协作开发代码
+2 用法：
+	//绑定自定义事件：
+	//obj:楼层，event:书架，fn:一本书	
+	function bindEvent(obj,event,fn){	
+		obj.listeners = obj.listeners || {};
+		obj.listeners[event] = obj.listeners[event] || [];		
+		obj.listeners[event].push(fn);
+	}
+
+	//主动触发自定义事件：
+	function fireEvent(obj, event) {
+        var events = obj.listener[event];
+        for (var i = 0; i < events.length; i++) {
+            events[i].call(obj);	//修改this的指向
+        }
+    }
+  使用举例：
+	<body>
+	    <span>haha啦啦啦</span>
+	    <input type="button" value='点一下'>
+	    <script>
+	    var oSpan = document.getElementsByTagName('span')[0];
+	    var oInput = document.getElementsByTagName('input')[0];
+
+	    function fn1() {
+	        this.style.color = 'red';
+	    }
+
+	    function fn2() {
+	        document.title = 'haha';
+	    }
+	    bindEvent(oSpan, 'lzxEvent', fn1);
+	    bindEvent(oSpan, 'lzxEvent', fn2);
+	    oInput.onclick = function() {
+	        fireEvent(oSpan, 'lzxEvent');
+	    };
+	    </script>
+	</body>
+
+
+-----------
+	问题：子级影响父级
+例子：
+    #div1 {width: 200px;height: 200px;background: red;}
+    #div2 {width: 100px;height: 100px;background: yellow;}
+
+	<body>
+	    <div id="div1">
+	        <div id="div2"></div>
+	    </div>
+	    <script>
+	    var oDiv = document.getElementById('div1');
+	    oDiv.onmouseover = function() {document.title += '1';};
+		oDiv.onmouseout = function() {document.title += '2';};
+	    </script>
+	</body>
+1 鼠标从"oDiv外界空白"移到"内层div2"时：
+	效果：title加上"1"
+	原因：冒泡
+2 鼠标从"内层div2"移到"oDiv外界空白"时：
+	效果：title加上"2"
+	原因：冒泡
+3 鼠标从"外层oDiv"移到"内层div2"时：
+	效果：title加上'21'
+	原因：鼠标离开外层oDiv了，所以title加"2"
+		  内层div2的"鼠标进入事件"冒泡到外层oDiv，所以title加"1"
+所以纯“阻止冒泡”不能解决问题
+	给内层div2的mouseover和mouseout都阻止冒泡
+	对情况3：title不会加1了，但还是会加2
+
+解决：
+	用onmouseenter onmouseleave(子级不会影响到父级)
+
+
+-----------
+	*Image*
+<img> 标签每出现一次，一个Image对象就会被创建。
+常用事件；onload onerror	
+canvas中加载图片：
+	var myPic=new Image();
+	myPic.onload=function(){
+		ctx.drawImage(this,0,0);
+	};
+	myPic.src='1.jpg';
+
+-----------
+	requestAnimationFrame(函数)
+例子：
+	requestAnimationFrame(move);
+	function move() {
+	    oDiv.style.left = oDiv.getBoundingClientRect().left + 3 + 'px';
+	    if (oDiv.getBoundingClientRect().left < 200)
+	        requestAnimationFrame(move);
+	}

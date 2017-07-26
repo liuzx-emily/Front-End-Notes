@@ -1,0 +1,88 @@
+--------------
+	*ajax跨域*
+html5支持ajax的跨域请求
+在标准浏览器下，XMLHttpRequest对象已经是升级版本，支持了更多的特性，可以跨域了。但是，如果想实现跨域请求，还需要另一个域的后端支持：设置header
+	
+XMLHttpRequest : 增加很多功能，虽然还能用，但是不推荐使用onreadystatechange事件来监听。推荐使用onload。
+	onload事件当请求成功时触发，即xhr.readyState == 4时
+	
+XDomainRequest : IE如果想实现跨域请求，则需要使用这个对象实现(IE7+都可以)
+
+例：域a想要访问域b下的1.php文件
+  标准下：
+	var xhr=new XMLHttpRequest();
+	xhr.onload=function(){
+		if(xhr.status==200){
+			alert(xhr.responseText);
+		}
+	}
+	xhr.open('get','http://www.b.com/1.php', true);
+	xhr.send();
+  IE下：
+	var oRequest = new XDomainRequest();
+	oRequest.onload = function() {
+		alert(this.responseText);
+	};
+	oRequest.open('get', 'http://www.b.com/1.php', true);
+	oRequest.send();
+
+  在http://www.b.com/1.php中：
+	header('Access-Control-Allow-Origin:http://www.a.com');
+	//设置允许访问该资源的域
+
+--------------
+	*ajax无刷新上传*
+XMLHttpRequest对象的新功能：利用ajax实现，无刷新上传文件。(IE不支持)
+1 上传文件要用：	<input type="file">
+	var oFile=document.querySelector('[type="file"]');
+	oFile.value	//是文件的名字，只是给用户看的
+	oFile.files //file控件中选择则的文件列表对象 是类数组（draggable拖拽外部文件也用的files对象）
+  如果只上传一个，需要传递：oFile.files[0]
+
+
+2 使用ajax无刷新上传
+	要用post方法，get有大小限制
+
+	var xhr=new XMLHttpRequest();
+	xhr.onload=function(){
+		if(xhr.status==200){
+			alert(this.responseText);
+		}
+	}
+	xhr.open('post','1.php',true);
+	//post方法在send前要设置请求头
+	xhr.setRequestHeader('X-Request-With','XMLHttpRequest');
+	//xhr.send('file='+oFiles.files[0]);//不行
+	//不能直接发送oFiles.files[0]，需要利用FormData对象把它转换
+	var oFormData=new FormData();
+	oFormData.append('file',oFiles.files[0]);//一参：key,二参:value
+	xhr.send(oFormData);
+
+3 监听上传进度：upload对象
+	事件progress：在上传的过程中连续触发
+	ev.total发送总量，ev.loaded待发送的总量
+	所以上传进度就是：ev.loaded/ev.total
+
+	var oUp=xhr.upload;
+	oUp.onprogress=function(ev){
+		var x=ev.loaded/ev.total; //上传进度
+		oSpan.innerText=x*100+'%';
+	}
+总结：
+	var oFile=document.querySelector('[type="file"]');
+	oBtn.onclick = function() {
+	    var xhr = new XMLHttpRequest();
+	    xhr.onload = function() {
+	        alert('OK,上传完成');
+	    };
+	    var oUp = xhr.upload;
+	    oUp.onprogress = function(ev) {
+	        var x = ev.loaded / ev.total;
+	        oSpan.innerText = x * 100 + '%';
+	    };
+	    xhr.open('post', '1.php', true);
+	    xhr.setRequestHeader('X-Request-With', 'XMLHttpRequest');
+	    var oFormData = new FormData();
+	    oFormData.append('file', oFile.files[0]);
+	    xhr.send(oFormData);
+	};

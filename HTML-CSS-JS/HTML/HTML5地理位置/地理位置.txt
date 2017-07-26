@@ -1,0 +1,56 @@
+HTML5 Geolocation API 用于获得用户的地理位置。
+鉴于该特性可能侵犯用户的隐私，除非用户同意，否则用户位置信息是不可用的。
+对于拥有 GPS 的设备，比如 iPhone，地理定位更加精确。
+
+runoob教程：http://www.runoob.com/html/html5-geolocation.html
+
+地理位置：经度 纬度 海拔
+位置信息从何而来：
+	IP地址
+	Wi-Fi无线网络
+	GPS全球定位系统
+	基站
+一般，PC是前两个，手机是后三个
+
+地理位置对象：navigator.geolocation
+
+--------------
+	*单次*
+单次定位请求  ：getCurrentPosition(请求成功函数，请求失败函数，数据收集方式)
+1 请求成功函数
+	经度 :  coords.longitude
+	纬度 :  coords.latitude
+	位置精度 :  coords.accuracy
+	海拔 :  coords.altitude
+	海拔精度 :  coords.altitudeAcuracy
+	方向，从正北开始以度计 :  coords.heading
+	速度，以米/每秒计 :  coords.speed
+	响应的日期/时间 : timestamp
+
+2 请求失败函数
+	失败编号  ：code
+	0  :  不包括其他错误编号中的错误
+	1  :  用户拒绝浏览器获取位置信息
+	2  :  尝试获取用户信息，但失败了
+	3  :   设置了timeout值，获取位置超时了
+
+3 数据收集 :  json的形式
+	enableHighAcuracy  :  更精确的查找，默认false
+	timeout  :  获取位置允许最长时间，默认infinity
+	maximumAge :  位置可以缓存的最大时间，默认0
+
+实例：“单次请求.html”
+
+--------------
+	*连续*
+连续定位请求  :  watchPosition()
+返回用户的当前位置，并继续返回用户移动时的更新位置（就像汽车上的 GPS）。用于移动设备
+停止请求  :  clearWatch()
+数据收集方式中新加参数：frequency 更新的频率
+
+
+
+--------------
+	*使用百度地图api
+http://lbsyun.baidu.com/index.php?title=jspopular
+http://lbsyun.baidu.com/jsdemo.htm#a1_2

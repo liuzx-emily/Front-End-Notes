@@ -1,0 +1,436 @@
+--------------------
+  *全局捕获*
+[和“事件绑定形式：冒泡 捕获”中的捕获没关系。只是中文翻译的一样。。]
+当我们给一个元素设置全局捕获以后，那么这个元素就会监听后续发生的所有事件，当有事件发生的时候，就会被当前设置了全局捕获的元素所触发。而且不是“共享”，是“完全抢过来”。
+设置：aInput[0].setCapture();
+释放：aInput[0].releaseCapture();
+例子： 
+  aInput[0].setCapture();
+  aInput[0].onclick = function() {alert(1};
+  aInput[1].onclick = function() {alert(2);
+    效果：无论点哪都弹1。点input[1]弹1，点菜单栏弹1，点桌面上的回收站，也弹1...
+兼容性：
+  ie:有这个方法，并且有效果(经测试IE5-11Eedge都有效)
+  ff:有这个方法，但是没效果
+  chrome:没有这个方法.报错aInput[0].setCapture is not a function
+因为只有IE能正常用，所以我们一般也不用它。
+我们利用它来解决IE8及以下中“拖拽div时，如果有文字被选中，则不能拖拽”的问题。
+
+--------------------
+	*拖拽*
+1 思路：
+	1 onmousedown：选择元素；onmousemove：移动元素；onmouseup： 释放元素
+      一层层包住，onmousedown包住move,move包住up
+  2 鼠标和Div的相对距离不变
+  3 把onmousemove和onmouseup加到document上
+  4 style.left必须有单位，而clientX和offsetLeft都没有单位
+
+  初级代码：
+   	oDiv.onmousedown = function(ev) {
+   	   var ev = ev || event;
+   	   //求出down的一瞬间鼠标和div之间的距离
+   	   var disX = ev.clientX - this.offsetLeft;
+   	   var disY = ev.clientY - this.offsetTop;
+   	   document.onmousemove = function(ev) {
+   	      var ev = ev || event;
+   	      oDiv.style.left = ev.clientX - disX + 'px'; //这里容易忘记加'px'
+   	      oDiv.style.top = ev.clientY - disY + 'px';
+   	   };
+
+   	   document.onmouseup = function() {
+   	      document.onmousemove = document.onmouseup = null;
+   	   };
+   	};
+
+2 小问题：拖拽的时候，如果有文字被选中，会产生问题
+  原因：当鼠标按下的时候，如果页面中有文字被选中，那么会触发浏览器默认拖拽文字的效果
+  解决：  	
+  	IE8及以下：用return false没用。用全局捕获 
+  	其他所有：阻止默认行为,在oDiv.onmousedown函数结尾加上return false就行了。
+
+  	oDiv.onmousedown = function(ev) {
+  	   var ev = ev || event;
+  	   var disX = ev.clientX - this.offsetLeft;
+  	   var disY = ev.clientY - this.offsetTop;
+
+  	   if (oDiv.setCapture) {
+  	   	//要先判断一下，因为chrome没有这个函数，直接用会报错
+  	      oDiv.setCapture();
+  	   }
+
+  	   document.onmousemove = function(ev) {
+  	      var ev = ev || event;
+  	      oDiv.style.left = ev.clientX - disX + 'px';
+  	      oDiv.style.top = ev.clientY - disY + 'px';
+  	   };
+
+  	   document.onmouseup = function() {
+  	      document.onmousemove = document.onmouseup = null;
+  	      
+  	      if (oDiv.releaseCapture) {
+  	         oDiv.releaseCapture();
+  	      }
+  	   };
+
+  	   return false;//为了非IE浏览器解决问题，chrome只能这么解决
+
+  	};
+
+3 拖拽图片会有问题，原因，解决的办法同上(oDiv换成oImg就行了)
+
+5 限制范围的拖拽
+	function drag(obj) {		
+		obj.onmousedown = function(ev) {
+			var ev = ev || event;			
+			var disX = ev.clientX - this.offsetLeft;
+			var disY = ev.clientY - this.offsetTop;			
+			if ( obj.setCapture ) {
+				obj.setCapture();
+			}			
+			document.onmousemove = function(ev) {
+				var ev = ev || event;
+				var L = ev.clientX - disX;
+				var T = ev.clientY - disY;
+				
+				if ( L < 0 ) {
+					L = 0;
+				} else if ( L > document.documentElement.clientWidth - obj.offsetWidth ) {
+					L = document.documentElement.clientWidth - obj.offsetWidth;
+				}
+				
+				if ( T < 0 ) {
+					T = 0;
+				} else if ( T > document.documentElement.clientHeight - obj.offsetHeight ) {
+					T = document.documentElement.clientHeight - obj.offsetHeight;
+				}
+				
+				obj.style.left = L + 'px';
+				obj.style.top = T + 'px';
+			};			
+			document.onmouseup = function() {
+				document.onmousemove = document.onmouseup = null;
+				if ( obj.releaseCapture ) {
+					obj.releaseCapture();
+				}
+			};			
+			return false;			
+		};		
+	};
+
+6 磁性吸附：离的很近后，可以自动对齐。
+	只需要把上面的“限制范围的拖拽”代码中的if ( L < 0 ) 改了。比如：
+		if (L < 100) {
+		   L = 0;
+		} 
+	效果：距离浏览器左边距离小于100px时，会一瞬间贴到最左边。
+  原理就是这样，根据需要自己改。
+
+7 碰撞检测：九宫格思路
+	<!DOCTYPE HTML>
+	<html>
+	<head>
+	   <meta charset="utf-8">
+	   <title>碰撞检测</title>
+	   <style>
+	   #div1{width: 100px;height: 100px;background: red;position: absolute;z-index: 2;}	   
+	   #img1{position: absolute;left: 500px;top: 200px;}
+	   </style>
+	</head>
+	<body>
+	   <div id="div1"></div>
+	   <img src="1.jpg" id="img1" />
+	</body>
+	<script>
+		var oDiv = document.getElementById('div1');
+		var oImg = document.getElementById('img1');
+		drag(oDiv);
+
+		function drag(obj) {
+		   obj.onmousedown = function(ev) {
+		      var ev = ev || event;
+		      var disX = ev.clientX - this.offsetLeft;
+		      var disY = ev.clientY - this.offsetTop;
+		      if (obj.setCapture) {
+		         obj.setCapture();
+		      }
+		      document.onmousemove = function(ev) {
+		         var ev = ev || event;
+		         var L = ev.clientX - disX;
+		         var T = ev.clientY - disY;
+
+		         var L1 = L;
+		         var R1 = L + obj.offsetWidth;
+		         var T1 = T;
+		         var B1 = T + obj.offsetHeight;
+
+		         var L2 = oImg.offsetLeft;
+		         var R2 = L2 + oImg.offsetWidth;
+		         var T2 = oImg.offsetTop;
+		         var B2 = T2 + oImg.offsetHeight;
+
+		         if (R1 < L2 || L1 > R2 || B1 < T2 || T1 > B2) {
+		            oImg.src = '1.jpg';
+		         } else {
+		            oImg.src = '2.jpg';
+		         }
+
+		         obj.style.left = L + 'px';
+		         obj.style.top = T + 'px';
+		      };
+		      document.onmouseup = function() {
+		         document.onmousemove = document.onmouseup = null;
+		         if (obj.releaseCapture) {
+		            obj.releaseCapture();
+		         }
+		      };
+		      return false;
+		   };
+		}
+	</script>
+	</html>
+
+8 拖拽改变层大小（只做了左右改宽度）
+  重点：1 拖左边界改变大小时，改width的同时必须改left（拖拽上边界同理）
+  		2 下面的方法只能在oDiv里面拖拽改变：右边界的右侧加不了效果，因为它已经不属于oDiv了
+  		3 怎么算增加/减小的px（ev.clientX - disX）
+  		4 改大小的时候注意正负（加减）
+	<!DOCTYPE HTML>
+	<html>
+	<head>
+	   <meta charset="utf-8">
+	   <title>拖拽改变层大小</title>
+	   <style>
+	   #div1 {width: 100px;height: 100px;background: red;position: absolute;left: 500px;top: 200px;}
+	   </style>
+	   
+	</head>
+
+	<body>
+	   <div id="div1"></div>
+	</body>
+	<script>
+      var oDiv = document.getElementById('div1');
+      oDiv.onmousedown = function(ev) {
+         var ev = ev || event;
+         var disW = this.offsetWidth;//原来的宽
+         var disX = ev.clientX;//down的一瞬间鼠标位置
+         var disL = this.offsetLeft;//原来的left值
+         var b = ''; //当前鼠标在哪个边
+         if ( obj.setCapture ) {
+         	obj.setCapture();
+         }	
+         if (disX > disL + disW - 10) {
+         	//设置右边界偏左10px以内可以拖拽改大小
+            //右边界的右侧加不了效果，因为它已经不属于oDiv了
+            b = 'right';
+         }
+         if (disX < disL + 10) {
+            b = 'left';
+         }
+
+         document.onmousemove = function(ev) {
+            var ev = ev || event;
+            switch (b) {
+               case 'left':
+                  //ev.clientX - disX:移动时的鼠标位置-down的一瞬间鼠标位置=鼠标走的距离
+                  oDiv.style.width = disW - (ev.clientX - disX) + 'px';
+                  oDiv.style.left = disL + (ev.clientX - disX) + 'px';
+                  //必须同时改变left值【易忘记】
+                  break;
+               case 'right':
+                  oDiv.style.width = disW + (ev.clientX - disX) + 'px';
+                  break;
+            }
+         }
+         document.onmouseup = function() {
+            document.onmousemove = document.onmouseup = null;
+            if ( obj.releaseCapture ) {
+            	obj.releaseCapture();
+            }
+         }
+         return false;
+      };
+	</script>
+ 	</html>
+
+9 模拟滚动条：为了好看
+  重点：滚动区域 滚动条（上下小箭头不是必须）
+
+  9-1 原始滚动条
+	  	oDiv2.onmousedown = function(ev) {
+	  	   var ev = ev || event;
+	  	   var disY = ev.clientY - this.offsetTop;
+	  	   document.onmousemove = function(ev) {
+	  	      var ev = ev || event;
+	  	      oDiv2.style.top = ev.clientY - disY + 'px';
+	  	   }
+	  	   document.onmouseup = 略..
+	  	}
+  	  注：只是原理，没做return false,setCapture等兼容
+
+  9-2 限制滚动条范围
+  	  备注：说是“滚动条”，只是一个单纯的能上下拽的div，下面代码还没有添加控制其他元素滚动、变化的功能
+  		<!DOCTYPE HTML>
+  		<html>
+  		<head>
+  		   <meta charset="utf-8">
+  		   <title>限制滚动条范围</title>
+  		   <style>
+  		   #div1 {width: 30px;height: 500px;background: black;position: absolute;left: 10px;top: 10px;}		   
+  		   #div2 {width: 30px;height: 30px;background: red;position: absolute;left: 0;top: 0;}
+  		   </style>
+  		</head>
+  		<body>
+  		   <div id="div1">
+  		      <div id="div2"></div>
+  		   </div>
+  		</body>
+  		<script>
+  		var oDiv1 = document.getElementById('div1');
+  		var oDiv2 = document.getElementById('div2');
+  		var iMaxTop = oDiv1.offsetHeight - oDiv2.offsetHeight;
+  		oDiv2.onmousedown = function(ev) {
+  		   var ev = ev || event;
+  		   var disY = ev.clientY - this.offsetTop;
+  		   if (oDiv2.setCapture) {
+  		      oDiv2.setCapture();
+  		   }
+  		   document.onmousemove = function(ev) {
+  		      var ev = ev || event;
+  		      var T = ev.clientY - disY;
+  		      if (T < 0) {
+  		         T = 0;
+  		      } else if (T > iMaxTop) {
+  		         T = iMaxTop;
+  		      }
+  		      oDiv2.style.top = T + 'px';
+  		   };
+  		   document.onmouseup = function() {
+  		      document.onmousemove = document.onmouseup = null;
+  		      if (oDiv2.releaseCapture) {
+  		         oDiv2.releaseCapture();
+  		      }
+  		   };
+  		   return false;
+  		};
+  		</script>
+  		</html>
+
+  9-3 加功能：控制其他元素高度
+  	  难点：有比例问题，另一元素的top不等于滚动块div的top！！！
+  	  <!DOCTYPE HTML>
+  	  <html>
+  	  <head>
+  	  <meta charset="utf-8">
+  	  <title>控制其他元素高度</title>
+  	  <style>
+  	  #div1 {width: 30px; height: 500px; background: black; position: absolute; left: 10px; top: 10px;}
+  	  #div2 {width: 30px; height: 30px; background: red; position: absolute; left: 0; top: 0;}
+  	  #div3 {width: 500px; height: 0; background: green; position: absolute; left: 50px; top: 10px;}
+  	  </style>
+  	  </head>
+  	  <body>
+  	  	<div id="div1">
+  	      	<div id="div2"></div>
+  	      </div>
+  	      <div id="div3"></div>
+  	  </body>
+  	  <script>	
+  	  	var oDiv1 = document.getElementById('div1');
+  	  	var oDiv2 = document.getElementById('div2');
+  	  	var oDiv3 = document.getElementById('div3');	
+  	  	var iMaxTop = oDiv1.offsetHeight - oDiv2.offsetHeight;	
+  	  	oDiv2.onmousedown = function(ev) {		
+  	  		var ev = ev || event;		
+  	  		var disY = ev.clientY - this.offsetTop;	
+  	  		if (oDiv2.setCapture) {
+  	    		      oDiv2.setCapture();
+  	    		}	
+  	  		document.onmousemove = function(ev) {			
+  	  			var ev = ev || event;			
+  	  			var T = ev.clientY - disY;			
+  	  			if ( T < 0 ) {
+  	  				T = 0;
+  	  			} else if ( T > iMaxTop ) {
+  	  				T = iMaxTop;
+  	  			}			
+  	  			oDiv2.style.top = T + 'px';			
+  	  			var iScale = T / iMaxTop;			
+  	  			document.title = iScale;			
+  	  			oDiv3.style.height = 500 * iScale + 'px';			
+  	  		};		
+  	  		document.onmouseup = function() {			
+  	  			document.onmousemove = document.onmouseup = null;
+  	  			if (oDiv2.releaseCapture) {
+  	    		         oDiv2.releaseCapture();
+  	    		}
+  	  		};		
+  	  		return false;		
+  	  	};
+  	  </script>
+  	  </html>
+
+  9-4 加功能：控制内容滚动（一般都是这个功能）
+  	  难点：仍然是比例问题
+  		<!DOCTYPE HTML>
+  		<html>
+  		<head>
+  		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  		<title>无标题文档</title>
+  		<style>
+  		#div1 {width: 30px; height: 500px; background: black; position: absolute; left: 10px; top: 10px;}
+  		#div2 {width: 30px; height: 30px; background: red; position: absolute; left: 0; top: 0;}
+  		#div3 {width: 498px; height: 498px; border: 1px solid green; position: absolute; left: 50px; top: 10px;}
+  		#div4 { position: absolute; left: 0; top: 0;line-height: 200px;font-size: 100px;}
+  		</style>
+  		</head>
+  		<body>
+  			<div id="div1">
+  		    	<div id="div2"></div>
+  		    </div>
+  		    <div id="div3">
+  		    	<div id="div4">
+  		    	<p>你</p>
+  		    	<p>好</p>
+  		    	<p>啊</p>
+  		    	<p>测</p>
+  		    	<p>似</p>
+  		        </div>
+  		    </div>
+  		</body>
+  		<script>	
+  			var oDiv1 = document.getElementById('div1');
+  			var oDiv2 = document.getElementById('div2');
+  			var oDiv3 = document.getElementById('div3');
+  			var oDiv4 = document.getElementById('div4');	
+  			var iMaxTop = oDiv1.offsetHeight - oDiv2.offsetHeight;	
+  			oDiv2.onmousedown = function(ev) {		
+  				var ev = ev || event;		
+  				var disY = ev.clientY - this.offsetTop;	
+  				if (oDiv2.setCapture) {
+  	    		      oDiv2.setCapture();
+  	    		}		
+  				document.onmousemove = function(ev) {			
+  					var ev = ev || event;			
+  					var T = ev.clientY - disY;			
+  					if ( T < 0 ) {
+  						T = 0;
+  					} else if ( T > iMaxTop ) {
+  						T = iMaxTop;
+  					}			
+  					oDiv2.style.top = T + 'px';			
+  					var iScale = T / iMaxTop;			
+  					document.title = iScale;			
+  					oDiv4.style.top = (oDiv3.clientHeight - oDiv4.offsetHeight) * iScale + 'px';
+            //易错写成：oDiv4.style.top = (-oDiv4.offsetHeight) * iScale + 'px';
+  				};		
+  				document.onmouseup = function() {			
+  					document.onmousemove = document.onmouseup = null;
+  					if (oDiv2.releaseCapture) {
+  	    		         oDiv2.releaseCapture();
+  	    		    }			
+  				};		
+  				return false;		
+  			};
+  		</script>
+  		</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>匀速运动</title>
+    <style>
+    body {
+        margin: 0;
+    }
+    
+    div {
+        position: absolute;
+        left: 500px;
+        top: 30px;
+        margin-left: 10px;
+        width: 50px;
+        height: 50px;
+        background-color: coral;
+    }
+    </style>
+    <script>
+    /*不考虑低IE*/
+    var oDiv = null;
+    var aBtn = null;
+    var json = {
+        left: 100,
+        top: 100
+    };
+    var speed = 5;
+    window.onload = function() {
+        oDiv = document.querySelector('div');
+        aBtn = document.querySelectorAll('[type="button"]');
+        aBtn[0].addEventListener('mouseenter', start, false);
+        aBtn[1].addEventListener('mouseenter', stop, false);
+    };
+
+    function start() {
+        clearInterval(oDiv.timer);
+        oDiv.timer = setInterval(move, 10, oDiv, json, speed);
+    }
+
+    function stop() {
+        clearInterval(oDiv.timer);
+    }
+
+    function move(obj, json, speed) {
+        var finished = true;
+        for (var attr in json) {
+            var iCur = getComputedStyle(obj)[attr];
+            iCur = parseInt(iCur);
+            var iTarget = json[attr];
+            var iSpeed = iCur < iTarget ? speed : (-speed);
+            console.log(iCur, iTarget, iSpeed);
+            if (Math.abs(iTarget - iCur) < speed) {
+                iCur = iTarget;
+                obj.style[attr] = iCur + 'px';
+            } else {
+                finished = false;
+                iCur = iCur + iSpeed;
+                obj.style[attr] = iCur + 'px';
+            }
+        }
+        if (finished) {
+            clearInterval(obj.timer);
+        }
+    }
+    </script>
+</head>
+
+<body>
+    <button type='button'>走</button>
+    <button type='button'>停</button>
+    <div></div>
+</body>
+
+</html>

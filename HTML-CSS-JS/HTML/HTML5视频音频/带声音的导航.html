@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>带声音的导航</title>
+    <style>
+    span {
+        display: inline-block;
+        font: 30px '华文彩云';
+        padding: 10px;
+        border: 1px solid coral;
+        border-radius: 10%;
+    }
+    </style>
+    <script>
+    window.onload = function() {
+        var oAudio = document.querySelector('audio');
+        var aSpan = document.querySelectorAll('span');
+        for (let i = 0; i < aSpan.length; i++) {
+            aSpan[i].onmouseenter = function() {
+                oAudio.src = i + 1 + '.mp3';
+                oAudio.play();
+            };
+        }
+
+
+    };
+    </script>
+</head>
+
+<body>
+    <nav>
+        <span>银之匙</span>
+        <span>钢炼</span>
+        <span>Mustang上校</span>
+    </nav>
+    <audio></audio>
+</body>
+
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>小方块移动</title>
+    <style>
+    canvas {
+        border: 1px solid crimson;
+    }
+    </style>
+    <script>
+    var oCan = null;
+    var ctx = null;
+    var num = 0;
+    window.onload = function() {
+        oCan = document.querySelector('#myCanvas');
+        ctx = oCan.getContext('2d');
+        ctx.fillStyle = 'hotpink';
+        ctx.fillRect(num, num, 50, 50);
+        var aBtn = document.querySelectorAll('[type="button"]');
+        aBtn[0].addEventListener('mouseenter', function() {
+            clearInterval(oCan.timer);
+            oCan.timer = setInterval(function() {
+                if (num > 250) {
+                    clearInterval(oCan.timer);
+                } else {
+                    ctx.clearRect(0, 0, oCan.width, oCan.height);
+                    ctx.fillRect(num, num, 50, 50);
+                    num++;
+                }
+
+            }, 10);
+        }, false);
+        aBtn[1].addEventListener('mouseenter', function() {
+            clearInterval(oCan.timer);
+        }, false);
+    };
+    </script>
+</head>
+
+<body>
+    <input type="button" value='开始'>
+    <input type="button" value='停止'>
+    <canvas id="myCanvas" width="400" height="300"></canvas>
+</body>
+
+</html>

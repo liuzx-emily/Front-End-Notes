@@ -1,0 +1,73 @@
+标签：audio video source
+
+------------
+	*视频容器*
+容器文件，类似于压缩了一组文件
+	音频轨道
+	视频轨道
+	元数据：封面，标题，字幕等
+	格式：.avi、.flv、.mp4、.mkv、.ogv等
+------------
+	*编码解码器*
+html由上到下加载页面时，不可能等视频、音频加载完才加载后面的内容。
+编码解码器：添加需要编码、播放需要解码，不同browser用的不一样。
+有的视音频格式，在有的浏览器中显示不出来（如：IE中不能显示ogv，因为ie内置的编码解码器不支持ogv）
+一个audio和video标签不能写两个src，来应对不同浏览器。解决要用到source标签。
+	<video>
+		<source src="1.ogv"></source>
+		<source src="2.mp4"></source>
+	</video>
+这样在支持ogv的浏览器中，显示1.ogv。在1.ogv读不出来的浏览器中，才会去显示2.mp4。
+
+------------
+	*属性*
+controls  :   显示或隐藏用户控制界面 默认隐藏
+	【不写controls,音视频就藏起来了。可以这样“添加背景音乐 autoplay loop”】
+autoplay  :  媒体是否自动播放
+loop  : 媒体是否循环播放
+currentTime  :  开始到播放现在所用的时间(s) 可写
+duration  :  媒体总时间(s)(只读)
+volume  :   0.0-1.0的音量相对值
+muted  :   是否静音
+autobuffer  :   开始的时候是否缓冲加载，autoplay的时候，忽略此属性
+paused  :   媒体是否暂停(只读)
+ended   :   媒体是否播放完毕(只读)
+error   :  媒体发生错误的时候，返回错误代码 (只读)
+currentSrc  :   以字符串的形式返回媒体地址(只读)
+
+video的额外属性：
+ poster  :   视频播放前的预览图片
+ width、height  :   设置视频的尺寸
+ videoWidth、 videoHeight  :   视频的实际尺寸(只读)
+
+------------
+	*方法*
+play()  :  媒体播放
+pause()  :  媒体暂停
+load()  :  重新加载媒体
+	比如，修改src后，只有load()一下才会生效
+
+
+------------
+	*事件*
+loadstart progress suspend emptied stalled play pause loadedmetadata loadeddata waiting playing canplay canplaythrough seeking seeked timeupdate ended ratechange durationchange volumechange
+
+------------
+	*例子*
+1 带声音的导航
+2 视频与canvas结合
+	canvas可以做变色 颠倒 沫沫
+3 自制播放器
+	不同浏览器下，控件外表不一样。如果想要统一外表，要自己写一个“控制器”
+  1 注意：
+  	音量为0 !==静音
+  	oninput：在内容修改后立即被触发，onchange：在内容修改，并且失去焦点后才触发
+  2 实现全屏：
+	1 等于可视区宽高
+	2 api：http://www.cnblogs.com/javaee6/p/3756249.html
+  3 播放、音量进度条：
+	1 <input type="range" min="0" max="100" step="1" value="20">
+	2 <progress max="100" value="76"></progress>
+	3 用两个div块模拟
+  更多功能：
+	连播：ended事件 换当前视频的src，然后load()

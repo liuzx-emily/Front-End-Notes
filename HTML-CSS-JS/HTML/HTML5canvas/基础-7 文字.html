@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>文字</title>
+    <style>
+    canvas {
+        border: 1px solid black;
+    }
+    </style>
+    <script>
+    var oCanvas;
+    var ctx;
+    window.onload = function() {
+        init();
+    };
+
+    function init() {
+        oCanvas = document.querySelector('canvas');
+        ctx = oCanvas.getContext('2d');
+        ctx.fillStyle = 'crimson';
+        ctx.font = "bold 100px '幼圆'";
+        text1('哈喽');
+
+        var aLi = document.querySelectorAll('li');
+        for (let i = 0; i < aLi.length; i++) {
+            aLi[i].onclick = show;
+        }
+    }
+
+    function text1(text) {
+        ctx.textBaseline = 'top';
+        ctx.fillText(text, (oCanvas.width - ctx.measureText(text).width) / 2, (oCanvas.height - 100) / 2);
+        //100是字体大小，也就是文字高度
+    }
+
+    function text2(text) {
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+        ctx.fillText(text, oCanvas.width / 2, oCanvas.height / 2);
+    }
+
+    function show() {
+        ctx.clearRect(0, 0, oCanvas.width, oCanvas.height);
+        text1(this.innerText);
+    }
+    </script>
+</head>
+
+<body>
+    <canvas width="500" height="400"></canvas>
+    <ol>
+        <li>小当家</li>
+        <li>数码宝贝</li>
+        <li>钢炼</li>
+        <li>银之匙</li>
+    </ol>
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>弹窗-组件开发</title>
+    <style>
+    body {
+        margin: 0;
+    }
+    
+    .container {
+        position: fixed;
+        border: 1px solid black;
+        display: none;
+        z-index: 1000;
+        background-color: coral;
+    }
+    
+    .title {
+        line-height: 30px;
+        background-color: darkgray;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .close {
+        float: right;
+    }
+    
+    .mask {
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.1);
+        /* filter: alpha(opacity=10);
+        opacity: 0.1; */
+        display: none;
+    }
+    </style>
+    <script>
+    function PopUpWindow(oSwitch) {
+        this.switch = oSwitch;
+        this.oWindow = null;
+        this.settings = {
+            title: '标题',
+            w: 400,
+            h: 300,
+            pos: 'center',
+            hasMask: false
+        };
+    }
+    PopUpWindow.prototype.init = function(opt) {
+        extend(this.settings, opt);
+        this.create();
+        this.setStyle();
+        var This = this;
+        this.switch.onclick = function() {
+            This.show();
+        };
+    };
+    PopUpWindow.prototype.create = function() {
+        this.oWindow = document.createElement('div');
+        this.oWindow.className = "container";
+        var oTitle = document.createElement('div');
+        oTitle.className = 'title';
+        oTitle.innerText = this.settings.title;
+        var oClose = document.createElement('span');
+        oClose.innerText = 'X';
+        oClose.className = 'close';
+        var This = this;
+        oClose.onclick = function() {
+            This.close(); //点x关闭窗口：display:none
+        };
+        oTitle.appendChild(oClose);
+        this.oWindow.appendChild(oTitle);
+        if (this.settings.hasMask) {
+            this.Createmask();
+        }
+        document.body.appendChild(this.oWindow);
+        //下面两行添加拖拽效果：
+        var d1 = new Drag(oTitle, this.oWindow);
+        d1.init();
+    };
+    PopUpWindow.prototype.setStyle = function() {
+        this.oWindow.style.width = this.settings.w + 'px';
+        this.oWindow.style.height = this.settings.h + 'px';
+        switch (this.settings.pos) {
+            //这里this.oWindow.offsetWidth恒为0，不知道为什么
+            case 'center':
+                this.oWindow.style.left = (document.documentElement.clientWidth - this.settings.w) / 2 + 'px';
+                this.oWindow.style.top = (document.documentElement.clientHeight - this.settings.h) / 2 + 'px';
+                break;
+            case 'bottom':
+                this.oWindow.style.right = 0;
+                this.oWindow.style.bottom = 0;
+                break;
+        }
+    };
+    PopUpWindow.prototype.show = function() {
+        if (this.settings.hasMask) {
+            this.oMask.style.display = 'block';
+        }
+        this.oWindow.style.display = 'block';
+    };
+    PopUpWindow.prototype.close = function() {
+        if (this.settings.hasMask) {
+            this.oMask.style.display = 'none';
+        }
+        this.oWindow.style.display = 'none';
+    };
+    PopUpWindow.prototype.Createmask = function() {
+        this.oMask = document.createElement('div');
+        this.oMask.className = 'mask';
+        document.body.appendChild(this.oMask);
+    };
+
+    function extend(obj1, obj2) {
+        for (var attr in obj2) {
+            obj1[attr] = obj2[attr];
+        }
+    }
+    //之前写好的拖拽，复制过来：
+    function Drag(oBar, oTarget) {
+        this.bar = oBar;
+        this.obj = oTarget;
+        this.disX = 0;
+        this.disY = 0;
+    }
+    Drag.prototype.init = function() {
+        var This = this;
+        this.bar.onmousedown = function(ev) {
+            ev = ev || window.event;
+            This.fnDown(ev);
+        };
+        this.bar.style.cursor = 'pointer';
+    };
+    Drag.prototype.fnDown = function(ev) {
+        var This = this;
+        this.disX = ev.clientX - this.obj.offsetLeft;
+        this.disY = ev.clientY - this.obj.offsetTop;
+        document.onmousemove = function(ev) {
+            ev = ev || window.event;
+            This.fnMove(ev);
+            return false;
+        };
+        document.onmouseup = this.fnUp;
+    };
+    Drag.prototype.fnMove = function(ev) {
+        var L = ev.clientX - this.disX;
+        var T = ev.clientY - this.disY;
+        this.obj.style.left = L + 'px';
+        this.obj.style.top = T + 'px';
+    };
+    Drag.prototype.fnUp = function() {
+        document.onmousemove = document.onmouseup = null;
+    };
+    </script>
+</head>
+
+<body>
+    <input type="button" value="正中间">
+    <input type="button" value="右下角">
+    <input type="button" value="遮罩">
+    <script>
+    var aInput = document.getElementsByTagName('input');
+    var p1 = new PopUpWindow(aInput[0]);
+    p1.init({
+        title: '登录'
+    });
+    var p2 = new PopUpWindow(aInput[1]);
+    p2.init({
+        title: '公告',
+        w: 100,
+        h: 150,
+        pos: 'bottom',
+    });
+    var p3 = new PopUpWindow(aInput[2]);
+    p3.init({
+        title: '遮罩',
+        w: 80,
+        h: 50,
+        hasMask: true
+    });
+    </script>
+</body>
+
+</html>

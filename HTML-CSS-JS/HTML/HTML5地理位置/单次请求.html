@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>单次请求</title>
+</head>
+
+<body>
+    <input type="button" value="获取地理位置">
+    <div></div>
+    <script>
+    var oBtn = document.querySelector('input');
+    var oDiv = document.querySelector('div');
+    var geoJson = {
+        enableHighAcuracy: true,
+        timeout: 500
+    };
+    oBtn.onclick = function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(geoSuccess, geoFail, geoJson);
+        } else {
+            oDiv.innerText = '你的浏览器太老了，不支持地理位置功能';
+        }
+
+    };
+
+    function geoSuccess(position) {
+        var str = "经度" + position.coords.longitude + '\n';
+        str += "纬度" + position.coords.latitude + '\n';
+        oDiv.innerText = str;
+    }
+
+    function geoFail(position) {
+        var str = "oops ";
+        switch (position.code) {
+            case 0:
+                str += "其他错误";
+                break;
+            case 1:
+                str += "用户拒绝浏览器获取位置信息";
+                break;
+            case 2:
+                str += "尝试获取用户信息，但失败了";
+                break;
+            case 3:
+                str += "设置了timeout值，获取位置超时了";
+                break;
+        }
+        oDiv.innerText = str;
+    }
+    </script>
+</body>
+
+</html>

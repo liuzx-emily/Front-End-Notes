@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>无标题文档</title>
+    <style>
+    li {
+        list-style: none;
+        width: 100px;
+        height: 30px;
+        background: yellow;
+        margin: 10px;
+    }
+    
+    div {
+        width: 100px;
+        line-height: 100px;
+        background: coral;
+        font-size: 25px;
+        color: white;
+        font-family: '华文彩云';
+        text-align: center;
+    }
+    
+    img {
+        width: 50px;
+    }
+    </style>
+    <script>
+    window.onload = function() {
+        var oUl = document.getElementsByTagName('ul')[0];
+        var aLi = oUl.getElementsByTagName('li');
+        var oDiv = document.querySelector('div');
+        var oImg = document.querySelector('img');
+        for (var i = 0; i < aLi.length; i++) {
+            aLi[i].draggable = 'true'; //设置可拖放
+            aLi[i].index = i;
+            aLi[i].ondragstart = function(ev) {
+                ev.dataTransfer.setDragImage(oImg, 10, 10);
+                ev.dataTransfer.setData('index', this.index);
+            };
+        }
+
+        oDiv.ondragenter = function() {
+            this.style.background = 'lightcoral';
+        };
+
+        oDiv.ondragover = function(ev) {
+            ev.preventDefault(); //这样在oDiv上才能drop
+        };
+
+        oDiv.ondragleave = function() {
+            this.style.background = 'coral';
+        };
+
+        oDiv.ondrop = function(ev) {
+            this.style.background = 'coral';
+            var index = ev.dataTransfer.getData('index');
+            oUl.removeChild(aLi[index]);
+            for (var i = 0; i < aLi.length; i++) {
+                aLi[i].index = i;
+            }
+        };
+
+    };
+    </script>
+</head>
+
+<body>
+    <ul>
+        <li>a</li>
+        <li>b</li>
+        <li>c</li>
+    </ul>
+    <div>垃圾桶</div>
+    <img src="1.jpg" alt="">
+</body>
+
+</html>

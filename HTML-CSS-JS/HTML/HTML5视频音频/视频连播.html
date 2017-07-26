@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>视频自动连播</title>
+    <style>
+    body {
+        margin: 0;
+    }
+    </style>
+    <script>
+    window.onload = function() {
+        var oVideo = document.querySelector('video');
+        //currentTime可写
+        oVideo.currentTime = oVideo.duration - 1;
+        oVideo.play();
+        oVideo.onended = function() {
+            if (confirm('要继续下一个?')) {
+                div1.innerText = '2s后自动下一个影片';
+                setTimeout(function() {
+                    oVideo.poster = null;
+                    oVideo.src = "1.jpg";
+                    oVideo.load();
+                    div1.innerText = '这里连播不成功，是因为后面的是假视频，jpg格式';
+                }, 2000);
+            }
+
+        };
+
+    };
+    </script>
+</head>
+
+<body>
+    <video controls poster="1.jpg">
+        <source src="1.jpg"></source>
+        <source src="bromance.MP4"></source>
+    </video>
+    <div id='div1'>
+        source处理格式问题：flv不认，就会MP4
+        <br> poster属性设置预览图片，不知道why只有加在标签里有效，js里加不起作用。。
+        <br>这里连播不成功，是因为后面的是假视频，jpg格式
+    </div>
+</body>
+
+</html>

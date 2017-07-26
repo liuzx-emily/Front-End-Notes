@@ -1,0 +1,306 @@
+1 guestbook文件夹：存放了留言板的后端文件
+	前端不需要知道细节，后端会提供接口给你		
+	
+2 miaov_guestbook_2014-01-08.sql文件：数据库文件
+	如何导入数据库文件（后端的知识，随便看看就行）:
+	1 开启服务器
+	2 进入phpMyAdmin，数据库的管理
+	3 新建数据库
+		名字：miaov_guestbook(打开sql文件找到名字Database: miaov_guestbook)
+		编码方式：utf8_bin
+	4 向新建的数据库中导入sql文件：导入-选择miaov_guestbook_2014-01-08.sql-执行
+
+准备工作完毕，开始前端的工作
+
+-----------------
+	*注册时用户名检测*
+
+后端提供的接口：用户名检测
+	调用参数：
+		get方式
+		guestbook/index.php
+			m : index
+			a : verifyUserName
+			username : 要验证的用户名
+		    合起来：guestbook/index.php?m=index&a=verifyUserName&username=要验证的用户名
+	返回值：		
+		code : 返回的信息代码 0：没有错误，1：有错误
+		message : 返回的信息 具体返回信息
+	
+事件onblur:当元素失去焦点的时候触发
+
+	oUsername1.onblur = function() {
+      var ajaxInfo = {
+         url: 'guestbook/index.php',
+         method: 'get',
+         data: 'm=index&a=verifyUserName&username=' + this.value,
+         fn: function(sData) {
+            var data = JSON.parse(sData);
+            oVerifyUserNameMsg.innerText = data.message;
+         }
+      };
+      ajax(ajaxInfo);
+   };
+
+-----------------
+	*注册*
+
+后端提供的接口：注册
+	调用参数：
+		get/post都可以（注册一般都用post）
+		guestbook/index.php
+			m : index
+			a : reg
+			username : 要注册的用户名
+			password : 注册的密码
+	返回值：
+		code : 返回的信息代码 0 = 没有错误，1 = 有错误
+		message : 返回的信息 具体返回信息
+(真正的注册，存入数据库的工作都是后端干的，不用管，用好接口就行)
+
+	oRegBtn.onclick = function() {
+	   var ajaxInfo = {
+	      url: 'guestbook/index.php',
+	      method: 'post',
+	      data: 'm=index&a=reg&username=' + encodeURI(oUsername1.value) + '&password=' + oPassword1.value,
+	      fn: function(sData) {
+	         var data = JSON.parse(sData);
+	         alert(data.message);
+	      }
+	   };
+	   ajax(ajaxInfo);
+	   //注册完不会自动登录，这是后端设定的，前端管不了。
+	   //所以这里不用更新用户登录信息
+	};
+
+-----------------
+	*登录*
+后端提供的接口：注册
+	调用参数：
+		get/post都可以（注册一般都用post）
+		guestbook/index.php
+			m : index
+			a : login
+			username : 要登陆的用户名
+			password : 登陆的密码
+	返回值：
+		code : 返回的信息代码 0 = 没有错误，1 = 有错误
+		message : 返回的信息 具体返回信息
+（登陆成功后，后端会自动添加cookie储存用户信息。前端只要取cookie就行了）
+
+	oLoginBtn.onclick = function() {
+	   var ajaxInfo = {
+	      url: 'guestbook/index.php',
+	      method: 'post',
+	      data: 'm=index&a=login&username=' + encodeURI(oUsername2.value) + '&password=' + oPassword2.value,
+	      fn: function(sData) {
+	         var data = JSON.parse(sData);
+	         alert(data.message);
+	         if (data.code === 0) {
+	            //说明登陆成功，需要更新userStatus
+	            updateUserStatus();
+	         }
+	      }
+	   };
+	   ajax(ajaxInfo);
+	};
+
+-----------------
+	*退出登录*
+后端提供的接口：退出
+	调用参数：
+		get/post都可以
+	   	guestbook/index.php
+	   		m : index
+	   		a : logout
+   	返回值：
+		code : 返回的信息代码 0 = 没有错误，1 = 有错误
+		message : 返回的信息 具体返回信息
+（退出成功后，后端会自动删除cookie，前端不用管）
+	
+	oLogout.onclick = function() {
+	   var ajaxInfo = {
+	      url: 'guestbook/index.php',
+	      method: 'post',
+	      data: 'm=index&a=logout',
+	      fn: function(sData) {
+	         var data = JSON.parse(sData);
+	         alert(data.message);
+	         if (data.code === 0) {
+	            //说明退出成功，需要更新userStatus
+	            updateUserStatus();
+	         }
+	      }
+	   };
+	   ajax(ajaxInfo);
+	};
+
+-----------------
+	*判断是否登录*
+看对应cookie是否存在就可以
+首先是个取cookie的函数：
+
+	function getCookie(key) {
+	   var arr1 = document.cookie.split('; ');
+	   for (var i = 0; i < arr1.length; i++) {
+	      var arr2 = arr1[i].split('=');
+	      if (arr2[0] == key) {
+	         return arr2[1];
+	      }
+	   }
+	}
+根据cookie是否存在，判断用户登录状态，并更新网页信息
+
+	function updateUserStatus() {
+	   var uid = getCookie('uid');
+	   var username = getCookie('username');
+	   // 如果uid存在，说明有cookie，说明是登录状态
+	   if (uid) {
+	      //如果是登陆状态：
+	      //1 用户信息和“退出登录”显示出来
+	      //2 注册和登录区都隐藏起来
+	      oUser.style.display = 'block';
+	      oUserInfo.innerHTML = username;
+	      oReg.style.display = 'none';
+	      oLogin.style.display = 'none';
+	   } else {
+	      oUser.style.display = 'none';
+	      oUserInfo.innerHTML = '';
+	      oReg.style.display = 'block';
+	      oLogin.style.display = 'block';
+	   }
+	}
+并且在用户登录成功、退出成功时，调用updateUserStatus()来更新。
+
+-----------------
+	*新发留言*
+后端提供的接口：新发留言
+	调用参数：
+		post
+	   	guestbook/index.php
+	   		m : index
+	   		a : send
+	   		content : 留言内容
+   	返回值：
+		code : 返回的信息代码 0 = 没有错误，1 = 有错误
+		message : 返回的信息 具体返回信息  
+		data : 返回成功的留言的详细信息
+			{
+				cid : 留言id	
+				content : 留言内容 
+				uid : 留言人的id
+				username : 留言人的名称
+				dateline : 留言的时间戳(秒)
+				support : 当前这条留言的顶的数量
+				oppose : 当前这条留言的踩的数量
+			}
+   			
+	oPostBtn.onclick = function() {
+	   var ajaxInfo = {
+	      url: 'guestbook/index.php',
+	      method: 'post',
+	      data: 'm=index&a=send&content=' + 留言内容,
+	      fn: function(sData) {
+	         var data = JSON.parse(sData);
+	         alert(data.message);
+	         if (d.code === 0) {
+	            //把当前留言添加到列表中
+	            createList(d.data, true);
+	         }
+	      }
+	   };
+	   ajax(ajaxInfo);
+	};
+
+其中添加留言函数：
+	function createList(data, insert) {
+	   var oDl = document.createElement('dl');
+
+	   var oDt = document.createElement('dt');
+	   var oStrong = document.createElement('strong');
+	   oStrong.innerHTML = data.username;
+	   oDt.appendChild(oStrong);
+
+	   var oDd1 = document.createElement('dd');
+	   oDd1.innerHTML = data.content;
+
+	   var oDd2 = document.createElement('dd');
+	   oDd2.className = 't';
+	   var oA1 = document.createElement('a');
+	   oA1.href = '';
+	   oA1.innerHTML = '顶(<span>' + data.support + '</span>)';
+	   var oA2 = document.createElement('a');
+	   oA2.href = '';
+	   oA2.innerHTML = '踩(<span>' + data.oppose + '</span>)';
+	   oDd2.appendChild(oA1);
+	   oDd2.appendChild(oA2);
+
+	   oDl.appendChild(oDt);
+	   oDl.appendChild(oDd1);
+	   oDl.appendChild(oDd2);
+
+	   if (insert && oList.children[0]) {
+	      	//insert为true时，说明是刚加的，要添加到最上面
+	      	//children[0]为了兼容IE低版本
+	      	oList.insertBefore(oDl, oList.children[0]);
+	   } else {
+	   		//从后端加载来的，+到后面
+	      	oList.appendChild(oDl);
+	   }
+	}
+
+-----------------
+	*获取存在后端数据库的留言*
+后端提供的接口：新发留言
+	调用参数：
+		post
+	   	guestbook/index.php
+	   		m : index
+	   		a : getList
+      		page : 获取的留言的页码，默认为1
+      		n : 每页显示的条数，默认为10
+   	返回值：
+		code : 返回的信息代码 0 = 没有错误，1 = 有错误
+		message : 返回的信息 具体返回信息  
+		data : 返回成功的留言的详细信息
+			{
+				cid : 留言id	
+				content : 留言内容 
+				uid : 留言人的id
+				username : 留言人的名称
+				dateline : 留言的时间戳(秒)
+				support : 当前这条留言的顶的数量
+				oppose : 当前这条留言的踩的数量
+			}
+
+全局变量var iPage = 1;
+
+	function showList() {	   
+	   var ajaxInfo = {
+	      url: 'guestbook/index.php',
+	      method: 'post',
+	      data: 'm=index&a=getList&page=' + iPage,
+	      fn: function(sData) {
+	         var data = JSON.parse(sData).data;
+	         if (data)
+	            for (var i = 0; i < data.list.length; i++) {
+	               createList(data.list[i]);
+	            }
+	         else {
+	            if (iPage == 1)
+	               oList.innerHTML = '现在还没有留言，快来抢沙发...';
+	            oShowMore.style.display = 'none';
+	            alert(iPage);
+	         }
+	      }
+	   };
+	   ajax(ajaxInfo);
+	}
+
+	//点击显示更多的内容
+	oShowMore.onclick = function() {
+	   iPage++;
+	   showList();
+	};
+	
+更多见：D:\wamp32\www\3 messageBoard
