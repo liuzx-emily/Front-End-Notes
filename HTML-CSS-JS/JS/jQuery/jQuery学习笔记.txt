@@ -984,7 +984,7 @@ $.xxx()  $.yyy()  $.zzz()：不仅可以给JQ对象用，也可以给原生DOM�
 
 --------------
 	jQuery插件
-1 $.extend : 扩展工具方法下的插件形式  $.xxx() $.yyy()
+1 $.extend : 扩展工具方法  $.xxx() $.yyy()
   
 	$.extend({
 		leftTrim : function(str){
@@ -999,26 +999,10 @@ $.xxx()  $.yyy()  $.zzz()：不仅可以给JQ对象用，也可以给原生DOM�
   调用：
 	$.aaa();  //弹出1
 
-2 $.fn.extend  :  扩展JQ对象下的插件形式  $().xxx()  $().yyy()
+2 $.fn.extend  :  扩展实例方法  $().xxx()  $().yyy()
 	$.fn.extend({		
 		drag : function(){
-			var disX = 0;
-			var disY = 0;			
-			var This = this;			
-			this.mousedown(function(ev){				
-				disX = ev.pageX - $(this).offset().left;
-				disY = ev.pageY - $(this).offset().top;				
-				$(document).mousemove(function(ev){					
-					This.css('left' , ev.pageX - disX);
-					This.css('top' , ev.pageY - disY);					
-				});
-				
-				$(document).mouseup(function(){
-					$(this).off();
-				});
-				
-				return false;				
-			});			
+			// ...
 		},
 		aaa : function(){
 			alert(2);
@@ -1027,3 +1011,30 @@ $.xxx()  $.yyy()  $.zzz()：不仅可以给JQ对象用，也可以给原生DOM�
   调用：
   	$('#div1').drag();
   	$().aaa();  //弹出2
+
+--------------
+  	$.extend
+1 参数只有一个{}时：扩展工具方法
+	$.extend({
+		aaa : function(){},
+		bbb : function(){}
+	});
+
+2 参数有多个{}时：后面的对象都扩展到第一个对象上
+	var a = {};
+	$.extend( a , { name : 'hello' } , { age : 30 } );
+	console.log( a );
+
+3 深拷贝 && 浅拷贝
+	浅拷贝：
+		var a = {};
+		var b = { name : 'Emma'};
+		$.extend(a , b );
+		a.name = 'John';
+		alert( b.name);	//'John'
+	深拷贝：(内层是引用类型时，需要)
+		var a = {};
+		var b = {  name : { age : 30 } };
+		$.extend( true , a , b );
+		a.name.age = 20;
+		alert( b.name.age );	//30
