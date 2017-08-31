@@ -1,4 +1,97 @@
-﻿-----------------------
+-----------------------
+	*border*
+1 border-width
+	1 不支持%
+		原因：边框的宽度不应该随屏幕大小变化而变化，所以用%不合语义
+	2 支持关键字(ie7除外)
+		thin 1px
+		medium 3px (默认)
+		thick 5px
+2 border-style
+	1 solid
+	2 dashed 虚线 (IE下比chrome ff更密一点)
+		因为不统一，只能乖乖做边框，不能用来画图
+	3 dotted 点线 (IE圆点;chrome ff方块)
+		IE8中可以用来画正圆边框
+		html:
+			<div class="box">
+			    <span>hello girl</span>
+			    <div class="dotted"></div>
+			</div> 
+		css:
+			.box{
+				width: 150px;
+				height: 150px;
+				overflow: hidden;
+				position: relative;
+				text-align: center;
+			}
+			.box span{
+				line-height: 150px;
+				color:white;
+			}
+			.dotted{
+				width: 150px;
+				height: 150px;
+				border:149px dotted #cd0000;
+				position: absolute;
+				left: 0;
+				top: 0;
+				z-index: -9999;
+			}
+	4 double 双线
+		兼容性极好，可用来绘制图形。
+		两边永远相等，中间区域正负1
+	    例：绘制"三道杠"图标：
+		 	div.double{
+		 		border-top:30px double crimson;
+		 		width: 50px;
+		 		height: 10px;
+		 		border-bottom:10px solid crimson;
+		 	}
+	5 inset outset groove 丑 用不到
+3 border-color
+	没有指明时，使用color的值
+	例：图形变色
+		<a class="btn_add" href="javascript:void(0)"></a>		
+		.btn_add{
+		    display: inline-block;
+		    width: 40px;
+		    height: 40px;
+		    border:2px solid;
+		    color:#ccc;
+		    position: relative;
+		}
+		.btn_add:before{
+		    content:"";
+		    display: inline-block;
+		    position: absolute;
+		    left: 4px;
+		    top: 18px;
+		    width: 0;
+		    height: 4px;
+		    border-right: 30px solid;
+		    color: inherit;
+		    z-index: 1;
+		}
+		.btn_add:after{
+		    content:"";
+		    display: inline-block;
+		    position: absolute;
+		    left: 18px;
+		    top: 4px;
+		    width:4px;
+		    height: 0;
+		    border-bottom: 30px solid;
+		    color: inherit;
+		    z-index: 1;
+		}
+		.btn_add:hover{
+		    color:#097;
+		}
+4 border设置为transparent来增加点击区域(IE7+支持透明边框)
+
+-----------------------
 	css样式位置
 1 行间：
 	<div style='color:red;font-size:20px'></div>
@@ -238,19 +331,3 @@ IE6 7 8：           filter:alpha(opacity=0~100);
   background-repeat:repeat-x;
   background-position:10px 0px;
   左边的10px宽度不会空着。
-
---------------------
-	*disabled和readonly*
-disabled：
-	当 input 元素加载时禁用此元素。
-	input内容不会随着表单提交。
-	不可以tab到
-readonly：
-	规定输入字段为只读。
-	input内容会随着表单提交。
-	可以tab到
-无论readonly还是disabled，都能通过js更改input的value
-
-例：
-	<input type="text" value="sth" disabled>
-	<input type="text" value="sth" readonly>
