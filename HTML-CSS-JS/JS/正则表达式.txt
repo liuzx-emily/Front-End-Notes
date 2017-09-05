@@ -1,4 +1,3 @@
-
 --------------
 	*知识点总结*
 创建正则对象
@@ -12,24 +11,25 @@ RegExp对象方法
 
 --------------
 	*课后练习*
-1 匹配成对标签
+1 匹配紧邻的成对的标签
 	var str = '<div><p></p><span></span></div>';
 	结果[ '<p></p>', '<span></span>' ]
 2 判断输入是不是13-99之间年龄
 3 -转换成驼峰
 	var str = 'border-bottom-color';
 	变为[borderBottomColor]
+4 过滤标签:把html格式的内容去掉标签变为纯文本。：
+	var str = "[<div class='red' id='title'>p>这是段落1</p><p>这是段落2</p></div>]";
+	结果：[这是段落1这是段落2]
 5 判断qq号:5-12位数字，第一位不能是0
 6 敏感词过滤
 	var oldStr = '中国五星红旗美利坚星条旗英国米字旗';
 	输出：**五星红旗***星条旗**米字旗
 
-7 过滤标签:把html格式的内容去掉标签变为纯文本。：
-	var str = "[<div class='red' id='title'>p>这是段落1</p><p>这是段落2</p></div>]";
-	结果：[这是段落1这是段落2]
+
 
 练习题答案：
-1 匹配成对标签
+1 匹配紧邻的成对标签
 	var re = /<([^<]+)><\/\1>/g;
 2 判断输入是不是13-99之间年龄
 	var re = /^(1[3-9]|[2-9]\d)$/;	//要加^和$
@@ -38,6 +38,15 @@ RegExp对象方法
 	var newStr = str.replace(re, function(match, p1) {
 	   return p1.toUpperCase();
 	});
+	或者：
+	var re = /-[a-z]/g;
+	var newStr = str.replace(re, function(match) {
+	   return match[1].toUpperCase();
+	});
+4 过滤标签:把html格式的内容去掉标签变为纯文本。：
+   	var re = /<[^<]+>/g;
+	var newStr = str.replace(re, '');
+	console.log(newStr);
 5 判断输入是不是qq号:5-12位数字，第一位不能是0
 	re = /^[1-9]\d{4,11}$/;	//要加^和$
 6 敏感词过滤
@@ -49,10 +58,6 @@ RegExp对象方法
 	   }
 	   return result;
 	});
-7 过滤标签:把html格式的内容去掉标签变为纯文本。：
-   	var re = /<[^<]+>/g;
-	var newStr = str.replace(re, '');
-	console.log(newStr);
 
 --------------
 	*一些常用的*
@@ -235,8 +240,8 @@ replace备注：上面的replace是简版，完整版:
 		2 p1,p2, ... :假如replace()方法的第一个参数是一个RegExp对象，则代表第n个括号匹配的字符串。(对应于上述的$1，$2等)
 		3 offset:匹配到的子字符串在原字符串中的偏移量。(比如原字符串是“abcd”，匹配到的子字符串是“bc”，那么这个参数将是1)
 		4 string:被匹配的原字符串。
-		（【易错！！】参数名字可以改，但是位置不能换。是按位置来分功能的。所以如果参数里不写offset，在pn后直接跟参数string，那么这里的string其实是“offset功能”，而string功能得不到）
-		(有几个括号，就到p及。比如：如果没有括号，则参数是match,offset,string)
+		参数名字可以改，但是位置不能换。
+		(有几个括号，就到p几。比如：如果没有括号，则参数是match,offset,string)
 		例子：
 			function replacer(match, p1, p2, p3, offset, string) {
 			  return [p1, p2, p3].join(' - ');
@@ -291,5 +296,3 @@ var re = {
 };
 
 使用：re.email
-
-
