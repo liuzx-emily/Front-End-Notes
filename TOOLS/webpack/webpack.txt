@@ -5,28 +5,29 @@
 2 为了避免每次安装都需要--registry参数，可以使用如下命令进行永久设置：
   npm config set registry http://registry.npm.taobao.org
 
+
 --------------
-  *基础1* 
-见webpack-test文件夹
+    *介绍*
+1 for JS的打包文件，把很多modules打包成少量的bundled assets
+2 [特点]代码分割code splitting：按需加载，不是全部加载
+3 loaders：加载非JS文件（CSS LESS 图片 commonJS ES6 .vue .jsx等）
+
+--------------
+  *基础* 
 mkdir webpack-test
 cd webpack-test
 npm init -y
 npm install webpack --save-dev
 
 cmd打包：webpack 源文件 目标文件
-例子：webpack hello.js hello.bundle.js
-
+例子：webpack hello.js bundle.js
+(注意：webpack必须先全局安装，才能在cmd中使用)
 
 --watch:监听文件，一有变化自动打包
 --progress：打包过程总可以可以看到打包进度 
-查看更多关于webpack的参数，可以cmd：webpack -h
+-h:查看更多关于webpack的参数
 
-
---------------
-  *基础2* 
-见webpack-test文件夹
 在源文件hello.js中引入其他文件：
-
 用commonJS的require语法，或者ES6的import语法都行。最终都会转成webpack自己的打包命令
     const world = require('./world.js');
     require('./style.css'); //需要loader处理
@@ -34,8 +35,8 @@ cmd打包：webpack 源文件 目标文件
 webpack只支持js类型，其他所有类型都需要loader来处理。
 loader需要先安装，再指定。
 1 安装：
-  cmd安装loader：npm install --save-dev css.loader style.loader
-  css-loader：让webpack能处理.css文件。此时只在打包文件bundle.js中有。但对于引入了bundle的html文件，css不会自动加入到html中。
+  npm install --save-dev css.loader style.loader
+  css-loader：让webpack能处理.css文件。此时只在打包文件bundle.js中有。但对于引入了bundle.js的html文件，css不会自动加入到html中。
   style-loader：把css-loader处理完的内容添加到html>head>style标签中
 
 2 指定loader的三种方法：
@@ -43,10 +44,9 @@ loader需要先安装，再指定。
     require('style-loader!css-loader!./style.css');   //hello.js中引入style.css
   (2)命令行每次打包时加上参数
     require('./style.css');   //hello中引入css文件时不指明loader
-    webpack hello.js bundle.js --module-bind "css=style-loader!css-loade"
+    webpack hello.js bundle.js --module-bind "css=style-loader!css-loader"
     注：单引号会报错 必须是双引号
   (3)在config文件中设置
-
 
 --------------
   *项目中使用* 
@@ -78,7 +78,6 @@ webpack加上参数运行，每次要打一长串很麻烦，可以使用npm中�
 
 --------------
   *配置文件*
-英文官网说明：https://webpack.js.org/configuration/
 中文官网说明：https://doc.webpack-china.org/configuration/
 
 注意整个配置中我们使用 Node 内置的 path 模块，并在它前面加上 __dirname这个全局变量。可以防止不同操作系统之间的文件路径问题
@@ -162,7 +161,7 @@ https://www.npmjs.com/package/html-webpack-plugin
 
 如果是多页面，那就需要多个htmlWebpackPlugin对象。每一个htmlWebpackPlugin对象自动生成一个html文件。
 
-如果不显示指定，那么每一个htmlWebpackPlugin对象中都默认包含entry中的所有chunk。
+如果不显式指定，那么每一个htmlWebpackPlugin对象中都默认包含entry中的所有chunk。
   可以用chunks和excludeChunks来指定
 
 
@@ -178,12 +177,6 @@ https://www.npmjs.com/package/html-webpack-plugin
 见config7.js
 
 
----------------------
----------------------
----------------------
----------------------
----------------------
----------------------
 ---------------------
   *loader-处理js css less/sass
 
@@ -305,3 +298,24 @@ http请求载入图片：
 base64载入图片：
   增大打包后文件的大小，让代码变得冗杂。
   优势：图片很小时，省去http请求时间
+
+
+---------------------
+  *热更新*
+https://segmentfault.com/a/1190000006964335
+安装：yarn add --dev webpack-dev-server
+webpack-dev-server简记wds
+1 基本目录
+  wds默认会以当前目录为基本目录，除非你指定它。
+  wds --content-base build 将build目录作为基本目录
+  注意：webpack-dev-server生成的bundle文件没有放在真实目录中，而是放在了内存中
+  在基本目录下新建一个index.html文件，在浏览器中输入http://localhost:8080访问。
+2 自动刷新
+  wds支持两种模式来自动刷新页面
+    iframe模式(页面放在iframe中,当发生改变时重载)
+    inline模式(将wds的客户端入口添加到包(bundle)中)
+  两种模式都支持热模块替换(Hot Module Replacement):只替换更新的部分,而不是整个页面重载.
+  2.1 iframe模式
+  2.2 inline模式
+3 热模块替换
+  --hot

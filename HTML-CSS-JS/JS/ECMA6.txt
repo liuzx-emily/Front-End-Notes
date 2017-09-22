@@ -1,6 +1,6 @@
 当前路径打开cmd：
-	shift + 鼠标右键
-	地址栏输入cmd
+	1 shift + 鼠标右键
+	2 地址栏输入cmd
 
 ----------
 	*主要内容
@@ -19,16 +19,8 @@
 
 ----------
 	*let const
-一、let const只在声明的块内有效
-	let经常用在for循环中:
-		var a = [];
-		for (let i = 0; i < 10; i++) {
-		  a[i] = function () {
-		    console.log(i);
-		  };
-		}
-		a[6](); // 6
-	变量i是let声明的，当前的i只在本轮循环有效，所以每一次循环的i其实都是一个新的变量
+一、只在声明的块内有效
+	let经常用在for循环中，当前的i只在本轮循环有效，所以每一次循环的i其实都是一个新的变量。
 	设置循环变量的那部分是一个父作用域，而循环体内部是一个单独的子作用域。
 		for (let i = 0; i < 3; i++) {
 		  let i = 'abc';
@@ -36,40 +28,46 @@
 		}
 	输出3个'abc'
 
-二、let和const不存在变量提升
+二、不存在变量提升
 	console.log(foo); //输出undefined
 	var foo = 2;
 	console.log(bar); //报错ReferenceError
 	let bar = 2;
 
-三、let const不允许重复声明
+三、不允许重复声明
+	因此，不能在函数内部重新声明参数。
+	function func(a) {
+		let a; // 报错
+	}
 
 四、let const的暂时性死区 temporal dead zone
 	ES6明确规定，如果区块中存在let和const命令，这个区块对这些命令声明的变量，从一开始就形成了封闭作用域。凡是在声明之前就使用这些变量，就会报错。
 		if (true) {
-		  //TDZ开始
-		  tmp = 'abc'; 		//ReferenceError
-		  console.log(tmp); //ReferenceError
-		  let tmp; 			//TDZ结束
-		  console.log(tmp); //undefined
-		  tmp = 123;
-		  console.log(tmp); //123
+			/* TDZ开始 */
+			tmp = 'abc'; 		//ReferenceError
+			console.log(tmp); //ReferenceError
+			let tmp; 			
+			/* TDZ结束 */
+			console.log(tmp); //undefined
+			tmp = 123;
+			console.log(tmp); //123
 		}
 	“暂时性死区”也意味着typeof不再是一个百分之百安全的操作：
 		typeof x; 	//ReferenceError
 		let x;
+	作为比较，如果一个变量根本没有被声明，使用typeof反而不会报错。
 	有些“死区”比较隐蔽，不太容易发现：
 		function bar(x = y, y = 2) {
-		  return [x, y];
+			return [x, y];
 		}
 		bar(); // 报错
 		
-		var x = x;	//不报错
-		let x = x;	//ReferenceError: x is not defined
+		var a = a;	//不报错
+		let b = b;	//ReferenceError: b is not defined
 
 五、块级作用域
 	ES5 只有全局作用域和函数作用域，没有块级作用域，这带来很多不合理的场景。
-	let实际上为 JavaScript 新增了块级作用域。块级作用域的出现，实际上使得获得广泛应用的立即执行函数表达式（IIFE）不再必要了。
+	let和const为 JavaScript 新增了块级作用域。块级作用域的出现，实际上使得"立即执行函数表达式（IIFE）"不再必要了。
 		// IIFE 写法
 		(function () {
 		  var tmp = ...;
@@ -89,28 +87,45 @@
 		    return a;
 		  };
 		}
+	本质上，块级作用域是一个语句，将多个操作封装在一起，没有返回值。
 
 六、const额外特点：
-	1 声明的时候必须赋值
-	2 声明的常量储存的是
-		值类型时：值不可以改变
-		引用类型时：引用关系（地址）不可以改变，对象里的数据可以变
-	备注：如果真的想将对象冻结，应该使用Object.freeze方法。
+	1 声明时，必须初始化
+	2 本质：const实际上保证的，并不是变量的值不得改动，而是变量指向的内存地址不得改动。
+		对于简单类型的数据（数值、字符串、布尔值），值就保存在变量指向的内存地址，因此等同于常量。
+		但对于复合类型的数据（主要是对象和数组），变量指向的内存地址中保存的只是一个指针，const只能保证这个指针是固定的，至于它指向的数据结构是不是可变的，就完全不能控制了。
+		const a = [];
+		a.push('Hello'); // 可执行
+		a.length = 0;    // 可执行
+		a = ['Dave'];    // 报错
 
 七、顶层对象的属性
-	ES6一方面规定，为了保持兼容性，var和function声明的全局变量，依旧是顶层对象的属性；另一方面规定，let命令、const命令、class命令声明的全局变量，不属于顶层对象的属性。也就是说，从ES6开始，全局变量将逐步与顶层对象的属性脱钩。
+	顶层对象，在浏览器环境指的是window对象，在Node指的是global对象。ES5之中，顶层对象的属性与全局变量是等价的。
+		window.a = 1;
+		a = 2;
+		window.a 	// 2
+	顶层对象的属性与全局变量挂钩，被认为是JavaScript语言最大的设计败笔之一。
+	ES6为了改变这一点，规定：
+		1 为了保持兼容性，var和function声明的全局变量，依旧是顶层对象的属性
+		2 let命令、const命令、class命令声明的全局变量，不属于顶层对象的属性。也就是说，从ES6开始，全局变量将逐步与顶层对象的属性脱钩。
+		var a = 1;
+		window.a 	// 1
+		let b = 1;
+		window.b 	// undefined
 
 八、声明变量的方法
 	ES5：var function。只有2种
-	ES6：let const import class var function。新增4，共6
+	ES6：let const import class 新增4，共6
 
 ----------
 	*解构赋值
+ES6允许按照一定模式，从数组和对象中提取值，对变量进行赋值，这被称为解构（Destructuring）
 规则：只要等号右边的值不是对象或数组，就先将其转为对象。
 string number null可以转成对应的包装对象
 undefined和null无法转为对象，所以对它们进行解构赋值都会报错。
 
 1 数组的解构赋值
+	从数组中提取值，按照对应位置，对变量赋值。
 	本质上，这种写法属于“模式匹配”，只要等号两边的模式相同，左边的变量就会被赋予对应的值
 		let [a, b, ...c] = [, 2, 3, 4, 5, 6];
 		a	// undefined
@@ -121,6 +136,10 @@ undefined和null无法转为对象，所以对它们进行解构赋值都会报�
 		x 	// "a"
 		y 	// undefined
 		z 	// []
+
+		let [a, [b], d] = [1, [2, 3], 4];
+		b 	// 易错，是2，不是[2,3]
+
 
 		let [x, y, z] = new Set(['a', 'b', 'c']);
 		x 	// "a"

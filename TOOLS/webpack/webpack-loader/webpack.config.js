@@ -67,7 +67,7 @@ module.exports = {
             use: [{
                 loader: "url-loader",
                 query: {
-                    limit: 200000, //200kb为分界线
+                    limit: 200, //200kb为分界线
                     name: "assets/[name]-[hash:5].[ext]"
                 }
             }, "image-webpack-loader"]
