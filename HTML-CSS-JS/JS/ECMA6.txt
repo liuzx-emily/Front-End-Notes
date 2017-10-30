@@ -162,56 +162,56 @@ undefined和null无法转为对象，所以对它们进行解构赋值都会报�
 		let [x = f()] = [1];	//不会执行f()
 
 2 对象的解构赋值:
-  方法一：变量和属性同名
-	let { a, b, c } = { b: "hah", a: "biu" };
-	a	// "biu"
-	b	// "hah"
-	c	// undefined
-	其实是下面的简写：
-	let {a:a,b:b,c:c}={ b: "hah", a: "biu" };
+	对象的解构与数组有一个重要的不同。数组的元素是按次序排列的，变量的取值由它的位置决定；而对象的属性没有次序，变量必须与属性同名，才能取到正确的值。
+	方法一：变量和属性同名
+		let { a, b, c } = { b: "hah", a: "biu" };
+		a	// "biu"
+		b	// "hah"
+		c	// undefined
+		其实是下面的简写：
+		let {a:a,b:b,c:c}={ b: "hah", a: "biu" };
 
-  方法二：
-	let { foo: baz } = { foo: "aaa", bar: "bbb" };
-	baz // "aaa"
-	foo // error: foo is not defined
+	方法二：
+		let { foo: baz } = { foo: "aaa", bar: "bbb" };
+		baz // "aaa"
+		foo // error: foo is not defined
 	这种方法证明了：对象的解构赋值的内部机制，是先找到同名属性，然后再赋给对应的变量。真正被赋值的是后者，而不是前者。上面代码中，foo是匹配的模式，baz才是变量。真正被赋值的是变量baz，而不是模式foo。
 
-  默认值：判断对象的属性值===undefined
-
-  注意：如果要将一个已经声明的变量用于解构赋值，必须非常小心。
-  	let foo;
-  	({foo} = {foo: 1}); // 成功 foo===1
-  	1 下面一行不能有let重新声明
-  	2 必须有小括号。因为解析器会将{}理解成代码块，而不是赋值语句。
-  
-  可以很方便地将现有对象的方法，赋值到某个变量：
-	let { log, sin, cos } = Math;
-
-  由于数组本质是特殊的对象，因此可以对数组进行对象属性的解构。
-	let arr = [1, 2, 3];
-	let {0 : first, [arr.length - 1] : last} = arr;
-	first // 1
-	last // 3
+	默认值：判断对象的属性值严格===undefined  
+	可以很方便地将现有对象的方法，赋值到某个变量：
+		let { log, sin, cos } = Math;
+	由于数组本质是特殊的对象，因此可以对数组进行对象属性的解构：
+		let arr = [1, 2, 3];
+		let {0 : first, [arr.length - 1] : last} = arr;
+		first // 1
+		last // 3
 
 3 string的解构赋值
+	字符串也可以解构赋值。这是因为此时，字符串被转换成了一个类似数组的对象。
 	let [a,b,c,d]="emily";
-	结果:a b c d分别是"e"、"m"、"i"、"l"
-	类似数组的对象都有一个length属性，因此还可以对这个属性解构赋值
-	let {length:lzxLen}="abcde";
-	结果：lzxLen是5
+	// a b c d分别是"e"、"m"、"i"、"l"
+	let {0:first,length:lzxLen}="abcde";
+	// first: "a" lzxLen: 5
 
 4 number和boolean的解构赋值
+	先转为对象
 	let {toString: s} = 123;
 	s === Number.prototype.toString // true
 	let {toString: s} = true;
 	s === Boolean.prototype.toString // true
 
+5 null和undefined不能进行解构赋值(因为无法转为对象)
 	let [a]=[null];			// a是null
 	let [b]=null;			// 报错
 	let [c]=[undefined];	// c是undefined
 	let [d]=undefined;		// 报错
 
 5 函数参数的解构赋值
+	function add([x, y]){
+	  return x + y;
+	}
+	add([1, 2]); // 3ZZ
+
 	[[1, 2], [3, 4]].map(([a, b]) => a + b);	// [ 3, 7 ]
 
 6 圆括号问题

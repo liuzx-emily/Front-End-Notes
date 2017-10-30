@@ -1,4 +1,4 @@
-﻿
+
 -------------
 for(var i=0;i<6000;i++){
 	oDiv.innerHTML+=i;
@@ -23,10 +23,7 @@ var arr=new Array(1,2,3);
 var show=function(){var a;};
 var show=new Function('var a;');
 
--------------
-只要能用原生方法，就不要自己写。
-1 方便
-2 原生的方法是C++写的，性能比js强多了。
+
 
 
 -------------

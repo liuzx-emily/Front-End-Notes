@@ -1,9 +1,9 @@
------------------------
+﻿-----------------------
 	*border*
 1 border-width
 	1 不支持%
 		原因：边框的宽度不应该随屏幕大小变化而变化，所以用%不合语义
-	2 支持关键字(ie7除外)
+	2 支持关键字
 		thin 1px
 		medium 3px (默认)
 		thick 5px
@@ -12,44 +12,7 @@
 	2 dashed 虚线 (IE下比chrome ff更密一点)
 		因为不统一，只能乖乖做边框，不能用来画图
 	3 dotted 点线 (IE圆点;chrome ff方块)
-		IE8中可以用来画正圆边框
-		html:
-			<div class="box">
-			    <span>hello girl</span>
-			    <div class="dotted"></div>
-			</div> 
-		css:
-			.box{
-				width: 150px;
-				height: 150px;
-				overflow: hidden;
-				position: relative;
-				text-align: center;
-			}
-			.box span{
-				line-height: 150px;
-				color:white;
-			}
-			.dotted{
-				width: 150px;
-				height: 150px;
-				border:149px dotted #cd0000;
-				position: absolute;
-				left: 0;
-				top: 0;
-				z-index: -9999;
-			}
 	4 double 双线
-		兼容性极好，可用来绘制图形。
-		两边永远相等，中间区域正负1
-	    例：绘制"三道杠"图标：
-		 	div.double{
-		 		border-top:30px double crimson;
-		 		width: 50px;
-		 		height: 10px;
-		 		border-bottom:10px solid crimson;
-		 	}
-	5 inset outset groove 丑 用不到
 3 border-color
 	没有指明时，使用color的值
 	例：图形变色
@@ -89,33 +52,8 @@
 		.btn_add:hover{
 		    color:#097;
 		}
-4 border设置为transparent来增加点击区域(IE7+支持透明边框)
 
------------------------
-	css样式位置
-1 行间：
-	<div style='color:red;font-size:20px'></div>
-2 内部：
-	在<style>标签中
-3 外部：
-	<link rel="stylesheet" href="1.css">
-
------------------------
-	*（js）网页换肤：换css样式表*
-首先给link加上ID:
-   <link rel="stylesheet" href="testStyle.css" id='link1'>
-   （html中的任何东西都可以通过加ID来取到,从而修改）
-通过ID找到想修改样式表所在的link：
-	var cssLink = document.getElementById('link1');
-通过js修改：
-	cssLink.isFirst = true;
-	oBtn.onclick = function() {
-	   if (cssLink.isFirst)
-	      cssLink.href = "testStyle2.css";
-	   else
-	      cssLink.href = "testStyle.css";
-	   cssLink.isFirst = !cssLink.isFirst;
-	};
+4 border设置为transparent来增加点击区域
 
 --------------------
 	*BFC和IFC*
@@ -136,28 +74,6 @@ https://yuiblog.com/blog/2010/05/19/css-101-block-formatting-contexts/
 文档流是相对于盒子模型讲的,文本流是相对于文字讲的。
 float之后,元素会脱离文档流,但是不脱离文本流。所以会有‘文字环绕图片’效果。
 absolute(fixed)后,元素不仅会脱离文档流,也会脱离文本流。
-
---------------------
-	*float布局总结*
-1	float的本职：文字环绕图片
-	float不是用来布局的
-2	float会脱离文档流,但是不脱离文本流。所以会有‘文字环绕图片’效果
-3	作用可形容为：带有方位的display:inline-block
-	解释：元素不再有原先的inline、block的限制,反而比较像inline-block。可以设置w h p b m,不设置w h时,由内容撑开。
-	[唯一多了的就是可以float:right从右向左排,但这很少用]
-4	float的问题：
-		1 因为脱离文档流,所以父元素有“高度塌陷问题”,要“清除浮动”
-		2 用float布局,元素必须要限高
-5	js中的float属性：因为float貌似是JavaScript中的一个关键字,所以不能直接用float
-	 	IE：  obj.style.styleFloat = "left";
-	 	其他：obj.style.cssFloat = "left";
-6	一个清除浮动的方法：不会影响任何其他样式,通用性强,覆盖面广
-
-	.fix{zoom:1;}
-	.fix:after{display:block; content:'.'; clear:both; line-height:0; visibility:hidden;}
-
-	备注: content:'.'中写什么都行,content:'lzx'也是ok的
-		line-height:0也可以写成height:0
 
 --------------------
 	*设置float之后的display属性*
@@ -230,11 +146,6 @@ word-wrap:
 
 
 --------------------
-	*基础选择符的优先级*
-1 同级,后面的覆盖前面的
-2 优先级 tag < class < id < style(行间)
-
---------------------
 	*伪类*
 伪类：伪类用于向被选中元素添加特殊的效果。
 	link     	未访问(默认)
@@ -243,30 +154,10 @@ word-wrap:
 	visited  	访问过后(点击过后)
 A四个伪类的顺序：
 	link    visited    hover  active
-	(love hate 记忆方法！)
-
-IE6不支持a以外其它任何标签的伪类；
-IE6以上的浏览器支持所有标签的hover伪类；
+	(love hate)
 
 
 --------------------
-	*css reset*
-但凡是浏览默认的样式,都不要使用。
-body,dl,dd,p,h1,h2,h3,h4,h5,h6{margin:0;font-size:12px;}
-ol,ul{margin:0;padding:0;list-style:none;}
-a{text-decoration:none;}
-img{border:none;}
-
-
---------------------
-	*cursor*
-cursor 指针样式 (规定要显示的光标的类型)
-cursor：pointer | text | move ……
-cursor:url(hand.cur),pointer;
-
-
---------------------
-border-style:solid实线 dashed虚线 dotted点线
 	
 常见样式 —文本设置
 	font-size		文字大小
@@ -300,8 +191,8 @@ c、vertical-align (暂时最完美的方案)
 
 --------------------
 	*遮罩滤镜*
-IE6 7 8：           filter:alpha(opacity=0~100); 
-其他浏览器 不透明度：  opacity:0~1; 
+IE8-：	filter:alpha(opacity=0~100); 
+标准：	opacity:0~1; 
 
 
 --------------------

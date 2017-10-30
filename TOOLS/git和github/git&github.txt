@@ -1,3 +1,11 @@
+常用：
+	初始化，下载到本地，并重命名：
+		git clone xxx.git "重命名"
+	从远程仓库更新：
+		git pull origin master
+
+
+
 概念
 git
 工具，版本控制
