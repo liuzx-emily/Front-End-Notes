@@ -4,6 +4,15 @@
 2 原生的方法是C++写的，性能比js强多了。
 
 -----------------------
+提交表单的方法
+	1 submit按钮：
+		<input type="submit">
+	2 submit函数：
+		form1.submit();
+	3 超链接a:
+		<a href="page2.html?user=emily">提交</a>
+
+-----------------------
 	*匈牙利命名法*
 1 	前缀 类型 例子
 	数组	a 	aItems
@@ -1558,6 +1567,11 @@ BOM中的顶层对象是window,是特指【当前】窗口。
 
 --------------------
 	*cookie*
+cookie是http协议制定的。由服务器把cookie保存到浏览器，浏览器进行下一次请求时，把上次从服务器得到的server再归还给服务器。
+javaWeb中使用cookie：
+	response.addCookie()
+	response.getCookies()
+
 注：chrome不允许js在本地文件中操作cookie。要放在服务器环境测试才行
 	用file://不行，用loaclhost或者127.0.0.1可以
 
