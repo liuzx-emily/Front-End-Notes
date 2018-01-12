@@ -3,44 +3,6 @@
 2 浏览器前缀
 
 
------------------
-	*总体预告*
-CSS3新增了很多选择器：
-   1 属性选择器 如[lzx~='ab']
-   2 结构性选择器 如p:nth-child(3n) p:only-child
-   3 伪类选择器 如input:checked
-有的内容，比如[lzx='ab'] ::after不是css3新加的，不过就放到一起说了
-新增的CSS3选择器的兼容问题，和解决方法看“兼容性总结.txt”，简单来说就是下一个东西，引进来就好了，很简单。
-CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查，先不管了。
-
-讲了一些文本设置。
-1 颜色模式 rgba    IE9+
-2 文字阴影 text-shadow    IE10+
-3 文字描边 -webkit-text-stroke
-   只有webkit内核浏览器才支持，而且必须加前缀。FF和chrome支持，IE都不支持。
-4 文本功能 direction和text-overflow  全兼容
-5 自定义字体：ie8-部分支持：即只支持EOT字体。ie9+全支持
-
-1 box-sizing IE8+
-2 box-shadow IE9+
-3 倒影box-reflect 所有IE都不支持
-4 自由缩放resize 所有IE都不支持
-5 CSS3分栏布局 IE10+支持，FF和chrome需要前缀
-6 响应式布局@media IE9+支持（IE6-8通过引入js来兼容）
-7 弹性盒模型 兼容性不好，没学，以后没事再看
-
-1 border-radius IE9+
-2 linear-gradient IE10+
-3 radial-gradient IE10+
-4 background-size IE9+
-5 background-origin IE9+
-6 background-clip IE9+
-7 mask IE不支持，chrome要前缀且只支持Mask-image
-
-1 渐变transition IE10+
-2 2D变换transform IE10+
-  3D变换transform IE10+
-3 动画animation IE10+
 
 
 -----------------
@@ -52,6 +14,7 @@ CSS3新增了很多选择器：
 有的内容，比如[lzx='ab'] ::after不是css3新加的，不过就放到一起说了
 新增的CSS3选择器的兼容问题，和解决方法看“兼容性总结.txt”，简单来说就是下一个东西，引进来就好了，很简单。
 CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查，先不管了。
+
 
 -----------------
 	*属性选择器*

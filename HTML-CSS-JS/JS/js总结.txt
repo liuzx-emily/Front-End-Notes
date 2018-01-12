@@ -1,64 +1,42 @@
--------------
+-----------------------【start】
 只要能用原生方法，就不要自己写。
-1 方便
-2 原生的方法是C++写的，性能比js强多了。
+	1 方便
+	2 原生的方法底层是C++写的，性能比js强多了。
 
------------------------
-提交表单的方法
-	1 submit按钮：
-		<input type="submit">
-	2 submit函数：
-		form1.submit();
-	3 超链接a:
-		<a href="page2.html?user=emily">提交</a>
 
------------------------
-	*匈牙利命名法*
-1 	前缀 类型 例子
-	数组	a 	aItems
-	布尔	b 	bIsComplete
-	浮点	f 	fPrice
-	函数	fn 	fnHandler
-	整型	i 	iItemCount
-	对象	o 	oDiv1
-	正则	re 	reEmailCheck
-	字符串	s 	sUserName
-2 首字母大写
+
+--------------前后台数据交互的方法--------------
+1 表单form
+	<input type="submit">
+	form1.submit();
+
+2 ajax
+
+3 url后边带参数
+	<a href="page2.html?user=emily">提交</a>
+	window.location.href="page2.html?user=emily"
+
+
+
 
 --------------------
 	*焦点*
-1 焦点
-	当一个元素获得焦点的时候,它就可以接收用户的输入。
-  	使元素获取焦点：1.点击 2.tab键切换 3.焦点函数
+1 获取焦点：
+	a.点击  b.tab键切换  c.焦点函数
 	不是所有元素都能够接收焦点的.能够响应用户操作的元素才有焦点，比如：form表单元素,a
 	
-2 焦点事件
-	onfocus:当元素获取到焦点的时候触发
-	onblur:当元素失去焦点的时候触发（用途：注册时验证用户名能否使用）
-	例子1：
-		oText.onfocus = function() {			
-			if ( this.value == '请输入内容' ) {
-				this.value = '';
-			}			
-		};
-	例子2；
-		oText.onblur = function() {			
-			if ( this.value == '' ) {
-				this.value = '请输入内容';
-			}			
-		};
+2 事件
+	onfocus
+	onblur（注册时，验证用户名是否重名）
 
-3 焦点函数
-	obj.focus():给指定的元素设置焦点
-	obj.blur():取消指定元素的焦点
-	obj.select():选择指定元素里面的文本内容,同样也是只能操作可交互性元素。(用途举例: 浏览器不允许网页操作user的剪切板。user想要复制什么内容时,帮它全选上。)
-	例子1：
-		oText.focus();	
-	例子2：	
-		var oBtn = document.getElementById('btn');		
-		oBtn.onclick = function() {			
-			oText.select();			
-		};
+3 函数
+	obj.focus()
+	obj.blur()
+	obj.select()：选择指定元素里面的文本内容,同样也是只能操作可交互性元素。
+		用途举例: 复制功能，但浏览器不允许网页操作用户电脑的剪切板，可以帮ta全选上
+
+
+
 
 ----------------------
    *数据类型*

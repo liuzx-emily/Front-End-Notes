@@ -4,6 +4,8 @@
 
  退出node：两次ctrl+c
 
+
+
 -----------*npm*
  换下载源：
 	npm config set registry "https://registry.npm.taobao.org"
@@ -24,6 +26,8 @@
  fsevent是mac osx系统的，在win下使用会有警告，忽略即可
 
  用npm初始化来创建package.json：npm init
+
+
 
 -----------*yarn*
  代码通过叫做"包"(有时称为"模块")的东西来共享
@@ -60,9 +64,15 @@
  运行一个定义好的包脚本。你可以在你的 package.json 文件中定义 scripts。
   yarn run [script] [-- <args>]
 
+
+
+
 -----------*服务器*
  使用php等后端语言时时，需要Apache或者Nginx的HTTP服务器，并配上一些模块。整个"接收 HTTP 请求并提供Web页面"的需求根本不需要php来处理。
  不过使用Node.js时，我们要自己编写整个服务器。
+
+
+
 
 -----------*Node.js的组成*
  1 引入模块：
@@ -72,10 +82,16 @@
  3 接收请求与响应请求:
 	客户端可以使用浏览器或终端发送HTTP请求，服务器接收请求后返回响应数据。
 
+
+
+
 -----------*顶层对象*
  在ECMAScript部分node和js是一样的，区别：DOM BOM
  js中的顶层对象：window
  node中的顶层对象：global（根本没有window）
+
+
+
 
 -----------*模块*
  一个文件就是一个模块，每个模块都有自己的作用域。
@@ -92,6 +108,8 @@
  举例：__filename 当前文件被解析过后的绝对路径
 	console.log( __filename );	//D:\hello.js
 	__filename变量不是全局的，每个模块都有自己的__filename
+
+
 
 -----------*模块加载*
  CommonJS规范加载模块是同步的，也就是说，只有加载完成，才能执行后面的操作。由于Node.js主要用于服务器编程，模块文件一般都已经存在于本地硬盘，所以加载起来比较快，不用考虑异步加载
@@ -136,6 +154,8 @@
   	下面也是改了引用，这样根本exports不出去。
   	exports={name,PI};
 
+
+
 -----------*process*
  process.stdout && process.stdin:
 	let name;
@@ -151,6 +171,8 @@
 	process.stdin.on('end', () => {
 	    process.stdout.write(`It s'over now.\nname=${name}`);
 	});
+
+
 
 -----------*Buffer类*
  用于操作二进制数据流。大小在被创建时确定，且无法调整。
@@ -178,6 +200,8 @@
  	console.log(bf5);	// <Buffer 01 01 01 01 01 01 01 01 01 01>
  	bf5.write('心\u0000\u000a', 1);
  	console.log(bf5);	// <Buffer 01 e5 bf 83 00 0a 01 01 01 01>
+
+
 
 -----------*fs文件系统 1*
  是核心模块，需要require引入。所有的方法都有异步和同步的形式。
@@ -234,6 +258,8 @@
 	});
 
  5 close
+
+
 
 -----------*fs文件系统 2*
  上面的open read write close等，是底层方法，使用起来麻烦。
@@ -317,16 +343,22 @@
  10 fs.rmdir(path, callback)
     异步地删除文件夹
 
+
+
 -----------*fs文件系统 实例*
  前端项目中，自动生成目录
  见init.js
  效果：自动生成demo文件夹和下面的结构
+
+
 
 -----------*fs文件系统 实例*
  前端项目中，自动合并文件，并监听变化
  见init2-auto.js
  难点：操作多个文件，用异步很麻烦，这里用的同步。
  效果：监控src文件夹下的所有变动，自动把文件合并输出到dist/main.txt中（src下只能再监控一层，如果js中再嵌套一个文件夹js1，那么js1中内容监控不到）
+
+
 
 -----------*后端服务器*
  见server.js
