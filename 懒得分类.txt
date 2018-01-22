@@ -45,3 +45,25 @@ num.toString(16)	//转成16进制
 数组复制：
 var arr=[1,2,3];
 var arr2=arr.concat([]);
+
+
+IE8支持：
+1 :focus(需要!DOCTYPE)
+
+2 div+p，选中p(需要!DOCTYPE)
+
+3 box-sizing
+
+4 input的maxlength属性
+  【textarea的maxlength属性IE8不支持】
+
+
+
+其他：
+
+4 设定了宽度的block级元素：
+	1 在最右 maring-left:auto
+	2 在最左 maring-right:auto
+	3 在中间 margin:0 auto
+
+5 outline是在border外面，不占地
