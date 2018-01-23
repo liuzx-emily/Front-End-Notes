@@ -33,20 +33,10 @@ cmd打包：webpack 源文件 目标文件
     require('./style.css'); //需要loader处理
 
 webpack只支持js类型，其他所有类型都需要loader来处理。
-loader需要先安装，再指定。
-1 安装：
-  npm install --save-dev css.loader style.loader
-  css-loader：让webpack能处理.css文件。此时只在打包文件bundle.js中有。但对于引入了bundle.js的html文件，css不会自动加入到html中。
-  style-loader：把css-loader处理完的内容添加到html>head>style标签中
+loader需要先安装，再指定
 
-2 指定loader的三种方法：
-  (1)文件中引用时直接写：
-    require('style-loader!css-loader!./style.css');   //hello.js中引入style.css
-  (2)命令行每次打包时加上参数
-    require('./style.css');   //hello中引入css文件时不指明loader
-    webpack hello.js bundle.js --module-bind "css=style-loader!css-loader"
-    注：单引号会报错 必须是双引号
-  (3)在config文件中设置
+
+
 
 --------------
   *项目中使用* 
@@ -80,12 +70,9 @@ webpack加上参数运行，每次要打一长串很麻烦，可以使用npm中�
   *配置文件*
 中文官网说明：https://doc.webpack-china.org/configuration/
 
-注意整个配置中我们使用 Node 内置的 path 模块，并在它前面加上 __dirname这个全局变量。可以防止不同操作系统之间的文件路径问题
-比如：在output中的path：
-  1 path: __dirname + '/dist'
-    直接使用__dirname，在本机测试可以
-  2 path: path.resolve(__dirname, "dist")
-    使用path模块，防止不同OS之间的文件路径问题
+注意整个配置中我们使用Node内置的path模块，可以防止不同操作系统之间的文件路径问题
+比如：
+  【path: __dirname + '/dist'】改为【path: path.resolve(__dirname, "dist")】
 
 1 entry：webpack打包的入口。
   所有的文件都要在这个"入口文件"中引入。
@@ -186,7 +173,12 @@ https://doc.webpack-china.org/loaders/
   处理css：sass转css
   资源处理：图片等
 
-2 loader使用方法：3种
+2 loader安装方法：
+  npm install --save-dev css.loader style.loader
+  css-loader：让webpack能处理.css文件。此时只在打包文件bundle.js中有。但对于引入了bundle.js的html文件，css不会自动加入到html中。
+  style-loader：把css-loader处理完的内容添加到html>head>style标签中
+
+3 loader使用方法：3种
     (1)文件中引用时直接写：
       require('style-loader!css-loader!./style.css');
     (2)命令行每次打包时加上参数
