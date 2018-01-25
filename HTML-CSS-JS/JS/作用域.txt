@@ -2,19 +2,17 @@ ES5中只有两个作用域：函数 全局(var function)
 ES6中新增了"块"作用域(let const)
 
 ---------------------
-	*作用域*
+	*ES5的作用域*
 1 变量提升：函数和变量声明会被解释器悄悄地“提升”到方法体的最顶部。
 	先提升var，值为undefined。
 	再提升function，值为function(){内容}
 	提升时重名的话：只留一个。
 2 ECMA5只有两种作用域:全局、函数作用域
-3 块中的function不能正常提升：
-	块中所有（var和function）都是undefined
 
 例子1:	
-	for( var i=0; i<10; i++ ){
+	for(var i=0;i<10;i++){
 		aBtn[i].onclick = function (){	
-			alert( i );		// undefined			
+			alert(i);		// undefined			
 			for( var i=0; i<5; i++ ){
 				...;
 			}		
@@ -24,9 +22,9 @@ ES6中新增了"块"作用域(let const)
 		
 
 例子2:	
-	for( var i=0; i<7; i++ ){
+	for(var i=0;i<7;i++ ){
 		aBtn[i].onclick = function (){			
-			alert( i );		// 7
+			alert(i);		// 7
 		};
 	}
 	alert(i);				// 7
@@ -83,22 +81,24 @@ ES6中新增了"块"作用域(let const)
 例子2:
 	var a=1;
 	var a="ok";
-	分析:最终a是var,是undefined(只说变量提升时)
+	分析:变量提升最终a是var,是undefined
+
+
 
 -----------------------
 	*ECMA5中:block中定义的var和函数*
 ECMA5中：只有函数会形成自己的域,其他的block{}不会。
-变量提升对block中的var一切正常；但是对于函数,只会知道它是一个function,内容是undefined.
-[注:是写在HTML里在浏览器的结果；不是运行纯js文件的结果]
+（在高级浏览器中，块中的function经过变量提升后是undefined）
 
 例子0:
 	console.log(i);		//undefined
-	console.log(   a);		//undefined
+	console.log(a);		//undefined
 	for (var i = 0; i < 3; i++) {
 		var a=5;
 	}
 	console.log(i);		//3
 	console.log(a);		//5
+
 
 例子1:
 	alert(a);			//undefined
@@ -111,6 +111,7 @@ ECMA5中：只有函数会形成自己的域,其他的block{}不会。
 	}
 	alert(a);			//1
 	alert(fn1);			//function fn1() {alert(5);}
+
 
 例子2:用来和1做对比
    alert(a);			//undefined
@@ -125,6 +126,9 @@ ECMA5中：只有函数会形成自己的域,其他的block{}不会。
 所以：
 1 对于函数，如果想要定义成全局的函数就乖乖写在外面,不要写在block｛｝内部。
 2 对于var，虽然block内定义的var能正常,但还是写在外面逻辑更清晰。
+
+
+
 
 ------------------------------------
 js的执行顺序是自上而下地执行，但是执行时却又分为两个环节

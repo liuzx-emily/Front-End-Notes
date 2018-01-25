@@ -1,13 +1,13 @@
 -----------------
-	*从0-N中随机获取m个数
+	*从0到n-1中随机获取m个数
 
-	function randNum(iAll, iWant) {
+	function randNum(n, m) {
 	    var arr = [];
 	    var newArr = [];
-	    for (let i = 0; i < iAll; i++) {
+	    for (let i = 0; i < n; i++) {
 	        arr.push(i);
 	    }
-	    for (let i = 0; i < iWant; i++) {
+	    for (let i = 0; i < m; i++) {
 	        let random = Math.floor(Math.random() * arr.length);
 	        newArr.push(arr.splice(random, 1));
 	    }
@@ -16,8 +16,8 @@
 例子：randNum(100,10)：从0-99中随机选10个不重复的数，返回数组
 
 注意:random=Math.floor(Math.random() * arr.length);里：
-	1 arr.length不能换成iAll，因为arr的长度在动态减少
-	2 floor不能换成round，不然可能取到arr[arr.length]，是undefined
+	1 arr.length不能换成n，因为arr的长度在动态减少
+	2 floor不能换成round，不然可能取到arr[arr.length]，越界
 
 
 
@@ -27,35 +27,11 @@
 	var arr=[3,4];
 1 arr.constructor==Array //true
 2 arr instanceof Array 	//true	
-3 Object.prototype.toString.call(arr)=='[object Array]' 		//true
-最好的方法3，因为1，2在iframe下会失效：
-  	var oF = document.createElement('iframe');
-  	document.body.appendChild( oF );  	
-  	var ifArray = window.frames[0].Array;  	
-  	var arr = new ifArray();  	
-  	alert( arr.constructor == Array );  //false
-	alert( arr instanceof Array );  //false
-	alert( Object.prototype.toString.call(arr) == '[object Array]' );  //true
+
+
 
 -----------------
 	*数组array*
-
-创建数组：
-	1	var arr = [ 'a',5,9 ];
-	2  	var arr = new Array('a',5,9);
-	   	//因为数组是object，所以可以这样new定义
-	3  	var arr = new Array();
-	   	arr[0]='a';
-	   	arr[1]=5;
-	   	arr[2]=9;
-		使用注意：
-			var arr = new Array(10);//只有一个数时，默认当成长度
-			//arr为[ , , , , , , , , ,  ],里面的元素、元素类型都是undefined
-
-			var arr2 = new Array(10, 20);//多于1个数时不用怕，不会当成长度
-			//arr为[ 10, 20 ]
-			var arr = new Array('10');//只有一个数时，加上''变成string就不会当作长度了
-			//arr为[ '10' ]，但是10不是number，是string
 
 数组的length：
    var arr = ['aaa', 2, 3];
@@ -63,6 +39,7 @@
    arr.length = 1;//则arr只保留第一个元素，长度变为1
    arr.length = 0;//清空数组
    arr = [];//赋值，也是清空数组
+
 字符串的length：
    var str = 'aaaaa';
    str的length可读，但不可写(因为string是不可变的)
@@ -70,15 +47,13 @@
 
 
 遍历数组可以用for和for in：
-	例子：（for的例子就省略了）
-		var arr = ['a', 'b', 'c'];
-		for (let a in arr) {
-	   		console.log(a + ',' + arr[a]);
-		}
-	结果：
-		0,a
-		1,b
-		2,c	
+	var arr = ['a', 'b', 'c'];
+	for (let a in arr) {
+   		// ...
+	}
+
+
+
 
 -----------------
 	*添加*
@@ -93,6 +68,10 @@
 2	push unshift：一次可以加多个
 	在尾加：arr.push('abc',4,5);	//返回arr的新length
 	在头加：arr.unshift(0,1);	//返回arr的新length
+
+
+
+
 
 ------------------------------------
 	*删除*
