@@ -180,3 +180,28 @@ response.js原理：
 其他：
     真正的@media是算上滚动条的宽度的。但IE8-模拟出来的假media不包含滚动条。所以要使用response.js兼容IE8-，最好减去滚动条的宽度：
         @media (min-width:1890px) // 1920的屏
+
+
+
+--------------------
+outline是在border外面，不占地
+
+
+--------------------
+设定了宽度的block级元素：
+    在最右 maring-left:auto
+    在最左 maring-right:auto
+    在中间 margin:0 auto
+
+
+
+-------------IE8支持：
+
+1 :focus
+
+2 div+p，选中p
+
+3 box-sizing
+
+4 input的maxlength属性
+  【textarea的maxlength属性IE8不支持】
