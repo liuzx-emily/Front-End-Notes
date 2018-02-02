@@ -16,7 +16,7 @@
             }
             for (var i = 1; i < 4; i++) {
                 if (aInput[i].checked) {
-                    window.localStorage.setItem('hobby', aInput[i].name);
+                    window.localStorage.setItem('hobby', aInput[i].id);
                 }
             }
         };
@@ -28,7 +28,7 @@
         }
         if (window.localStorage.getItem('hobby')) {
             for (var i = 1; i < 4; i++) {
-                if (aInput[i].name === window.localStorage.getItem('hobby')) {
+                if (aInput[i].id === window.localStorage.getItem('hobby')) {
                     aInput[i].checked = true;
                 }
             }

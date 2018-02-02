@@ -1,8 +1,19 @@
 
+-------------文档声明-------------【start】
+很多问题都是因为文档声明：
+	html声明改为html5：	<!DOCTYPE html>
 
 
 
--------------alert-------------【start】
+--------------------------
+undefined==false 	// false
+null==false 		// false
+0==false 			// true
+
+
+
+
+-----------------alert-----------------
 alert()只能弹出字符串，非string会自动调用toString
 
 	var a=[1,2,3];

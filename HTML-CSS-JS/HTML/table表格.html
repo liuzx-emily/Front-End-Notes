@@ -56,45 +56,7 @@
    td,th    display: table-cell;
    (IE7-里都是block)
 
-   *操作表格*
-1 利用属性来获取table元素
-   tBodies  可以有多个
-   tHead    只能有一个
-   tFoot    只能有一个
-   rows     行，可以有多个
-   cells    列，可以有多个
-   所以oTab.children[0].children[1].children[1].innerHTML;可以直观地写成：
-   oTab.tBodies[0].rows[1].cells[1].innerHTML;//获取2-2的内容
 
-2 通过js动态修改表格
-   <body>
-      <table>
-         <tbody>
-         </tbody>
-      </table>
-   </body>
-   <script>
-      var oTbody = document.getElementsByTagName('table')[0].tBodies[0];
-      for (let i = 0; i < 5; i++) {
-         var oRow = document.createElement('tr');
-         for (let j = 0; j < 3; j++) {
-            var oCol = document.createElement('td');
-            oCol.innerHTML = (i + 1) + ' - ' + (j + 1);
-            oRow.appendChild(oCol);
-         }
-         var oA = document.createElement('a');
-         oA.innerHTML = '点我删除';
-         oA.href = 'javascript:void(0);';
-         oA.onclick = function() {
-            oTbody.removeChild(this.parentNode.parentNode);
-            //之前把this写成oA了，找了好久错。。。
-         };
-         var lastCol = oRow.cells[oRow.cells.length - 1];
-         lastCol.innerHTML = '';
-         lastCol.appendChild(oA);
-         oTbody.appendChild(oRow);
-      }
-   </script>
 -->
 
 <head>

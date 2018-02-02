@@ -1,6 +1,4 @@
-//getComputedStyle和opacity属性都是IE9+
 /*使用举例：
-oBtn.onclick = function() {
     fnMove({
         obj: aSpan[0],
         json: {
@@ -19,9 +17,8 @@ oBtn.onclick = function() {
         }
 
     });
-};
+
 */
-//是学习后，自己写的
 function fnMove(move) {
     var obj = move.obj;
     var json = move.json;

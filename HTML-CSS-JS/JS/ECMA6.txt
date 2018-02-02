@@ -2,20 +2,7 @@
 	1 shift + 鼠标右键
 	2 地址栏输入cmd
 
-----------
-	*主要内容
-1 let和const命令
-2 变量的解构赋值
-3 Set数据结构
-4 Map数据结构
-5 Iterator和for...of循环
-6 Class基本语法
-7 Symbol
-8 数组和对象的扩展
-9 函数的扩展
-10 Promise
-11 Generator
-12 async函数
+
 
 -------------------let和const命令-------------------
 
@@ -29,6 +16,7 @@
 	输出3个'abc'
 
 2 不存在变量提升
+
 	console.log(foo); //undefined
 	var foo = 2;
 	console.log(bar); //报错
@@ -71,449 +59,231 @@
 
 
 
+
 -------------------解构赋值-------------------
+解构：从数组和对象中提取值，对变量进行赋值
 
-ES6允许按照一定模式，从数组和对象中提取值，对变量进行赋值，这被称为解构（Destructuring）
-规则：只要等号右边的值不是对象或数组，就先将其转为对象。
-string number null可以转成对应的包装对象
-undefined和null无法转为对象，所以对它们进行解构赋值都会报错。
-
-1 数组的解构赋值
-	从数组中提取值，按照对应位置，对变量赋值。
-	本质上，这种写法属于“模式匹配”，只要等号两边的模式相同，左边的变量就会被赋予对应的值
-		let [a, b, ...c] = [, 2, 3, 4, 5, 6];
-		a	// undefined
-		b	// 2
-		c	// [3,4,5,6]
-
-		let [x, y, ...z] = ['a'];
-		x 	// "a"
-		y 	// undefined
-		z 	// []
-
-		let [a, [b], d] = [1, [2, 3], 4];
-		b 	// 易错，是2，不是[2,3]
+规则：
+	只要等号右边的值不是对象或数组，就先将其转为对象	
+	如果等号的右边不能转为对象(null undefined)，会报错
+	如果等号的右边(转为对象后)不是可遍历的结构，会报错。
 
 
-		let [x, y, z] = new Set(['a', 'b', 'c']);
-		x 	// "a"
-	如果等号的右边（转为对象后）不是可遍历的结构，那么将会报错。
-		// 报错
-		let [foo] = 1;
-		let [foo] = false;
-		let [foo] = NaN;
-		let [foo] = undefined;
-		let [foo] = null;
-		let [foo] = {};
-	默认值：判断是否有值: ===undefined
-		let [a = 1] = [undefined];	// 1
-		let [b = 1] = [null];		// null
-		let [x=1,y=x] = [];    		// x=1; y=1
-		let [x=1,y=x] = [2];   		// x=2; y=2
-		let [x=1,y=x] = [1, 2];		// x=1; y=2
-		let [x=y,y=1] = [];   		// ReferenceError
-	如果默认值是一个表达式，那么这个表达式是惰性求值的，即只有在用到的时候，才会求值。
-		let [x = f()] = [1];	//不会执行f()
 
-2 对象的解构赋值:
-	对象的解构与数组有一个重要的不同。数组的元素是按次序排列的，变量的取值由它的位置决定；而对象的属性没有次序，变量必须与属性同名，才能取到正确的值。
-	方法一：变量和属性同名
-		let { a, b, c } = { b: "hah", a: "biu" };
-		a	// "biu"
-		b	// "hah"
-		c	// undefined
-		其实是下面的简写：
-		let {a:a,b:b,c:c}={ b: "hah", a: "biu" };
 
-	方法二：
-		let { foo: baz } = { foo: "aaa", bar: "bbb" };
-		baz // "aaa"
-		foo // error: foo is not defined
-	这种方法证明了：对象的解构赋值的内部机制，是先找到同名属性，然后再赋给对应的变量。真正被赋值的是后者，而不是前者。上面代码中，foo是匹配的模式，baz才是变量。真正被赋值的是变量baz，而不是模式foo。
+-------------------解构赋值之 数组-------------------
+数组：模式匹配，根据位置
+	let [a, b, ...c] = [ , 2, 3, 4, 5, 6];
+	a	// undefined
+	b	// 2
+	c	// [3,4,5,6]
 
-	默认值：判断对象的属性值严格===undefined  
-	可以很方便地将现有对象的方法，赋值到某个变量：
-		let { log, sin, cos } = Math;
-	由于数组本质是特殊的对象，因此可以对数组进行对象属性的解构：
-		let arr = [1, 2, 3];
-		let {0 : first, [arr.length - 1] : last} = arr;
-		first // 1
-		last // 3
+	let [x, y, ...z] = ['a'];
+	x 	// "a"
+	y 	// undefined
+	z 	// []
 
-3 string的解构赋值
-	字符串也可以解构赋值。这是因为此时，字符串被转换成了一个类似数组的对象。
+	let [a, [b], c] = [1, [2, 3], 4];
+	b 	// 2
+	c 	// 4
+
+默认值：判断是否===undefined
+	let [a = 1] = [undefined];	// 1
+	let [b = 1] = [null];		// null
+	let [x=1,y=x] = [];    		// x=1; y=1
+	let [x=1,y=x] = [2];   		// x=2; y=2
+	let [x=1,y=x] = [1, 2];		// x=1; y=2
+
+
+
+
+
+-------------------解构赋值之 对象-------------------
+1 变量和属性同名
+	let { a, b, c } = { b: "hah", a: "biu" };
+	a	// "biu"
+	b	// "hah"
+	c	// undefined
+	其实是下面的简写：
+	let {a:a,b:b,c:c}={ b: "hah", a: "biu" };
+
+2 	let { foo: baz } = { foo: "aaa", bar: "bbb" };
+	baz // "aaa"
+	foo // 报错: foo is not defined
+	这种方法证明了：对象的解构赋值的内部机制，是先找到同名属性，然后再赋给对应的变量。真正被赋值的是变量baz，而不是匹配模式foo
+
+默认值：判断对象的属性值严格===undefined  
+
+可以很方便地将现有对象的方法，赋值到某个变量：
+	let { log, sin, cos } = Math;
+
+由于数组本质是特殊的对象，因此可以对数组进行对象属性的解构：
+	let arr = [1, 2, 3];
+	let {0 : first, [arr.length - 1] : last} = arr;
+	first // 1
+	last // 3
+
+
+
+
+
+-------------------解构赋值之 字符串-------------------
+
+字符串也可以解构赋值。这是因为此时，字符串被转换成了一个类似数组的对象。
 	let [a,b,c,d]="emily";
 	// a b c d分别是"e"、"m"、"i"、"l"
 	let {0:first,length:lzxLen}="abcde";
 	// first: "a" lzxLen: 5
 
-4 number和boolean的解构赋值
-	先转为对象
-	let {toString: s} = 123;
-	s === Number.prototype.toString // true
-	let {toString: s} = true;
-	s === Boolean.prototype.toString // true
 
-5 null和undefined不能进行解构赋值(因为无法转为对象)
-	let [a]=[null];			// a是null
-	let [b]=null;			// 报错
-	let [c]=[undefined];	// c是undefined
-	let [d]=undefined;		// 报错
 
-5 函数参数的解构赋值
+
+
+-------------------解构赋值之 函数参数-------------------
+函数参数的解构赋值
 	function add([x, y]){
 	  return x + y;
 	}
-	add([1, 2]); // 3ZZ
+	add([1, 2]); // 3
 
 	[[1, 2], [3, 4]].map(([a, b]) => a + b);	// [ 3, 7 ]
 
-6 圆括号问题
-	建议只要有可能，就不要在模式中放置圆括号。
 
-7 用途
-	1 交换变量值 [x,y]=[y,x];
-	2 函数返回多个值后，方便的取出这些值
-		let { foo, bar } = example();
-	3 方便地将一组参数与变量名对应起来
-		// 参数是一组有次序的值
-		function f([x, y, z]) { ... }
-		f([1, 2, 3]);
 
-		// 参数是一组无次序的值
-		function f({x, y, z}) { ... }
-		f({z: 3, y: 2, x: 1});
-	4 提取JSON数据
-		let jsonData = {
-		  id: 42,
-		  status: "OK",
-		  data: [867, 5309]
-		};
 
-		let { id, status, data: number } = jsonData;
-	5 函数参数的默认值
-	6 遍历map结构
-	7 输入模块的指定方法
 
-----------
-	*数据结构Set
-1 集合Set：无序，不能有重复项
-	键和值相同
-2 创建
-	const s=new Set([1,2,3]);
-3 属性：size
-	s.size===3
-4 方法
-	1 s.add(value) 添加一个数据，返回set，所以可以链式添加。
-		s.add("a").add("b").add("c");
-	2 s.delete(value) 删除制定数据，返回布尔值
-		s.delete("a")	//返回true
-		s.delete("a")	//没有a可以删了，返回false
-	3 s.has(value) 返回布尔值
-		s.has("a")	//没有a，返回false
-		s.has(1)	//返回true
-	4 s.clear() 清除所有，无返回值
-	5 keys() 返回键名的遍历器
-	6 values() 返回键值的遍历器，和keys()返回相同
-	7 entries() 返回键值对的遍历器
-	8 forEach() 使用回调函数遍历每个成员，不会修改原set
-		s.forEach(function(value,key,set){
-			//...
-		});
+-------------------解构赋值之 实例-------------------
 
-----------
-	*数据结构Map
-1 字典Map：使用[key,value]的形式来存储，key不能重复
-  Object中的key只能是string类型，而Map的key可以是任何类型的
-  var data1={a:1},data2={b:2},obj={};
-  obj[data1]=11;
-  obj[data2]=22;
-结果:obj中只有一个属性：obj["[object Object]"]===22
-原因，发现data1和data2不是string类型，自动调用toString。而且data1.toString()==="[object Object]"，data1.toString()===data2.toString()。后面的22表达式覆盖了前面的11
-2 创建
-	const m=new Map([
-		["a",1],
-		["b",2]
-	]);
-3 属性：只有一个size
-	m.size===2
-4 方法:
-	1 set(key,value) 返回map，所以可以链式添加。
-	  如果key已经有了，则value会更新；否则新生成该key
-		m.set("aa","11").set("ew",13);
-	2 get(key)	返回value，找不到则返回undefiend
-		m.get("aa");
-	3 delete(key) 返回布尔值
-		m.delete("a");
-	4 has(key) 返回布尔值
-		m.has("aa");
-	5 clear() 清除所有，无返回值
-	6 keys() 返回键名的遍历器
-	7 values() 返回键值的遍历器
-	8 entries() 返回键值对的遍历器
-	9 forEach() 使用回调函数遍历每个成员，不会修改原map
-		m.forEach(function(value,key,map){
-			//...
-		});
-5 注意事项
- 1.	一般情况下:NaN!==NaN，但是在map中将NaN看成1个
-	map.set(NaN,10).set(NaN,100)
-	map中只有一个NaN，值是100
- 2.	m.set({},'x').set({},'y');
-	m中存了两个{}，值分别是"x" "y"
-	原因：引用类型比较看地址，{}!=={}
- 	map判断key是否相同，是比较地址
- 3. map里面的key的排列顺序是按照添加顺序来排列的
+1 交换变量值 [x,y]=[y,x];
 
-----------
-	*Iterator和for...of循环
-1 现在总共有四种数据集合：数组 对象 集合Set 字典Map.
-  Iterator为这4中数据结构提供统一的访问机制。任何数据结构只要部署Iterator结构，就可以完成遍历操作，而且这种遍历操作是依次处理该数据的所有成员。
-2 Iterator遍历器的作用：
-	为4中数据结构，提供一个统一的、简便的访问接口
-	使得数据结构的成员能够按某种次序排列
-	主要用于for..of循环
-3 手写 Iterator 接口
-	function iterator(arr){
-	  let index = 0;
-	  return {
-	    next: function (){
-	      return index < arr.length ?
-	      {value: arr[index++], done: false} :
-	      {value: undefined, done: true};
-	    }
-	  };
-	}
-	const it = iterator([1,2]);
-	console.log(it.next());
-	console.log(it.next());
-	console.log(it.next());
-	console.log(it.next());
-  结果：
-	Object {value: 1, done: false}
-	Object {value: 2, done: false}
-	Object {value: undefined, done: true}
-	Object {value: undefined, done: true}
+2 函数返回多个值后，方便的取出这些值
+	let { foo, bar } = example();
 
- Iterator的遍历过程：
-	创建一个指针对象，指向当前数据结构的起始位置。也就是说，遍历器对象本质上，就是一个指针对象。
-	第一次调用指针对象的next方法，可以将指针指向数据结构的第一个成员。
-	第二次调用指针对象的next方法，指针就指向数据结构的第二个成员。
-	不断调用指针对象的next方法，直到它指向数据结构的结束位置。
+3 方便地将一组参数与变量名对应起来
 
-	每一次调用next方法，都会返回数据结构的当前成员的信息。具体来说，就是返回一个包含value和done两个属性的对象。其中，value属性是当前成员的值，done属性是一个布尔值，表示遍历是否结束。
+	function f([x, y, z]) { ... }
+	f([1, 2, 3]);
 
-5 数组 set map有自带的Iterator接口，对象没有。
-  凡是具有Symbol.iterator属性的数据结构都具有 Iterator接口
-  const arr = [1, 2, 3];
-  const set = new Set(['a', 'b', 'c']);
-  const map = new Map([
-      ['a', 1]
-  ]);
+	function f({x, y, z}) { ... }
+	f({z: 3, y: 2, x: 1});
 
-  const itArr = arr[Symbol.iterator]();
-  const itSet = set[Symbol.iterator]();
-  const itMap = map[Symbol.iterator]();
-
-  console.log(itArr);
-  console.log(itSet);
-  console.log(itMap);
-
-  console.log(itSet.next());
-  console.log(itSet.next());
-  console.log(itSet.next());
-  console.log(itSet.next());
-
-  const obj = {};
-  console.log(obj[Symbol.iterator]);	//undefined
-
-6 具备iterator接口的数据结构都可以进行如下操作
-	解构赋值
-	扩展运算符 ...
-	用for..of循环
-
-	let [x, y] = new Set(['a', 'b', 'c']);
-
-	let str = 'emily';	//string也有iterator接口
-	let arrStr = [...str];	//["e", "m", "i", "l", "y"]
-
-	const arr2 = [{}, 1, 'a', 1, 'a', 'b', []];
-  题目：利用Set和...进行数组去重
-	var arr = [5, 1, 8, 5, 9, 5, 4, 8, 2, 1, 8];
-	arr=[...new Set(arr)];	//[5, 1, 8, 9, 4, 2]
-	console.log([...new Set(arr2)]);
-
-7 for..of循环
-	for (let i of ["ha", 2, 3, 4]) {
-	    console.log(i);	//"ha"等
-	}
-
-	const m = new Map();
-	m.set('a', 1).set('b', 2).set('c', 3);
-	for(let data of m){
-	  console.log(data);	//["a",1]等
-	}
-
-	for (let [key, value] of m) {
-	    console.log(key, value);	//key是"a"等,value是1等
-	}
-
-思考题：如何给一个不具备Iterator接口的数据结构部署一个Iterator？
-const d={
-	"0":"e",
-	"1":"m",
-	"2":"i",
-	"3":"l",
-	"4":"y"
-};
-
-----------
-	*类class
-JS语言的传统方法是通过构造函数，定义并生成新对象，是一种基于原型的面向对象系统。这种写法跟传统的面向对象语言（比如C++和Java）差异很大，很容易让新学习这门语言的人感到困惑。所以，在ES6中新增加了类的概念，可以使用 class 关键字声明一个类，之后以这个类来实例化对象。
-
-传统写法：
-	const Emily = function(a, b) {
-	    this.a = a;
-	    this.b = b;
+4 提取JSON数据
+	let jsonData = {
+	  id: 42,
+	  status: "OK",
+	  data: [867, 5309]
 	};
 
-	Emily.prototype = {
-	    constructor: Emily,
+	let { id, status, data: number } = jsonData;
+
+
+
+
+-------------------类class-------------------
+ES6中新增加了类的概念，可以使用 class 关键字声明一个类，之后以这个类来实例化对象。
+
+传统写法：
+	var Person = function(name, age) {
+	    this.name = name;
+	    this.age = age;
+	};
+
+	Person.prototype = {
+	    constructor: Person,
 	    print: function() {
-	        console.log(this.a);
+	        console.log(this.name);
 	    }
 	};
 
 class写法：
-	class Emily{
-		constructor(a,b){
-			this.a=a;
-			this.b=b;
+	class Person{
+		constructor(name,age){
+	    	this.name = name;
+			this.age=age;
 		}
 		print(){
 			console.log(this.a)
 		}
 	};
 使用还是和以前一样：
-	var emily= new Emily("haha",23);
-	emily.print();
+	var p= new Person("haha",23);
+	p.print();
 
 说明：class只是语法糖
-	1 类中的constructor方法是构造方法，this关键字则代表实例对象。
+	1 类中定义方法的时候，前面不能加上function。方法之间不能加逗号分隔
 
-	2 类中定义方法的时候，前面不能加上function。另外，方法之间不能加逗号分隔
-
-	3 构造函数的prototype属性，在ES6的“类”上面继续存在。而且类的所有方法都定义在类的prototype属性上面。
-
-	4 定义在类中的方法都是不可以枚举的。
-		console.log(Object.keys(Emily.prototype));
-
-	5 constructor方法是类的默认方法，通过new命令生成对象实例时，自动调用该方法。类一定有constructor方法，如果没有显式定义，一个空的constructor方法会被默认添加。
-
-	6 生成类的实例对象的写法，与ES5完全一样，也是使用new命令。如果不加上new，像函数那样调用Class，将会报错。(ES5的写法，当函数调用不会报错)
+	2 构造函数的prototype属性，在ES6的“类”上面继续存在。而且类的所有方法都定义在类的prototype属性上面。
 
 extends static super
 
 
-----------
-	*Symbol
-1
-ES5 的对象属性名都是字符串，这容易造成属性名的冲突。比如，你使用了一个他人提供的对象，但又想为这个对象添加新的方法（mixin 模式），新方法的名字就有可能与现有方法产生冲突。如果有一种机制，保证每个属性的名字都是独一无二的就好了，这样就从根本上防止属性名的冲突。这就是 ES6 引入Symbol的原因。
-
-ES6 引入了一种新的原始数据类型Symbol，表示独一无二的值。它是 JavaScript 语言的第七种数据类型，前六种是：undefined、null、布尔值（Boolean）、字符串（String）、数值（Number）、对象（Object）。
-
-Symbol 值通过Symbol函数生成。这就是说，对象的属性名现在可以有两种类型，一种是原来就有的字符串，另一种就是新增的 Symbol 类型。凡是属性名属于 Symbol 类型，就都是独一无二的，可以保证不会与其他属性名产生冲突。
-
-	let s1 = Symbol();	//不能用new
-	let s2 = Symbol();
-	console.log(typeof s1); //'symbol'
-	console.log(s1 === s2);	//false
-
-Symbol 函数接收一个字符串作为参数，表示对Symbol的描述。主要是为了在控制台显示，或者转为字符串的时候，比较容易区分
-
-	let s3 = Symbol('emily');
-	console.log(Symbol('emily') === Symbol('emily'));	//false
-
-2 Symbol可以显式的转成string或者boolean，
-  Symblo不能转成数字，会报错
-  Symbol 值不能与其他类型的值进行运算，会报错
-
-3 作为对象的属性名
-  由于每一个 Symbol 值都是不相等的，这意味着 Symbol 值可以作为标识符，用于对象的属性名，就能保证不会出现同名的属性。这对于一个对象由多个模块构成的情况非常有用，能防止某一个键被不小心改写或覆盖。
-	var mySymbol = Symbol();
-
-	// 第一种写法
-	var a = {};
-	a[mySymbol] = 'Hello!';
-
-	// 第二种写法
-	var a = {
-	[mySymbol]: 'Hello!'
-	};
-
-	// 第三种写法
-	var a = {};
-	Object.defineProperty(a, mySymbol, { value: 'Hello!' });
-
-	// 以上写法都得到同样结果
-	a[mySymbol] // "Hello!"
-
-4 属性名的遍历
-Symbol 作为属性名，该属性不会出现在for...in、for...of循环中，也不会被Object.keys()、Object.getOwnPropertyNames()、JSON.stringify()返回。但是，它也不是私有属性，有一个Object.getOwnPropertySymbols方法，可以获取指定对象的所有 Symbol 属性名。
-不能被for...in循环遍，历虽然不能被遍历，但是也不是私有的属性，可以通过Object.getOwnPropertySymbols方法获得一个对象的所有的Symbol属性
 
 
 
-----------
-	*字符串扩展
+
+
+-----------------字符串扩展-----------------
 1 模版字符串
-	console.log(`name=${p1.name},age=${p1.age}`);
+	`${变量}` 
 
-2 新方法
-  1 repeat
-  2 includes() startsWith() endsWith()
-
+2 新方法 repeat(次数) includes() startsWith() endsWith()
+  	
 	let str1 = 'ha';
 	let str2 = str1.repeat(3);	//"hahaha"
 
 	let str = 'emily';
-	console.log(str.includes('mi'));  	//true
-	console.log(str.includes('am'));  	//false
+	str.includes('mi')  	//true
+	str.includes('am')  	//false
 
-	console.log(str.startsWith('e')); 	//true
-	console.log(str.startsWith('a')); 	//false
+	str.startsWith('e') 	//true
+	str.startsWith('a') 	//false
 
-	console.log(str.endsWith('ly')); 	//true
-	console.log(str.endsWith('ily')); 	//true
+	str.endsWith('ly') 		//true
+	str.endsWith('ily') 	//true
 
-----------
-	*数组扩展
-1 Array.from() //把类数组对象转成真正的数组,不改变原对象
+
+
+
+
+-----------------数组扩展-----------------
+1 Array.from()  把类数组对象转成真正的数组,不改变原对象
 	var lis = document.querySelectorAll('li');
-	console.log(Array.isArray(lis));	//判断是不是数组 false
+	console.log(Array.isArray(lis));	/  false
 	var lis2 = Array.from(lis);
-	console.log(Array.isArray(lis2));	//true
+	console.log(Array.isArray(lis2));	// true
+
 2 Array.of()
 	const arr = Array.of(1,"3.5");
 	console.log(arr);	//[1,"3.5"]
-3 find(函数) //返回第一个匹配的元素，找不到undefined
-  findIndex(函数)	//返回第一个下标，找不到-1
+
+3 find(函数)：返回第一个匹配的元素，找不到undefined
+  findIndex(函数)：返回第一个匹配的元素下标，找不到-1
   	const arr = [100, 200, 300, 400];
   	let res = arr.find(function (a){
   	  return a > 0;
   	});
   	console.log(res);	//100
+
   	let res = arr.findIndex(function (a){
   	  return a > 0;
   	});
   	console.log(res);	//0
+
 4 fill(value, start, end)
 	const arr = [1, 2, 3, 4];
 	arr.fill('abc', 1, 3);
 	console.log(arr); //[1,"abc","abc",4];
 
-----------
-	*对象扩展
+5 Array.isArray()	判断是不是数组
+  IE9+
+
+
+
+
+
+
+
+--------------对象扩展--------------
 1 简洁表示法
 	let a = 1;
 	const obj = {
@@ -527,102 +297,58 @@ Symbol 作为属性名，该属性不会出现在for...in、for...of循环中，
   	    fn() {}
   	}
 
-2 Object.is() //判断两个对象是否长得一样
-		console.log(Object.is(NaN, NaN)); //true
-		console.log(Object.is(+0, -0)); //false
+2 Object.is() ：判断两个对象是否长得一样
+	Object.is(NaN, NaN) 	//true
+	Object.is(+0, -0) 		//false
 
 3 Object.assign(目标对象，源对象..)
-  用于对象的合并， 将源对象的所有可枚举属性， 复制到目标对象。
-		let obj1 = { a: 1 };
-		let obj2 = { a: 2, b: 3 };
-		let obj3 = { c: 'abc' };
-		Object.assign(obj1, obj2, obj3);
-		console.log(obj1);//{a:2,b:3,c:'abc'}
+  用于对象的合并，将源对象的所有可枚举属性， 复制到目标对象。
+	let obj1 = { a: 1 };
+	let obj2 = { a: 2, b: 3 };
+	let obj3 = { c: 'abc' };
+	Object.assign(obj1, obj2, obj3);
+	console.log(obj1);//{a:2,b:3,c:'abc'}
 
-----------
-		*函数扩展
+
+
+
+
+--------------函数扩展--------------
 1 参数默认值
+
 2 rest参数：ECMA6中不推荐使用arguments
-	rest参数形式为"...变量名"，用于获取函数的多余参数
-		function sum(a,b,...args){
-			//...
-		}
+	function sum(a,b,...args){
+		//...
+	}
+
 3 箭头函数 =>
-		const fn=a=>a;等价于：
-		const fn=function(a){return a;};
-	参数个数不为1时，要用括号包起来
-		const fn= () => "hiahia~";	//没有参数
-		const fn= (a,b) => a+"~biu~"+b;	//2个参数
-	函数体可以用{}括起来
-		const fn= (a,b) => {
-			a=a*3+1;
-			b=b*4-2;
-			return a+b;
-		}
-	如果返回一个对象，要用()括起来：
-		const fn1= (a,b)=> {a,b};	//这么写{}被当成包裹函数体
-		const fn2= (a,b)=> ({a,b});//返回一个对象{a,b}
-		fn(5,"ha")	//Object {a: 5, b: "ha"}
-	箭头函数经常用于方法的回调函数：
-		var arr = [5, 2, 3, 4, 1];
-		arr.sort((a,b)=>a-b);	//[1, 2, 3, 4, 5]
-	1.箭头函数内没有自己的this对象，所以在使用的时候，其内部的this就是定义时所在环境的对象，而不是使用时所在环境的对象。
-		function fn(){
-			setTimeout(function (){
-				console.log(this);
-			}, 1000);
-			setTimeout(() => {
-				console.log(this);
-			},1000);
-		}
-		var obj = {a: 1};
-		fn.call(obj);	//window Obj{a:1}
-		不能给箭头函数使用 call apply bind
-	2. 箭头函数体内没有arguments对象，可以用rest参数代替
-		function fn1(){
-			setTimeout(() => {
-				console.log(arguments);
-			}, 1000)
-		}
-		fn1(2,3);	//[2, 3],箭头函数没有arguments，向上找到fn1的arguments
 
-		function fn2(){
-			setTimeout((...args) => {
-				console.log(args);
-			}, 1000)
-		}
-		console.log(fn2(2,3));	//[]
+	const fn=a=>a;
+  等价于
+	const fn=function(a){
+		return a;
+	};
 
-		const fn3 = (...arr) => arr;
-		console.log( fn3(2,3) );	//[2,3]
-	3.不可以当作构造函数，不可以使用new命令，会报错
+  参数个数不为1时，要用括号包起来
+	const fn= () => "hiahia~";
+	const fn= (a,b) => a+"-"+b;
 
-----------
-	*异步操作Promise
-1 状态
-	pending进行中
-	resolved已完成
-	rejected已失败
-2 两个原型方法：
-	Promise.prototype.then()
-	Promise.prototype.catch()
-	两个常用的静态方法：
-	Promise.all()
-	Promise.resolve
-例子：
-		const p = new Promise((lResolve,lReject)=>{
-			const oImg=new Image();
-			oImg.src="";
-			oImg.onload= () => {
-				lResolve(this);
-			};
-			oImg.onerror= () => {
-				lReject(new Error("oops~图片加载失败啦"));
-			};
-		});
-		p.then((img)=>{
-			console.log("图片加载成功啦");
-			document.body.appendChild(img);
-		}).catch(er=>{
-			console.log(er);
-		});
+  函数体可以用{}括起来
+	const fn= (a,b) => {
+		a=a*3+1;
+		b=b*4-2;
+		return a+b;
+	}
+
+  如果返回一个对象，要用()括起来，不然会被当作函数体：
+	const fn1= (a,b)=> {a,b};	//{}被当作函数体
+	const fn2= (a,b)=> ({a,b});	//返回一个对象{a,b}
+
+
+  箭头函数经常用于方法的回调函数：
+	arr.sort((a,b)=>a-b);	//升序排序
+
+  箭头函数内没有自己的this对象，所以在使用的时候，其内部的this就是定义时所在环境的对象，而不是使用时所在环境的对象。
+  不能给箭头函数使用 call apply bind
+  
+  箭头函数内没有arguments对象，
