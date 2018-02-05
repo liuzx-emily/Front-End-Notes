@@ -1,0 +1,523 @@
+只有1.x版本支持IE8-，2和3都是IE9+
+
+
+API: 		
+	http://jquery.cuishifeng.cn/index.html
+
+
+
+
+----------------------
+IE低版本中,绑定事件时，jQuery会添加行间属性 /jQuery\d{21}="\d+"/。
+所以直接复制html，赋值给另一个元素，会使这两个元素的行间属性 /jQuery\d{21}/ 值相同。
+所以绑定、取消事件会互相干扰。
+
+
+不太熟的：
+	1 text()、html()、val()、attr()等都有回调函数
+	2 增加所选元素 add()
+	3 停止动画 stop()
+	4 $.inArray(value,array,[fromIndex])
+
+
+
+
+
+
+----------------------文档就绪事件----------------------
+在dom文档树加载完之后执行：
+	$(document).ready(function(){});
+	$(function(){});
+
+
+
+
+
+----------------------选取元素----------------------
+
+1 多选点：add()
+	var elem = $('div');
+	var elem2 = elem.add('span'); //elem2包含所有div和span元素
+	elem2.css('background','yellow'); 
+
+
+
+
+
+
+------------------动画 animate()------------------
+animate() 方法用于创建自定义动画。
+
+$(selector).animate(params,[速度],[运动方式],[回调]);
+	速度："slow"、"normal"、"fast"、毫秒值，默认400ms
+	运动方式：linear(匀速)和 swing(慢快慢)
+	回调：在动画完成时执行的函数，每个元素执行一次
+
+	$("button").click(function(){
+	  $("div").animate({
+	    paddingLeft:'+100px',	// += 相对现在的值
+	    opacity:'0.5',
+	    height:'150px',
+	    width:'150px'
+	  },2000);
+	});
+
+使用队列功能：jQuery 提供针对动画的队列功能。连续写多个animate()，会按顺序执行（前一个执行完，才开始执行下一个）
+  	$("button").click(function(){
+  	  var div=$("div");
+  	  div.animate({left:'100px'},"slow");
+  	  div.animate({fontSize:'3em'},"slow");
+  	});
+
+
+	$(this).animate({width:300},2000).delay(1000).animate({height:300},2000);
+	宽变完了，等1000后，再变高
+
+
+
+
+
+------------------停止动画 stop finish------------------
+	
+	$('#div1').stop();   		// 阻止当前运动，立刻开始后续运动
+	$('#div1').stop(true); 		// 阻止当前+后续运动
+	$('#div1').stop(true,true); // 阻止当前+后续运动，立即到当前运动的目标点
+
+	$('#div1').finish(); 		// 阻止当前+后续运动，立即到所有运动的目标点
+
+
+IE8-下，有时候动画会触发多次，比如：
+	    subNav.slideDown("fast");
+	改成：
+	    subNav.stop();
+	    subNav.slideDown("fast");
+
+
+
+
+------------------链(Chaining)------------------
+在相同的元素上，可以把动作/方法链接在一起
+
+会变红，然后向上滑动，再然后向下滑动：
+	$("#p1").css("color","red").slideUp(2000).slideDown(2000);
+
+    为了看着方便：
+	$("#p1").css("color","red")
+	  .slideUp(2000)
+	  .slideDown(2000);
+
+
+
+
+------------------prop和attr的区别------------------
+
+prop：DOM元素本身就有的属性		
+	if( $("#checkbox1").prop("checked") === false )
+	if( $('#option1').prop("selected") === false )
+
+attr：自定义属性
+
+
+
+
+------------------取html------------------
+outer:
+	$(".test").prop("outerHTML");
+inner:
+	$(".test").html();
+
+
+
+
+
+-----------------创建节点-----------------
+$('div')	选择div标签
+
+$('<div>')	创建div标签，内容为空
+
+var a=$('<div><p>段落</p></div>');	//创建元素，把div对象返回给变量a
+
+
+
+
+
+-----------------复制节点clone()-----------------
+clone() : 可以接收一个参数，true：复制绑定事件
+
+	$('div').appendTo( $('span') ); 是剪贴过去
+	$('div').clone().appendTo( $('span') ); 复制过去，但是不复制事件函数
+	$('div').clone(true).appendTo( $('span') ); 事件函数也复制了
+
+
+
+
+
+-----------------包装wrap-----------------
+wrap() : 包装
+wrapAll() : 整体包装 【小心，可能会改变DOM结构！】
+wrapInner() : 内部包装
+unwrap() : 删除包装，也就是删除父级 ( 父级是body的话删不掉body )
+
+
+	$('#nav').wrap('<div>');
+	#nav 变为 div>#nav
+
+	$('#nav').wrapInner('<div>');
+	#nav 变为 #nav>div
+
+	$('#nav').unwrap()
+	div>#nav 变为 #nav
+
+
+
+
+
+
+-----------------删除元素-----------------
+remove() - 删除被选元素（及其子元素），返回元素中不包含绑定的事件
+	$("#div1").remove();
+	var oDiv = $('div').remove();	//删除div,并其存到oDiv中。div绑定的事件函数不保存。
+
+remove()方法也可接受一个参数，允许您对被删元素进行过滤
+例：删除 class="italic" 的所有p，而不是删除p里的所有.italic元素
+	$("p").remove(".italic");
+
+detach() - 删除被选元素（及其子元素），返回元素中包含绑定的事件
+	$("#div1").empty();				//div1的innerHTML=''
+	var oDiv = $('div').detach();	//删除div,并其存到oDiv中。div绑定的事件函数也一起存。
+
+empty() - 删除备选元素的所有子元素
+
+
+
+
+
+--------------------大小--------------------
+width innerWidth outerWidth
+	$('div').css('width') 		//有单位 w
+	$('div').width()			//无单位 w
+	$('div').innerWidth()		//无单位 w+p
+	$('div').outerWidth()		//无单位 w+p+b
+	$('div').outerWidth(true)	//无单位 w+p+b+m
+
+和原生js的比较：
+	1 style.width : 有单位 w
+	2 clientWidth : 无单位 w+p
+	3 offsetWidth : 无单位 w+p+b
+
+jq的和js的区别：
+	jq的可以获取display:none的元素的值，
+	原生js的不能
+
+
+
+
+
+----------------------找后代----------------------
+children() 返回被选元素的所有直接子元素。
+find() 返回被选元素的后代元素，一路向下直到最后一个后代。
+例子：
+	$("div").children() 返回每个 <div> 元素的所有直接子元素
+  	$("div").children("p.a")  返回类名为 "a" 的所有 <p> 元素，并且它们是 <div> 的直接子元素：
+  	$("div").find("span") 返回属于 <div> 后代的所有 <span> 元素
+  	$("div").find("*") 返回 <div> 的所有后代
+
+
+
+
+----------------------index----------------------
+index：索引 返回当前元素在所有兄弟节点中的位置，从0开始
+	$('#h').index()
+
+
+
+
+
+----------------------筛选----------------------
+
+根据位置来筛选：first() last() eq(3) slice(1,4)
+filter(.box) not(.box)
+has(.box)
+
+	$("div p").first()	选取首个 <div> 元素内部的第一个 <p> 元素
+	$("div p").last() 	选择最后一个 <div> 元素中的最后一个 <p> 元素
+	$("p").eq(1); 		选取第二个p
+  	$('div').eq(-2) 	选择倒数第2个div
+  	$('li').slice(1,4) 	选中1，2，3
+
+	$("p").filter(".url"); 返回带有类名 "url" 的所有 <p> 元素：
+	$("p").not(".url"); 返回不带有类名 "url" 的所有 <p> 元素：
+
+filter not has的区别：
+	filter not：针对当前元素
+	has：针对子孙元素
+
+	$('div').filter('.box') 能选中div.box
+	$('div').has('.box')	能选中div>.box
+
+
+
+	
+
+----------------------序列化form元素----------------------
+$(selector).serialize()
+$(selector).serializeArray()
+
+可以选择一个或多个表单元素，或form
+
+例：
+	<input type="text" name="a" value="1">
+	<input type="text" name="b" value="2">
+	<input type="text" name="c" value="3">
+
+	console.log($('form').serialize());  
+	结果：a=1&b=2&c=3
+
+	console.log( $('form').serializeArray() );
+	结果：
+	[
+		{ name : 'a' , value : '1' },
+		{ name : 'b' , value : '2' },
+		{ name : 'c' , value : '3' }
+	]
+
+
+
+
+----------------------绑定事件 on----------------------
+on(events,[selector],[data],fn) 具体看API
+解绑用off()
+
+one()：只运行一次
+
+	$('div').on('click mouseover',fn1);	
+	$('div').on({
+		'click' : fn1,
+		'mouseover' : fn2
+	});
+
+	$("p").on("click", {foo: "bar"}, function(event) {
+		alert(event.data.foo);
+	})
+
+
+事件委托，结构：ul>(li*3)
+	$('ul').on('click', 'li', function() {
+		$(this)	//这里的this指点击的li
+	});	
+
+
+
+
+----------------------取消绑定事件 off----------------------
+off(events,[selector],[fn])	具体看API
+
+	$('div').on('click mouseover', function() {
+	   alert(123);
+	   $('div').off('mouseover');
+	});
+  效果：第一次click或mouseover时，弹出123，并且取消mouseover事件的所有绑定函数。之后只有click才弹123.
+
+	$("p").off();	移除p的所有
+	$("p").off("click") 移除p的click的所有
+
+例3：事件委托和取消
+	$("body").on("click", "p", fn1);
+	$("body").off("click", "p", fn1); 
+
+
+
+
+----------------------主动触发事件----------------------
+	trigger(type,[data])
+	triggerHandler(type, [data])
+区别：
+	1 trigger引起事件的浏览器默认行为（比如表单提交）；后者不引起
+	2 trigger会操作所有元素；后者只影响第一个元素。
+	3 trigger触发的事件会冒泡；后者不冒泡。
+
+例1：
+	$('#div1').on('click',fn1);	
+	$('#div1').trigger('click');
+
+例2：提交第一个表单
+	$("form:first").trigger("submit");
+
+例3：
+	$("p").click(function (event, a, b) {
+		//如果通过鼠标点击触发，那么a和b是undefined
+	});
+	
+	$("p").trigger("click", ["foo", "bar"]);	//a指向"foo" b指向"bar"
+
+例4：自定义事件
+	$("p").on("sayHi", function (event, message1, message2) {
+	  alert(message1 + ' ' + message2);
+	});
+	$("p").trigger("sayHi", ["Hello","World!"]);
+
+例5：自定义事件，先弹123 再456
+	$('#div1').on('show',function(){
+		alert(123);
+	});	
+	$('#div1').on('show',function(){
+		alert(456);
+	});	
+	$('#div1').trigger('show');
+
+
+
+
+----------------------事件对象----------------------
+
+	$('div').click(function(ev){
+		...
+	});
+
+2 ev.pageX:鼠标相对于文档的左边缘的位置
+	注意区分：原生js中的clientX是相对于可视区
+
+3 ev.which : 监视输入。针对键盘和鼠标事件，这个属性能确定你到底按的是哪个键或按钮。
+
+4 ev.preventDefault();  //阻止默认事件
+  ev.stopPropagation(); //阻止冒泡的操作
+  return false;   		//阻止默认事件 + 阻止冒泡的操作
+
+5 event.currentTarget 在事件冒泡阶段中的当前DOM元素
+
+6 event.target:最初触发事件的DOM元素。通常用于比较event.target和this来确定事件是不是由于冒泡而触发的。经常用于事件冒泡时处理事件委托。
+
+7 event.data
+
+8 event.type 事件的类型
+	$('#div1').on('click', {name: 'hello'}, function(ev) {
+		alert(ev.data.name);
+		alert(ev.target);
+		alert(ev.type);	//click
+	});
+
+
+
+
+
+
+
+
+----------------------each()----------------------
+
+	$('li').each(function(index,elem){		
+		$(elem).html(index);		
+	});
+
+
+
+
+--------------jQ转成原生js：get()--------------
+jQuery和javascript不能混用。利用get()函数可以把jQ转成原生js。
+
+	$('#div1').innerHTML		// 报错
+	$('#div1').get(0).innerHTML
+
+
+
+
+
+----------------------工具方法----------------------
+
+$.xxx()：不仅可以给JQ对象用，也可以给原生DOM对象用
+
+1 $.type(obj) 判断类型。返回更细，能分出array等object
+	$.type(true)		//"boolean"
+	$.type(3) 			//"number"
+	$.type("test") 		//"string"
+	$.type(fn1)			//"function"
+	$.type([]) 			//"array"
+	$.type(new Date()) 	//"date"
+	$.type(/test/) 		//"regexp"
+
+2 $.trim() 去掉string的首尾空格
+
+3 $.inArray(value,array,[fromIndex]) 确定value在数组中的位置
+  找不到返回-1
+
+4 $.proxy(function,object) 返回一个新函数，并且修改this指向为oject
+	函数没有参数：
+		function show(){
+			console.log(this);
+		}
+		var a=$.proxy(show,oDiv);	//把这个改了this指向的show函数存起来
+		a();						//oDiv
+		show();						//window
+	函数有参数：
+		function show(n1,n2){
+			alert(n1);
+			alert(n2);
+			alert(this);
+		}
+		var a=$.proxy(show,oDiv,3,4);
+
+7 $.makeArray(aDiv) 把类数组对象转成真正的数组
+
+
+
+
+
+
+-------------------扩展-------------------
+1 $.extend : 扩展工具方法  $.xxx() $.yyy()
+  
+	$.extend({
+		leftTrim : function(str){
+			return str.replace(/^\s+/,'');
+		},
+		rightTrim : function(){},
+		aaa : function(){
+			alert(1);
+		},
+		bbb : function(){}
+	});
+  调用：
+	$.aaa();  //弹出1
+
+2 $.fn.extend  :  扩展实例方法  $().xxx()  $().yyy()
+	$.fn.extend({		
+		drag : function(){
+			// ...
+		},
+		aaa : function(){
+			alert(2);
+		}		
+	});
+  调用：
+  	$('#div1').drag();
+  	$().aaa();  //弹出2
+
+
+
+
+
+-------------------$.extend-------------------
+1 参数只有一个{}时：扩展工具方法
+	$.extend({
+		aaa : function(){},
+		bbb : function(){}
+	});
+
+2 参数有多个{}时：后面的对象都扩展到第一个对象上
+	var a = {};
+	$.extend( a , { name : 'hello' } , { age : 30 } );
+	console.log( a );
+
+3 深拷贝 && 浅拷贝
+	浅拷贝：
+		var a = {};
+		var b = { name : 'Emma'};
+		$.extend(a , b );
+		a.name = 'John';
+		alert( b.name);	//'John'
+	深拷贝：(内层是引用类型时，需要)
+		var a = {};
+		var b = {  name : { age : 30 } };
+		$.extend( true , a , b );
+		a.name.age = 20;
+		alert( b.name.age );	//30
