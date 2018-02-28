@@ -7,22 +7,9 @@
 	2 元素不再有原先的inline、block的限制,反而比较像inline-block。可以设置w h p b m,不设置w h时,由内容撑开。
 
 2 文本流：相对于文字
-
 	float之后,元素会脱离正常流,但是不脱离文本流。所以会有"文字环绕图片"效果。
 	绝对定位(absolute fixed)后,元素不仅会脱离正常流,也会脱离文本流。
 
-
-
-
---------------------
-	*设置float之后的display属性*
-任何元素，只要设置了float，那么display属性一律变为block。
-
-	.box{
-		float:left;
-		display:inline-block;
-	}
-	.box最终的display是block
 
 
 
@@ -64,7 +51,14 @@ inline和inline-block元素存在空白符问题：
     .fix{zoom:1;}
     .fix:after{display:block; content:''; clear:both; height:0; visibility:hidden;}
 
-            
+7 任何元素，只要设置了float，那么display属性一律变为block    
+    .box{
+        float:left;
+        display:inline-block;
+    }
+    .box最终的display是block
+
+
 
 
 -----------------竖直方向的margin叠加-----------------

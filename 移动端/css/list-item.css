@@ -1,0 +1,56 @@
+/*导航*/
+#nav-container{
+	height: 1.5rem;
+	position: relative;
+}
+#nav{
+    background: #00BCD4;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    font-size: 0.5rem;
+    position: absolute;
+	width: 100%;
+	top: 0;
+}
+#nav.navFixed {
+	position: fixed;
+}
+/*很长很长的内容*/
+#long-content {
+	background: #b4c0ff;
+	color: white;
+	line-height: 5;
+	font-size: 0.8rem;
+}
+/*筛选容器 铺满屏幕*/
+#filter-container{
+	display: none;
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 99999999999999;
+}
+/* 遮罩 铺满屏幕*/
+#filter-cover{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	z-index: 1;
+	background: rgba(0,0,0,0.5);
+}
+/*面板 屏幕右边*/
+#filter-panel{
+	position: absolute;
+	background:white;
+	box-shadow: 0 0 10px #aaa;
+	z-index:2;
+	width: 60%;
+	height: 100%;
+	right: 0;
+	top: 0;
+}
+

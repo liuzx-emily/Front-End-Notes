@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+    <!-- 公共 -->
+    <link rel="stylesheet" href="css/public.css">
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/public.js"></script>
+    <!-- 本页 -->
+    <link rel="stylesheet" href="css/list-shop.css">
+    <script src="js/list-shop.js"></script>
+    <title>店铺列表</title>
+</head>
+
+<body>
+    <!-- 简单页面的公共头：< 标题 点点点 -->
+    <div id="simple-public-head">
+        <!-- 返回 -->
+        <img src="img/le-jt.png" id="simplebackBtn">
+        <!-- 标题 -->
+        <div class="page-title">店铺列表</div>
+        <!-- 点点点 -->
+        <div id="dot-container"></div>
+    </div>
+    <!-- 简单页面的 搜索框 -->
+    <form action="#" onsubmit="return false;" id="simple-public-search">
+        <input type="search" autocomplete="off" id="search_input" placeholder="搜索">
+        <img src="img/search-dark.png">
+    </form>
+    <p> "点点点"：为了实现点击旁边，关掉当前弹出层的效果。</p>
+    <p>加了一个#dot-cover全屏遮罩，在这个遮罩上添加点击事件。</p>
+</body>
+
+</html>
