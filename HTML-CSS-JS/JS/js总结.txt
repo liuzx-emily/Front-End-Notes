@@ -24,6 +24,33 @@ null==false 		// false
 
 
 
+
+
+
+-------------动态加载的元素绑定事件-------------
+
+1 方法一：添加完html之后，再绑定事件
+
+	$.ajax({
+		success: function(res){
+			.html(html);
+			setTimout(function(){
+				$("#btn").click(function(){});
+			},0);
+		}
+	});
+
+2 方法二：用委托
+	$('div').on("click","#btn",function() {
+		// this指向#btn
+	});
+
+
+
+
+
+
+
 -----------------alert-----------------
 alert()只能弹出字符串，非string会自动调用toString
 

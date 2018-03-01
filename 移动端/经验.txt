@@ -91,3 +91,44 @@ html的字号 = 窗口宽/(设计图/100)
 
 -------------hover-------------
 移动端上hover很好用，可以少写js
+
+
+
+
+
+-------------向下滚动 加载数据-------------
+要点：
+	ajax获取数据需要时间，想页面中添加内容也需要时间
+	所以要避免多次触发
+
+$(function(){
+	// 当前页数
+	var curPage=1;
+	// 当前内容是否加载完成
+	var curDone=false;
+	// 第一次数据需要手动加载
+	loadData();
+	// 页面滚动时，加载数据
+	$(window).scroll(function(){
+		// 如果之前的内容加载完成了，才能加载新数据
+		if(curDone){
+			if(滚动到底部了吗?){				
+				loadData();
+			}
+		}
+
+	});
+});
+
+function loadData(){
+	curDone=false;
+	$.ajax({
+		success: function(res){
+			append(html);
+			setTimeout(function(){
+				page++;
+				curDone=true;
+			},0);
+		}
+	});
+}

@@ -13,11 +13,21 @@ IE低版本中,绑定事件时，jQuery会添加行间属性 /jQuery\d{21}="\d+"
 所以绑定、取消事件会互相干扰。
 
 
+
+
+
+----------------------
 不太熟的：
 	1 text()、html()、val()、attr()等都有回调函数
+
+		$("div").attr("title",function(){
+			return $(this).html();
+		});
+
 	2 增加所选元素 add()
 	3 停止动画 stop()
-	4 $.inArray(value,array,[fromIndex])
+	4 判断元素是否在数组中
+		$.inArray(value,array,[fromIndex])
 
 
 
@@ -54,19 +64,19 @@ $(selector).animate(params,[速度],[运动方式],[回调]);
 	回调：在动画完成时执行的函数，每个元素执行一次
 
 	$("button").click(function(){
-	  $("div").animate({
-	    paddingLeft:'+100px',	// += 相对现在的值
-	    opacity:'0.5',
-	    height:'150px',
-	    width:'150px'
-	  },2000);
+		$("div").animate({
+			paddingLeft:'+100px',	// += 相对现在的值
+			opacity:'0.5',
+			height:'150px',
+			width:'150px'
+		},2000);
 	});
 
 使用队列功能：jQuery 提供针对动画的队列功能。连续写多个animate()，会按顺序执行（前一个执行完，才开始执行下一个）
   	$("button").click(function(){
-  	  var div=$("div");
-  	  div.animate({left:'100px'},"slow");
-  	  div.animate({fontSize:'3em'},"slow");
+		var div=$("div");
+		div.animate({left:'100px'},"slow");
+		div.animate({fontSize:'3em'},"slow");
   	});
 
 
@@ -80,10 +90,10 @@ $(selector).animate(params,[速度],[运动方式],[回调]);
 ------------------停止动画 stop finish------------------
 	
 	$('#div1').stop();   		// 阻止当前运动，立刻开始后续运动
-	$('#div1').stop(true); 		// 阻止当前+后续运动
-	$('#div1').stop(true,true); // 阻止当前+后续运动，立即到当前运动的目标点
+	$('#div1').stop(true); 		// 阻止所有运动
+	$('#div1').stop(true,true); // 阻止所有运动，立即到当前运动的目标点
 
-	$('#div1').finish(); 		// 阻止当前+后续运动，立即到所有运动的目标点
+	$('#div1').finish(); 		// 阻止所有运动，立即到所有运动的目标点
 
 
 IE8-下，有时候动画会触发多次，比如：
@@ -91,6 +101,8 @@ IE8-下，有时候动画会触发多次，比如：
 	改成：
 	    subNav.stop();
 	    subNav.slideDown("fast");
+
+
 
 
 
@@ -109,6 +121,7 @@ IE8-下，有时候动画会触发多次，比如：
 
 
 
+
 ------------------prop和attr的区别------------------
 
 prop：DOM元素本身就有的属性		
@@ -116,6 +129,8 @@ prop：DOM元素本身就有的属性
 	if( $('#option1').prop("selected") === false )
 
 attr：自定义属性
+
+
 
 
 
