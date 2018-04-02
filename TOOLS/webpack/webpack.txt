@@ -11,6 +11,8 @@
 1 for JS的打包文件，把很多modules打包成少量的bundled assets
 2 [特点]代码分割code splitting：按需加载，不是全部加载
 3 loaders：加载非JS文件（CSS LESS 图片 commonJS ES6 .vue .jsx等）
+	webpack只支持js类型，其他所有类型都需要loader来处理。
+	loader需要先安装，再指定
 
 --------------
   *基础* 
@@ -24,7 +26,7 @@ cmd打包：webpack 源文件 目标文件
 (注意：webpack必须先全局安装，才能在cmd中使用)
 
 --watch:监听文件，一有变化自动打包
---progress：打包过程总可以可以看到打包进度 
+--progress：打包过程中可以看到打包进度 
 -h:查看更多关于webpack的参数
 
 在源文件hello.js中引入其他文件：
@@ -32,8 +34,7 @@ cmd打包：webpack 源文件 目标文件
     const world = require('./world.js');
     require('./style.css'); //需要loader处理
 
-webpack只支持js类型，其他所有类型都需要loader来处理。
-loader需要先安装，再指定
+
 
 
 

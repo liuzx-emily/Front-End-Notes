@@ -1,0 +1,41 @@
+搭建的项目是单入口的，改成多页面：
+	https://www.jianshu.com/p/0a30aca71b16
+
+开发期间的跨域问题
+
+
+----------------------使用vue-cli搭建项目----------------------
+https://www.cnblogs.com/wisewrong/p/6255817.html
+
+1 安装node
+	下载地址：http://nodejs.cn/download/
+	命令：node -v和npm -v验证是否安装成功
+
+2 全局安装vue-cli
+	npm i -g vue-cli
+	命令：vue -V验证是否安装成功
+
+3 用vue-cli生成项目
+	命令：vue init 模版名称 项目名称
+	例如：vue init webpack vue-project
+	初始化完成之后，进入目录：cd vue-project
+	安装依赖：npm install
+
+5 默认端口是8080，在config>index.js中可以修改端口
+
+6 开发阶段 
+	启动项目：npm run dev
+	源代码放在src文件夹下
+
+7 打包上线
+	打包：npm run build
+	打包完成后,会生成 dist 文件夹
+	项目上线时，只需要将 dist 文件夹放到服务器
+	（打包之后，如果想要在本地查看dist文件夹，需要在config>index.js中把assetsPublicPath改为"./"，在npm run build）
+
+
+----------------------前端价值----------------------
+1 搭建前端工程
+2 网络优化
+3 API定制
+4 nodejs层

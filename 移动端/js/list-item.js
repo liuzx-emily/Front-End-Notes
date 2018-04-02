@@ -5,13 +5,15 @@ $(function() {
     navFixed();
     $("#nav input").click(function() {
         $("#filter-container").css("display", "block");
-        // 用body溢出隐藏需要给body定高，而且会突然弹回顶部
-        // 用html溢出隐藏，不需要给谁定高，会固定在当前
-        $("html").css("overflow", "hidden");
+        // 不允许滚动
+        $(document).on('touchmove', function(e) {
+            e.preventDefault();
+        });
     });
     $("#filter-cover").click(function() {
         $("#filter-container").css("display", "none");
-        $("html").css("overflow", "auto");
+        // 允许滚动
+        $(document).off('touchmove');
     });
 });
 // 搜索
