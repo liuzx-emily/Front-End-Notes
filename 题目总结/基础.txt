@@ -8,7 +8,7 @@
 
 3*	找出数组中的最大值 arr=[1,2,3]
 
-4*	将多维数组转化成1维：arr=[1,2,3,[5,6],[1,4,8]];
+4*	将多维数组转化成1维：[1,2,[[5,9],6],[1,4,8]]
 
 5*	var arr1=[1,2,3];
 	var arr2=[4,5,6];
@@ -18,7 +18,6 @@
 	a=5,则b=12
 	a=其他，则b=7;（不能用if和switch）
 
-7	用jQ写出一个ajax请求
 
 ----【答案】----
 
@@ -35,34 +34,23 @@
 
 4	var arr1=[1,2,[[5,9],6],[1,4,8]];
 	arr2=arr1.join(",").split(",");
+	// arr2: ["1", "2", "5", "9", "6", "1", "4", "8"]
 	arr2.map(function(x){
 		return parseInt(x);
 	});
 	// arr2: [1, 2, 5, 9, 6, 1, 4, 8]
 
-5	var arr1=[1,2,3];
-	var arr2=[4,5,6];
-	arr1+arr2 	//"1,2,34,5,6" 是个string
+5	arr1+arr2 	//"1,2,34,5,6" 是个string
+	说明：
+		arr1转成字符串："1,2,3"
+		arr2转成字符串："4,5,6"
+		字符串相加，变成"1,2,34,5,6"
+	[1,2,3]+'aa'的结果是:"1,2,3aa"
 
 6	方法一：
-		var b = (a==5 && 1) || (a==10 && 2) || (a==12 && 3)  || 0;
+		var b = (a==3 && 5) || (a==5 && 12) || 7;
 	方法二：
-		var b={'3':5,'5':12}[a] || 0;	
-
-7	$.ajax({
-		url : 'xxx.php',
-		type : 'POST',
-		data : {
-			name:"emily",
-			age:20
-		},
-		success : function(data){
-			alert(1);
-		},
-		error : function(){
-			alert(2);
-		}
-	});
+		var b={'3':5,'5':12}[a] || 7;	
 
 
 
@@ -84,6 +72,7 @@
 		var str="";
 		$("ul>li").html(function(index,val){
 			str+=val;
+			return val;
 		});
 
 
@@ -124,7 +113,6 @@ http设计初衷：
 
 
 
-
 ---------------------正则---------------------
 
 1	转驼峰：background-color转成backgroundColor
@@ -145,22 +133,52 @@ http设计初衷：
 		return p1.toUpperCase();
 	});
 	alert(str2);	//backgroundColorHa
-
-2	var str = 'abkdisaovifwodjn18djaa';
-	var str2 = str.split('').sort().join(''); //"18aaaabdddfiijjknoosvw"
-	var re = /([\d\D])\1*/g;
-	var c = '';
-	var num = 0;
-	str2.replace(re, function(match) {
-	    if (match.length > num) {
-	        num = match.length;
-	        c = match[0];
-	    }
+	或者：
+	str.replace(/-[a-z]/g,function(match){
+		return match[1].toUpperCase();
 	});
-	alert(c + ',' + num);
+
+2	var str="abkdisaovifwodjn18djaa";
+	var str2=str.split("").sort().join("");
+	var resMap={};
+	var maxMap={el:"",count:0};
+	str2.replace(/([\d\D])\1*/g,function(match){
+		var el=match[0];
+		var len=match.length;
+		resMap[el]=len;
+		if(len>maxMap.count){
+			maxMap.count=len;
+			maxMap.el=el;
+		}
+		return match;
+	});
+	console.log(resMap);
+	console.log(maxMap);
 	关键点：
 	1 思路：要想到先排序，把一样的字符排一起
 	2 str不能sort，转成arr才能sort
+	
+	或者不用正则：
+		var str="abkdisaovifwodjn18djaa";
+		var resMap={};
+		var maxMap={
+			el:"",
+			count:0
+		};
+		for(var i=0;i<str.length;i++){
+			var el=str[i];
+			if(resMap[el]==undefined){
+				resMap[el]=0;
+			}
+			resMap[el]++;
+			var len=resMap[el];
+			if(len>maxMap.count){
+				maxMap.count=len;
+				maxMap.el=el;
+			}
+		}
+		console.log(JSON.stringify(resMap));
+		console.log(maxMap);
 
 3	var str = "135452154724";
   	var re = /(?=(\d{3})+$)/g;
