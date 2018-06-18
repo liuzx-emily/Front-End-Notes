@@ -1,0 +1,10 @@
+{
+    "bitwise": true,
+    "curly": true,
+    "eqeqeq": false,
+    "esversion": 6,
+    "undef": true,
+    "unused": true,
+    "browser": true,
+    "devel": true
+}

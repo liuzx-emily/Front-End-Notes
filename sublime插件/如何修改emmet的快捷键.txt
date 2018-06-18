@@ -1,0 +1,5 @@
+1 把后缀.sublime-package改成.zip后解压
+
+2 替换文件：Installed Packages -> Emmet -> emmet -> snippets.json
+
+3 替换完成后 打包成.zip，再改后缀为.sublime-package

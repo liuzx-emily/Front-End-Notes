@@ -25,7 +25,7 @@
 	ctrl+shift+p中输入fetch
 
 5 sublimeLinter + jshint
-	提示代码中的不规范、错误（需要先安装nodejs）
+	需要先安装nodejs
 	SublimeLinter-jshint	先npm i jshint -g
 	SublimeLinter-csslint	先npm i csslint -g
 	jshint配置：https://jinlong.github.io/2014/10/25/jshint-configuration/
