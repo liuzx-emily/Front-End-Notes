@@ -2,7 +2,8 @@
 	1	有一个数n=5，不用for、while等循环，怎么返回[1,2,3,4,5]这样一个数组
 	2	斐波那契数列 1.1.2.3.5.8.13.21
 	3	数组去重
-	4	getNodeById
+	4	已有树结构，通过id取到节点getNodeById
+	5	构造树结构结构
 
 
 
@@ -140,4 +141,39 @@
 	var a = getNodeById(node1, 11);
 	console.log('最终结果就是', a);
 
+
+
+
+--------------------题目5---------------------
+题目：
+	var list = [
+		{ id: "1", name: "a", pid: "0" },
+	    { id: "2", name: "g", pid: "8" },
+	    { id: "3", name: "h", pid: "2" },
+	    { id: "4", name: "d", pid: "1" },
+	    { id: "5", name: "j", pid: "6" },
+	    { id: "6", name: "c", pid: "0" },
+	    { id: "7", name: "k", pid: "6" },
+	    { id: "8", name: "f", pid: "9" },
+	    { id: "9", name: "b", pid: "0" },
+	    { id: "10", name: "i", pid: "7" },
+	    { id: "11", name: "e", pid: "1" }
+	];
+	需求：给出list，输出ztree结构的数据
+
+
+解答：
+	function getChildren(id){
+		var childrenList=[];
+		for(var i=0;i<list.length;i++){
+			if(list[i].pid===id){
+				list[i].children=getChildren(list[i].id);
+				childrenList.push(list[i]);
+			}
+		}
+		return childrenList;
+	}
+
+	var res=getChildren("0");
+	console.log(res);
 
