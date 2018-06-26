@@ -25,10 +25,30 @@
 	ctrl+shift+p中输入fetch
 
 5 sublimeLinter + jshint
-	需要先安装nodejs
-	SublimeLinter-jshint	先npm i jshint -g
-	SublimeLinter-csslint	先npm i csslint -g
-	jshint配置：https://jinlong.github.io/2014/10/25/jshint-configuration/
+	1 先安装nodejs
+	2 全局安装jshint和csslint
+		先npm i jshint -g
+		先npm i csslint -g
+	3 在ST3中安装：
+		sublimelinter
+		SublimeLinter-jshint
+		SublimeLinter-csslint
+	4 jshint配置参考资料：
+		https://jinlong.github.io/2014/10/25/jshint-configuration/
+		https://www.jianshu.com/p/4cb23f9e19d3
+		官方api：http://jshint.com/docs/options/
+	5 修改jshint全局设定：
+		在sublimelinter的settings-user中，指定.jshintrc文件
+	  	{
+	  	    "linters":
+	  	    {
+	  	        "jshint":
+	  	        {
+	  	            "disable": false,
+	  	            "args": ["--config","D:\\nodejs\\.jshintrc"]
+	  	        }
+	  	    }
+	  	}
 
 6 AutoFileName
 	插入文件时自动提示路径

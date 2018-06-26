@@ -1,10 +1,22 @@
 {
-    "bitwise": true,
-    "curly": true,
-    "eqeqeq": false,
+    // ECMAScript版本
     "esversion": 6,
-    "undef": true,
-    "unused": true,
-    "browser": true,
-    "devel": true
+    // 设置为true时：不允许使用&（因为位运算符在js中使用较少，经常是把 && 错输成 &）
+    "bitwise": true,
+    // 设置为true时：禁止使用==和 !=，强制使用 ===和 !==
+    "eqeqeq": true,
+    // 设置为true时：允许出现"javascript:"
+    "scripturl": false,
+    // 设置为false时：禁止从外部访问内部声明的变量（举例见下）
+    "funcscope": false
 }
+/*
+
+【 scripturl 】
+
+【 funcscope 】
+	if (true) {
+	    var x = 0;
+	}
+	x += 1; // funcscope设置为false时，会warning：'x' used out of scope.
+*/

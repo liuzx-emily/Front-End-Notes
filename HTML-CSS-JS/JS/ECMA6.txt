@@ -4,6 +4,26 @@
 
 
 
+-------------------Array的4个常用函数-------------------
+兼容性：都是IE8不兼容，IE9+兼容。
+
+1 forEach
+	按顺序让数组中的每个元素do sth（无返回值，不修改原数组）
+2 map
+	按顺序处理数组中的每个元素，得到一个新数组
+3 reduce
+	让数组中的前项和后项做某种计算，累计得到最终值
+	array.reduce(function(total必填, currentValue必填, currentIndex, arr), initialValue)
+4 filter
+	筛选出数组中符合条件的项，得到一个新数组新数组
+5 every
+	检测是否所有数组元素都符合条件，返回boolean
+6 some
+	检测数组元素中是否有元素符合指定条件，返回boolean
+
+
+
+
 -------------------let和const命令-------------------
 
 1 只在声明的块内有效
