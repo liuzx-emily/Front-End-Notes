@@ -1,58 +1,74 @@
- 兼容性：不支持IE8-，因为 Vue.js 使用了 IE8 不能模拟的 ECMAScript 5 特性。 
-（IE8-中用不了Object.definedProperty）
- https://unpkg.com/vue/dist/vue.js
+ 兼容性：不支持IE8-，因为 Vue.js 使用了 IE8 不能模拟的 ECMAScript 5 特性（ Object.definedProperty ）
+
 
 最重要的是思路转换：
 1 数据驱动
 	去修改数据，让vue自动帮你做其它所有事。
-	目标：让DOM操作绝迹！
+	目标：杜绝DOM操作！
 2 组件化
 
 
 
-一. 渐进式框架
+# 一. 渐进式框架
 
 二. vue中的两个核心点
 	1 响应的数据绑定
 	 	数据改变 -> 自动更新视图
 	 	利用Object.definedProperty中的setter/getter代理数据，监控对数据的操作
-	 	(具体：mozila搜索Object.definedProperty)
+	 	注意：只有当实例被创建时 data 中存在的属性才是响应式的！！！！
 
-	2 组合的视图组件
-	 	ui页面映射为组件树
-	 	划分组件可维护、可重用、可测试
+	2 组件
 
 
 三. 虚拟DOM
-	vue2.0中引入新功能：虚拟DOM
-	http://www.cnblogs.com/lvyongbo/p/5931636.html
-
-四. MVVM模式	
-	Model - View- ViewModel
-	http://www.cnblogs.com/indream/p/3602348.html
-
-----------------
-	*声明式渲染
-例：求数组中每一项的倍数，放在另一个数组中
-命令式：
-	var newArr = [];
-    for( var i = 0; i < arr.length; i++ ){
-        newArr.push(arr[i]*2)
-    }
-命令式：
-    var newArr = arr.map(function(item){
-        return item * 2;
-    });
+	1 操作DOM慢，页面卡
+	2 DOM节点可以表示为一个JS对象，也就是虚拟DOM
+		var domNode = {
+		  tag: 'div'
+		  attributes: { id: 'div1' }
+		  children: []
+		};
+	3 操作虚拟DOM快
+		domNode.children.push(新的子节点);
 
 
-----------------
-	*指令
-是一种特殊的自定义行间属性。
-指令的职责就是当其表达式的值改变时，相应地将某些行为应用到DOM上。
-在vue中，指令以v-开头。
+----------------计算属性computed、方法methods、监听watch----------------
+计算属性computed、方法methods、监听watch可以达到相似的功能
 
-v-bind:	简写为: 动态地绑定数据
-v-on:	简写为@ 绑定事件监听器
+1 计算属性 vs 方法
+	每次触发重新渲染时：
+		计算属性：基于依赖进行缓存的。只在相关依赖发生改变时才会重新求值。如果依赖没有变化，那么多次访问都会立即返回之前的计算结果，不会执行计算函数。
+		方法：每次都会执行函数，重新计算
+
+	举例1：
+		computed:{
+			// 每次触发重新渲染，不会重新计算，而是返回之前缓存的值
+			now(){
+				return Date.now();
+			}
+		}
+
+2 计算属性 vs 监听watch
+	一般用计算属性比较好
+
+	举例：将a b求和，得到c的值
+		1 计算属性的写法：
+			computed:{
+				c(){
+					return a+b;
+				}
+			}
+
+		2 监听的写法：
+			watch:{
+				a(to,from){
+					this.c=to+this.b;	
+				},
+				b(to,from){
+					this.c=this.a+to;
+				}
+			}
+
 
 
 ----------------
@@ -66,13 +82,13 @@ v-on:	简写为@ 绑定事件监听器
 	*html模版
 插值：
 	文本："Mustache"语法（双大括号）{{}} 
-	v-text v-html
+	v-html
 	属性：v-bind:  简写:
 
 例：
 	<article>
-	    <div v-html="lzxHtml"></div>
 	    <div>{{lzxMessage1}}</div>
+	    <div v-html="lzxHtml"></div>
 	    <div :lzx="lzxAttrValue"></div>
 	</article>
 	<script>

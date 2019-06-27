@@ -359,7 +359,7 @@
 
 
 ---------------后端服务器---------------
- 见server.js
+ 启动服务器，在cmd中：node server server.js
  1 http模块 - require('http')
     const http = require('http');
     // 创建并返回一个HTTP服务器对象

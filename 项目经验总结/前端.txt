@@ -1,0 +1,321 @@
+﻿-----------富文本编辑器判空时，需要先把标签、空白符去掉-----------
+// 去掉html标签
+var article_content_withoutTag = article_content.replace(/<\/?.+?>/g, "");
+// 去掉空白符：空格、换行等
+article_content_withoutTag = article_content_withoutTag.replace(/\s/g, "");
+// 去掉 &nbsp;
+article_content_withoutTag = article_content.replace(/&nbsp/gi, "");
+
+if (article_content_withoutTag == "" || article_content_withoutTag == null) {
+    alert("请填写文章内容");
+    return false;
+}
+
+
+-----------图片滚动-----------
+jquery.cxscroll
+坑：css
+    js内部写死了class名
+
+
+
+-----------jquery函数 trigger() triggerHandler()-----------
+1 共同点：
+    能触发通过 jquery 绑定的事件处理函数，on() bind() click()等
+    都能触发原生元素对象上的on{eventType}绑定的事件处理函数；
+
+2 不同点：
+    triggerHandler不会触发浏览器的默认行为，trigger会
+
+    triggerHandler()只会触发第一个匹配的元素上的事件，而 trigger()会触发所有匹配元素的事件；
+
+    triggerHandler()触发的事件不会冒泡，而 trigger()会冒泡；
+
+    triggerHandler()返回值可以是任意值，如果没有明确 return 值，则为 undefined，而.trigger()永远返回 jQuery object。所以使用.triggerHandler()时链式调用得自己实现。
+
+
+
+
+-----------iframe-----------
+1 父页面中取子页面元素：用contents()
+    例子：根据子页面的高，改变iframe的高度。父页面中的js：
+        $(function() {
+            // document ready之后调用（dom结构加载完成后），保证能取到iframe元素
+            changeIframeHeight();
+        });
+        function changeIframeHeight(){
+            var obj_Iframe = $("#main_iframe");
+            // iframe元素load完成之后，取子页面的高（load是在所有图片等外部文件都加载完毕后，这样就保证图片的高度已经撑起来了）
+            obj_Iframe.load(function() {
+                var h = parseInt(obj_Iframe.contents().find("body").css("height")) + 10;
+                obj_Iframe.css("height", h + "px");
+            });
+        }
+
+2 子页面取父页面元素：
+    // 为了保证高度正确，不能用ready，要用load
+    // $(document)没有load，要用$(window).load
+    $(window).load(function() {
+        var h=parseInt($(document).height())+10;
+        var parentIframe=$('#main_iframe', parent.document);
+        parentIframe.css('height', h+"px");
+    });
+
+
+
+
+
+
+-----------播放视频-----------
+如果要兼容ie8，只能用flash。如果是ie9+，可以用html5标签video
+
+在ie8中兼容html5的video标签：
+    http://www.muquan.net/article/345.html（知道就行了，不推荐使用）
+
+
+在ie8中用flash播放swf格式文件：
+    播放swf文件不能控制(暂停等)，会不停循环播放
+    <embed align="center" src="swf文件路径" width="1200" height="427" type="application/x-shockwave-flash" wmode="transparent" quality="high">
+    </embed>
+
+
+在ie8中用flash播放flv格式文件：
+    需要下载一个swf文件（flvplayer.swf）【下载地址：http://pan.baidu.com/share/link?shareid=145882&uk=2317013614】
+    用这个swf文件来播放我们的flv文件
+    flv文件可以控制
+    <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="500" height="400">
+        <param name="movie" value="下载的swf文件地址！">
+        <param name="quality" value="high" />
+        <param name="allowFullScreen" value="true">
+        <embed src="下载的swf文件地址！" allowfullscreen="true" flashvars="vcastr_file=需要播放的flv文件地址！！" quality="high" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="960" height="540"></embed>
+    </object>
+
+
+
+    
+
+
+-----------比较时间，如果时间大小关系不对则交换-------------
+
+    check_exchange(param, "purchasedate_start", "purchasedate_end");
+    check_exchange(param, "changedate_start", "changedate_end");
+
+    function check_exchange(target, key_a, key_b) {
+        var temp;
+        if (target[key_a] > target[key_b]) {
+            temp = target[key_a];
+            target[key_a] = target[key_b];
+            target[key_b] = temp;
+        }
+    }
+
+----------------------select二级联动---------------------
+
+    <select id="sel_type_level1" disabled onchange="get_type_level2($(this).val())">
+        <option value="">加载中</option>
+    </select>
+    <select id="sel_type_level2" disabled iname="assettypeid">
+        <option value="">请选择</option>
+    </select>
+
+    // 加载一级类型 
+    function get_type_level1() {
+        var param = {
+            select_type: 6,
+            is_enable: 1,
+            parentid: "0"
+        };
+        var fnSuccess = function(res) {
+            if (res.data.length > 0) {
+                // 成功
+                html = "<option value=''>请选择</option>";
+                for (var i = 0; i < res.data.length; i++) {
+                    html += "<option value='" + res.data[i].AssetTypeId + "'>" +
+                        res.data[i].AssetTypeName + "</option>";
+                }
+                $("#sel_type_level1").html(html);
+                $("#sel_type_level1").prop('disabled', false);
+            } else {
+                $("#sel_type_level1").html('<option value="">暂无数据</option>');
+            }
+            fn_ajax_init();
+        };
+        $.rajax(basePath + 'itssAssetSearch/initSelect.do', param, fnSuccess, true);
+    }
+    // 加载二级类型 【一级类型change时才调用】
+    function get_type_level2(parentid) {
+        // 禁止选择二级、禁止搜索
+        $("#sel_type_level2").prop('disabled', true);
+        $("#btn-search").prop('disabled', true);
+        // 如果没有选一级
+        if (parentid == "") {
+            $("#sel_type_level2").html('<option value="" selected>请选择</option>');
+            return;
+        }
+        // 清空以前的二级
+        $("#sel_type_level2").html('<option value="' + parentid + '" selected>加载中</option>');
+        var param = {
+            select_type: 6,
+            is_enable: 1,
+            parentid: parentid
+        };
+        var fnSuccess = function(res) {
+            if (res.data.length > 0) {
+                // 成功
+                html = "<option value='" + parentid + "' selected>请选择</option>";
+                for (var i = 0; i < res.data.length; i++) {
+                    html += "<option value='" + res.data[i].AssetTypeId + "'>" +
+                        res.data[i].AssetTypeName + "</option>";
+                }
+                $("#sel_type_level2").html(html);
+                $("#sel_type_level2").prop('disabled', false);
+            } else {
+                $("#sel_type_level2").html('<option value="' + parentid + '" selected>无二级分类</option>');
+            }
+            // 允许搜索
+            $("#btn-search").prop('disabled', false);
+        };
+        $.rajax(basePath + 'itssAssetSearch/initSelect.do', param, fnSuccess, true);
+    }
+
+---------------------wdatepicker日期联动-----------------
+
+    <input type="text" class="input-date wdate" id="startTime3">
+    <input type="text" class="input-date wdate" id="endTime3">
+
+    $("#startTime3").bind("click focus", function() {
+        WdatePicker({
+            maxDate: '#F{$dp.$D(\'endTime3\')}',
+            dateFmt: "yyyy-MM-dd",
+        });
+    });
+    $("#endTime3").bind("click focus", function() {
+        WdatePicker({
+            minDate: '#F{$dp.$D(\'startTime3\')}',
+            dateFmt: "yyyy-MM-dd"
+        });
+    });
+
+---------------------wdatepicker 默认当天----------------
+    // 所有class为"initCurDate"的日期控件，初始化为当天     
+    $('.initCurDate').val(function() {
+        var today = new
+        Date();
+        var h = today.getFullYear();
+        var m = today.getMonth() +1;
+        var d = today.getDate();
+        m = m < 10 ? "0" + m : m;
+        d = d < 10 ? "0" + d : d;
+        return h + "-" + m + "-" + d;
+    });
+
+
+-------------------------弹窗内容清空---------------------    
+    // 打开弹框 卸载板卡
+    function openCardBox(index) {
+        // 清空弹窗内容、初始化日期
+        clearDialog($("#cardBox"));
+        // 打开弹窗
+        $('#cardBox').showDialog("卸载板卡", 650, 400, false);
+        // 修改全局变量
+        curIndex.card = index;
+        // 获得当前数据
+        var data = changingData.card[index];
+        if (data.operationFlag == 1) {
+            // 未操作
+        } else {
+            // 已操作，回显
+            $("#cardBox_sel_state").val(data.state);
+            $("#cardBox_sel_state").trigger("change");
+            $("#cardBox .box-maintainInfo").bindInameValue(data.maintainInfo);
+            $("#cardBox .box-dumpingInfo").bindInameValue(data.dumpingInfo);
+        }
+    }
+    // 清空弹窗内容、初始化日期
+    function clearDialog(container) {
+        // 文本框清空
+        container.find(" input[type='text']").val("");
+        // textarea清空
+        container.find(" textarea").val("");
+        // 单选清空
+        container.find(" input[type='radio']").prop("checked", false);
+        // 多选清空
+        container.find(" input[type='checkbox']").prop("checked", false);
+        // select清空，并触发change事件！！！
+        container.find(" select").val("");
+        container.find(" select").trigger('change');
+        // 日期初始化为当天
+        container.find(" .initCurDate").val(function() {
+            var today = new Date();
+            var h = today.getFullYear();
+            var m = today.getMonth() + 1;
+            var d = today.getDate();
+            m = m < 10 ? "0" + m : m;
+            d = d < 10 ? "0" + d : d;
+            return h + "-" + m + "-" + d;
+        });
+        // 隐藏box
+        container.find(" .box-maintainInfo").hide();
+        container.find(" .box-position").hide();
+        container.find(" .box-dumpingInfo").hide();
+    }
+
+
+
+-------------------------radio赋值---------------------   
+    // 先清空
+    $("input[name='importance']").prop("checked",false);
+    // 再赋值
+    $("input[name='importance'][value='1']").prop("checked",true);
+
+
+-------------------------url中传递中文---------------------   
+    encodeURI(EventName)
+
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return decodeURI(r[2]);
+        return null;
+    }
+
+
+-------------------------日期格式化--------------------- 
+Date.prototype.Format = function(formatStr)   
+{   
+    var str = formatStr;   
+    var Week = ['日','一','二','三','四','五','六'];  
+  
+    str=str.replace(/yyyy|YYYY/,this.getFullYear());   
+    str=str.replace(/yy|YY/,(this.getYear() % 100)>9?(this.getYear() % 100).toString():'0' + (this.getYear() % 100));   
+  
+    str=str.replace(/MM/,this.getMonth()>9?this.getMonth().toString():'0' + this.getMonth());   
+    str=str.replace(/M/g,this.getMonth());   
+  
+    str=str.replace(/w|W/g,Week[this.getDay()]);   
+  
+    str=str.replace(/dd|DD/,this.getDate()>9?this.getDate().toString():'0' + this.getDate());   
+    str=str.replace(/d|D/g,this.getDate());   
+  
+    str=str.replace(/hh|HH/,this.getHours()>9?this.getHours().toString():'0' + this.getHours());   
+    str=str.replace(/h|H/g,this.getHours());   
+    str=str.replace(/mm/,this.getMinutes()>9?this.getMinutes().toString():'0' + this.getMinutes());   
+    str=str.replace(/m/g,this.getMinutes());   
+  
+    str=str.replace(/ss|SS/,this.getSeconds()>9?this.getSeconds().toString():'0' + this.getSeconds());   
+    str=str.replace(/s|S/g,this.getSeconds());   
+  
+    return str;   
+}   
+
+
+-------------------------判断浏览器--------------------- 
+if(/Android|Windows Phone|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){
+    // 手机
+    window.location.href="";
+}else if(/iPad/i.test(navigator.userAgent)){ 
+    // ipad
+    window.location.href="";
+}else{
+    
+}

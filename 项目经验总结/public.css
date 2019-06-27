@@ -1,0 +1,35 @@
+/*reset 默认样式重置*/
+body, ul, li, p, input {
+    margin: 0;
+    padding: 0;
+}
+li {
+    list-style: none;
+}
+a {
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+}
+img {
+    border: none;
+}
+a, span, i {
+    display: inline-block;
+}
+input[type="button"] {
+    cursor: pointer;
+    outline: none;
+}
+/*pre自动换行*/
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+/*文字溢出显示省略号*/
+.ellipsis {
+    width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

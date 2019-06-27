@@ -20,9 +20,11 @@
   初级代码：
    	oDiv.onmousedown = function(ev) {
    	   var ev = ev || event;
+       
    	   //求出down的一瞬间鼠标和div之间的距离
    	   var disX = ev.clientX - this.offsetLeft;
    	   var disY = ev.clientY - this.offsetTop;
+
    	   document.onmousemove = function(ev) {
    	      var ev = ev || event;
    	      oDiv.style.left = ev.clientX - disX + 'px'; //这里容易忘记加'px'
@@ -68,7 +70,7 @@
 
   	};
 
-3 拖拽图片会有问题，原因，解决的办法同上(oDiv换成oImg就行了)
+3 拖拽图片会有问题，原因、解决的办法同上(oDiv换成oImg就行了)
 
 5 限制范围的拖拽
 	function drag(obj) {		

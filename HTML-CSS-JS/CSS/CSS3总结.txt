@@ -1,27 +1,13 @@
-兼容性问题：
+注意兼容性问题：
 1 IE10-很多根本不支持
 2 浏览器前缀
 
 
 
-
------------------
-	*阶段预告*
-CSS3新增了很多选择器：
-	1 属性选择器 如[lzx~='ab']
-	2 结构性选择器 如p:nth-child(3n) p:only-child
-	3 伪类选择器 如input:checked
-有的内容，比如[lzx='ab'] ::after不是css3新加的，不过就放到一起说了
-新增的CSS3选择器的兼容问题，和解决方法看“兼容性总结.txt”，简单来说就是下一个东西，引进来就好了，很简单。
-CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查，先不管了。
-
-
 -----------------
 	*属性选择器*
 
-兼容性：
-1 IE7:支持大部分，一小部分有bug用不了
-2 IE6-:完全不支持
+兼容性：非常好！！在IE8中，只要声明<!DOCTYPE html>就ok
 
 （为了不混淆，使用自定义属性lzx）
 <span lzx='ab'  > 1 </span>
@@ -48,7 +34,6 @@ CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查�
 6 [lzx*='ab']必须包含'ab'('abx'和'xab'都可以，'a b'不行)
 	选中1 2 3 4 5 6 7 9 10(除了8的所有)
 
-备注：属性值两边可以不写引号
 
 应用举例：根据href属性选择a标签
 	<a href="doc/1.txt">link1</a>
@@ -67,10 +52,6 @@ CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查�
 【重要：css是从1开始计数的，不是从0开始！】
 
 1 E:nth-child(n)  匹配同级元素中的第n个，且这个元素必须也是E类型
-  注意：
-	1 不是找E的子节点，是E的同级元素，也就是E的父元素的子节点。
-	2 找到的第n个元素必须也是E类型
-
 	<div>
 		<p>p1</p>
 		<p>p2</p>
@@ -94,8 +75,8 @@ CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查�
 		<p>p4</p>
 		<p>p5</p>
 	</div>
-	p:nth-child(2n)：p4	//找不到span2，因为它不是<p>
-  想要无视标签类型，只靠DOM结构位置来选择：
+
+	p:nth-child(2n)：p4
 	div>*:nth-child(2n):找到span2 p4
 
 2 E:nth-last-child(n) 匹配同级元素中的第n个，从后向前计算。且这个元素必须也是E类型
@@ -155,7 +136,8 @@ CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查�
 	      <a href="#"></a>
 	   </li>
 	</ul>
-  取到目标a：li:nth-child(2) > a:nth-child(2)
+  取到目标a：
+  	li:nth-child(2) > a:nth-child(2)
 
 
 
@@ -200,6 +182,7 @@ CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查�
   例子1：input:checked	选择每个被选中的 <input> 元素。
   小应用：配合element1~element2选择器，来模拟单选框效果
   	（因为默认的单选框没法改样子，很丑）
+
   	<style>
   	label{ float:left;margin:0 5px; overflow:hidden; position:relative;}
   	label input{ position:absolute;left:-50px;top:-50px;}
@@ -266,25 +249,6 @@ CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查�
 	两种元素必须拥有相同的父元素，但是 element2 不必直接紧随 element1。
 	例子：p~ul	选择前面有 <p> 元素的每个 <ul> 元素。
 
------------------
-	*阶段总结*
-CSS3新增了很多选择器：
-	1 属性选择器 如[lzx~='ab']
-	2 结构性选择器 如p:nth-child(3n) p:only-child
-	3 伪类选择器 如input:checked
-有的内容，比如[lzx='ab'] ::after不是css3新加的，不过就放到一起说了
-新增的CSS3选择器的兼容问题，和解决方法看“兼容性总结.txt”，简单来说就是下一个东西，引进来就好了，很简单。
-CSS2的选择器应该也有兼容问题，和解决办法，自己没有去查，先不管了。
-
-	*阶段预告*
-讲完选择器，来讲一些文本的设置。
-1 颜色模式 rgba    IE9+
-2 文字阴影 text-shadow    IE10+
-3 文字描边 -webkit-text-stroke
-	只有webkit内核浏览器才支持，而且必须加前缀。FF和chrome支持，IE都不支持。
-4 文本功能 direction和text-overflow  全兼容
-5 自定义字体：ie8-部分支持：即只支持EOT字体。ie9+全支持
-
 
 -----------------
 	*新增颜色模式rgba*
@@ -312,10 +276,7 @@ rgba：
 	   <div>内层div</div>
 	</div>
 	给.box设置color: rgba(255, 255, 255, 0.5);
-	里面的文字“这里是文字~”和“内层div”会变半透明
-	（注意color会继承，内层div会从div.box继承color样式）
-
-3 问题：注意边框颜色透明有问题
+	里面的文字“这里是文字~”和“内层div”会变半透明（因为继承了color）
 
 
 -----------------
@@ -412,24 +373,7 @@ text-shadow：x y blur color, …
 	http://www.fontsquirrel.com/fontface/generator
 
 
------------------
-	*阶段总结*
-讲了一些文本设置。
-1 颜色模式 rgba    IE9+
-2 文字阴影 text-shadow    IE10+
-3 文字描边 -webkit-text-stroke
-	只有webkit内核浏览器才支持，而且必须加前缀。FF和chrome支持，IE都不支持。
-4 文本功能 direction和text-overflow  全兼容
-5 自定义字体：ie8-部分支持：即只支持EOT字体。ie9+全支持
 
-	*阶段预告*
-1 box-sizing IE8+
-2 box-shadow IE9+
-3 倒影box-reflect 所有IE都不支持
-4 自由缩放resize 所有IE都不支持
-5 CSS3分栏布局 IE10+支持，FF和chrome需要前缀
-6 响应式布局@media IE9+支持（IE6-8通过引入js来兼容）
-7 弹性盒模型 兼容性不好，没学，以后没事再看
 
 -----------------
 	*box-sizing*
@@ -555,24 +499,7 @@ user-scalable	是否允许用户进行缩放，值为"no"或"yes", no 代表不�
 		Center 所有子元素居中
 
 
------------------
-	*阶段总结*
-1 box-sizing IE8+
-2 box-shadow IE9+
-3 倒影box-reflect 所有IE都不支持
-4 自由缩放resize 所有IE都不支持
-5 CSS3分栏布局 IE10+支持，FF和chrome需要前缀
-6 响应式布局@media IE9+支持（IE6-8通过引入js来兼容）
-7 弹性盒模型 兼容性不好，没学，以后没事再看
 
-	*阶段预告*
-1 border-radius IE9+
-2 linear-gradient IE10+
-3 radial-gradient IE10+
-4 background-size IE9+
-5 background-origin IE9+
-6 background-clip IE9+
-7 mask IE不支持，chrome要前缀且只支持Mask-image
 
 -----------------
 	*border-radius* IE9+

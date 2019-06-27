@@ -1,50 +1,44 @@
-runoob教程：http://www.runoob.com/html/html5-webstorage.html
 
 ----------------
 	*和cookie比较*
-一. 以前，本地存储使用cookie
-  cookie的特点：
-  	1) 缺点：cookie的存储限制，能存的数据少
-  	2) 缺点：每次请求都会请求服务器，给服务器压力，也影响网页性能
-  	3) 同一个浏览器下，页面间的cookie是共享的
-二. HTML5提供更好的本地存储方式：storage (IE8+)
+一. cookie
+	以前，本地存储使用cookie。但是cookie能存的数据少，只有4k（例：农设项目地图接口出错，就是因为cookie满了存不进去了）
+
+二. HTML5提供更好的本地存储方式：storage 
   1 storage的特点：
-  	1) 优点：能存的数据多（5M）
-  	2) 优点：不会请求服务器，减轻服务器压力，网页性能高
+  	1) 【太好了！！】IE8+都兼容，所以可以放心使用
+  	2) 能存的数据多，每个域名下可以存5M
+  	3) 【注意！！！】在浏览器的隐私模式下，storage是不可读取的。所以重要的交互数据不要使用storage传递
   2 storage有两种：
 	1) localStorage
 		永久存储。只有手动删除时，数据才会消失
-	  	窗口间数据共享
+	  	同域名下，窗口间数据共享
   	2) sessionStorage
 		窗口的临时存储，页面关闭时，所有存储数据消失
 		窗口间数据不共享
 
+
 ----------------
 	*storage的方法*
-1 setItem():
-	设置数据，key-value，都是string类型
-	要用别的类型的话，用JSON.parse和JSON.stringify
-2 getItem():
-	获取数据，通过key来获取到相应的value
-3 removeItem():
-	删除数据，通过key来删除相应的value
-4 clear():
-	删除全部存储的值
+1 setItem("name","小明")
 
+2 getItem("name")
+
+3 removeItem("name")
+
+4 clear()	删除全部存储的值
+
+【注意！！！】storage中的key和value都是string类型，所以存对象时需要：
 	localStorage.setItem(key,JSON.stringify(value))
 	JSON.parse(localStorage.getItem(key))
 
-----------------
-	*例子：保存已填写信息
-1 window的unload事件：在用户关闭页面时触发
 
 
-注：storage事件，不知道why只有在ff下测试成功了。。
 ----------------
 	*storage的事件*
-只有一个事件：storage
+只有一个事件：window.onstorage
 	当数据有变动(修改或删除)时，会触发storage事件。
-	在变动数据窗口中不会触发，。
+	在变动数据窗口中不会触发。
 	Key : 修改或删除的key值，如果调用clear(),key为null
 	newValue  :  新设置的值，如果调用removeStorage(),key为null
 	oldValue :  调用改变前的value值

@@ -9,6 +9,8 @@
 
 1 forEach
 	按顺序让数组中的每个元素do sth（无返回值，不修改原数组）
+	[a,b,c].forEach(function(item, index, arr), thisValue)
+	空数组[]不执行回调函数。
 2 map
 	按顺序处理数组中的每个元素，得到一个新数组
 3 reduce

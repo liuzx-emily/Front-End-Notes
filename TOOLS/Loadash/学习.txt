@@ -1,0 +1,47 @@
+---------------- 在vue-cli中使用 ----------------
+安装：
+	npm i loadash --save
+在主文件中引用：
+	import _ from 'loadash';
+
+
+
+
+---------------- 兼容性 ----------------
+1 loadash 4+兼容IE9+
+2 需要兼容IE8的话，可以用3.x版本。lodash 3.x 版本没有直接提供可用的js， 需要手动构建。 方法：
+	安装 
+	npm i -g lodash-cli@3.10.1 
+	安装完成后执行 
+	lodash compat 
+	会输出兼容IE6~IE8的版本lodash.custom.js及lodash.custom.min.js
+
+
+---------------- Array方法 ----------------
+1 _.chunk(array, [size=1])
+	将数组拆分成小数组	
+
+	例子：
+		_.chunk([1, 2, 3, 4], 2);
+		// [[1, 2], [3, 4]]
+		 
+		_.chunk([1, 2, 3, 4], 3);
+		// [[1, 2, 3], [4]]
+
+2 _.compact(array)
+	去除假值。假值：false  null  0  ""  undefined NaN
+
+	例子：
+		_.compact([0, 1, false, 2, '', 3]);
+		// [1, 2, 3]
+
+3 _.uniq(array)
+	数组去重	
+
+	例子：
+		_.uniq([2, 1, 2]);
+		// [2, 1]
+
+
+
+_.debounce(func, [wait=0], [options={}])

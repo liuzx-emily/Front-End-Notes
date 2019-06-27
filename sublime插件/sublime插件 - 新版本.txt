@@ -1,5 +1,12 @@
 ﻿官网https://packagecontrol.io/
 
+0 被墙了怎么办？
+	Preferences -> Package Settings -> Package Control -> Settings - user ->
+	添加内容：
+		"channels":
+		[
+			"https://raw.githubusercontent.com/HBLong/channel_v3_daily/master/channel_v3.json"
+		],
 
 1 emmet【必备】
 	代码快速编写神器！教程：https://docs.emmet.io/abbreviations/syntax/

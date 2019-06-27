@@ -43,13 +43,11 @@
             <tr></tr>
          </tbody>
       </table> 
-   所以写html时，就规规矩矩地写上tbody，不然以后写js时会有“误会”。
-   比如：oTable.children[0]你以为是取到第一个tr，其实是取到了tbody
 
 11 table里的标签都有自己默认的display值，比如：
    table    display: table;
    caption  display: table-caption;
-   theader  display: table-header-group; 
+   thead    display: table-header-group; 
    tbody    display: table-row-group;   
    tfoot    display: table-footer-group;
    tr       display: table-row;
@@ -60,78 +58,74 @@
 -->
 
 <head>
-   <meta charset="UTF-8">
-   <title>table表格</title>
-   <style>
-   /*css reset*/
-   
-   table {
-      border-collapse: collapse;
-   }
-   
-   th,
-   td {
-      /*默认都有padding，没有margin*/
-      padding: 0;
-   }
-   /*css reset结束*/
-   
-   table {
-      width: 800px;
-      ☐ height: 400px;
-      background: #ddd;
-      \
-   }
-   
-   th,
-   td {
-      border: 1px solid coral;
-      width: 100px;
-   }
-   
-   .left,
-   .right {
-      width: 50px;
-   }
-   
-   .middle {
-      width: 300px;
-   }
-   </style>
+    <meta charset="UTF-8">
+    <title>table表格</title>
+    <style>
+    /*css reset*/
+
+    table {
+        border-collapse: collapse;
+    }
+
+    th, td {
+        /*默认都有padding，没有margin*/
+        padding: 0;
+    }
+    /*css reset结束*/
+
+    table {
+        width: 800px;
+        height: 400px;
+        background: #ddd;
+    }
+
+    th, td {
+        border: 1px solid coral;
+        width: 100px;
+    }
+
+    .left, .right {
+        width: 50px;
+    }
+
+    .middle {
+        width: 300px;
+    }
+    </style>
 </head>
 
 <body>
-   <table>
-      <caption>caption：表格标题</caption>
-      <thead>
-         <tr>
-            <th class="left">标题1</th>
-            <th class="middle">标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2</th>
-            <th class="right">标题3</th>
-         </tr>
-      </thead>
-      <tbody>
-         <tr>
-            <td colspan="2" rowspan="2">内容1-1</td>
-            <td>内容1-3</td>
-         </tr>
-         <tr>
-            <td>内容2-3</td>
-         </tr>
-         <tr>
-            <td>内容3-1</td>
-            <td>内容3-2</td>
-            <td>内容3-3</td>
-         </tr>
-      </tbody>
-      <tfoot>
-         <tr>
-            <td>尾部1</td>
-            <td>尾部2</td>
-            <td>尾部3</td>
-         </tr>
-      </tfoot>
-   </table>
+    <table>
+        <caption>caption：表格标题</caption>
+        <thead>
+            <tr>
+                <th class="left">标题1</th>
+                <th class="middle">标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2标题2</th>
+                <th class="right">标题3</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2" rowspan="2">内容1-1</td>
+                <td>内容1-3</td>
+            </tr>
+            <tr>
+                <td>内容2-3</td>
+            </tr>
+            <tr>
+                <td>内容3-1</td>
+                <td>内容3-2</td>
+                <td>内容3-3</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>尾部1</td>
+                <td>尾部2</td>
+                <td>尾部3</td>
+            </tr>
+        </tfoot>
+    </table>
 </body>
 
 </html>

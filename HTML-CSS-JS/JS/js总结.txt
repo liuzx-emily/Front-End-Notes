@@ -342,6 +342,16 @@ toFixed(n)：四舍五入为n位小数
 	myObj1 = myFunction.apply(myObj, [10, 2]); 	//返回20
 	myObj2 = myFunction.call(myObj, 5, 7); 		//返回35
 
+	bind也是修改函数this指向，区别在于：
+	apply和call都是即刻调用，而bind只是返回一个"修改了this指向的函数"，等待以后调用
+
+	用apply模拟一个bind函数：
+	function bindThis(f, oTarget) {
+	    return function(){
+	        return f.apply(oTarget,arguments);	// 这里的arguments不能忘
+	    };
+	}
+
 
 
 

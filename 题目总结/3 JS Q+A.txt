@@ -17,6 +17,12 @@
 	arr1+arr2结果是什么？
 
 7 成长速度为5显示1个箭头；成长速度为10显示2个箭头；成长速度为12显示3个箭头；其他都显示都显示0个箭头。
+
+8 js中函数的方法call、apply、bind都是用来改变this指向的，用apply模拟一个bind函数
+	function bind(f,oTarget){
+		// 填内容
+	}
+
 -----------------
 	解答1
 只能用于数字：
@@ -111,3 +117,11 @@ arr1+arr2 	//"1,2,34,5,6" 是个string
 	var add_level = (add_step==5 && 1) || (add_step==10 && 2) || (add_step==12 && 3)  || 0;
 高手2：
 	var add_level={'5':1,'10':2,'12':3}[add_step] || 0;	
+
+-----------------
+	解答8
+function bind(f,oTarget){
+	return function(){
+		f.apply(oTarget,arguments);
+	};
+}

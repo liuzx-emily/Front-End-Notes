@@ -1,0 +1,161 @@
+﻿------------------------- 起步 -------------------------
+全局安装：
+	npm install -g @vue/cli
+	npm install -g @vue/cli-service-global
+
+新建项目并启动：
+	vue create rock-cloud
+	cd rock-cloud
+	开发：npm run serve
+	上线：npm run build
+
+sublime text3安装插件：
+	Vue Syntax Highlight
+	Vuejs Complete Package
+
+
+
+------------------------- 已有项目中安装、使用新插件 -------------------------
+1 font-awesome
+	安装：进入项目目录 npm install font-awesome
+	引用：在main.js 文件中
+		import 'font-awesome/css/font-awesome.css'
+
+2 elementui
+	安装：进入项目目录 npm i element-ui -S
+	引用：在main.js 文件中：
+		import ElementUI from 'element-ui'
+		import 'element-ui/lib/theme-chalk/index.css'
+
+		Vue.use(ElementUI)
+3 router
+	安装：进入项目目录 npm install vue-router
+	引用：在main.js 文件中：
+		import VueRouter from 'vue-router'
+		Vue.use(VueRouter)
+
+4 axios
+	npm install axios --save-dev
+	使用：
+		在main.js 文件中：
+			import axios from 'axios';
+
+			Vue.prototype.$axios=axios
+			
+		在vue.config.js 中设置：
+
+			devServer: {
+			    proxy: {
+			        '/api': {
+			            target: 'http://localhost:8916/jg/',
+			            ws: true,
+			            changeOrigin: true,
+			            pathRewrite: {
+			                '^/api': ''
+			            }
+			        },
+			        '/foo': {
+			            target: '<other_url>'
+			        }
+			    }
+			}
+
+5 pdf
+	npm install pdfjs-dist
+
+
+
+	npm install pdfjs (不管用)
+	npm install pdfjs-dist（不管用）
+	npm install --save vue-pdf（是纯canvas，不能搜索）
+	npm install --save pdfobject（使用的是浏览器内置的pdf浏览器，搜索也是浏览器的ctrl+f搜索。所以不支持IE11）
+
+6 上传
+	npm i jquery --save
+	npm i webuploader --save
+
+7 less 
+	npm i less@2.7.3 less-loader --save
+	安装后即可使用，不需要进行配置，但是不能安装3.0+版本的
+
+8 sass
+	npm install -D sass-loader node-sass
+	安装后即可使用，不需要进行配置
+
+9 lodash
+	npm i lodash --save
+	在主文件中引用：
+		import _ from 'lodash';
+
+10 mockjs
+	npm i mockjs --save
+
+11 cookie
+	npm i vue-cookies --save
+12 vuex
+13 echarts
+	npm install --save echarts vue-echarts-v3
+
+14 手机端UI组件
+	 npm i mint-ui -S
+	 引用：
+	 	// 引入全部组件
+	 	import Vue from 'vue';
+	 	import Mint from 'mint-ui';
+	 	Vue.use(Mint);
+	 
+------------------------- 修改配置 -------------------------
+在项目目录中新建：vue.config.js
+
+
+
+------------------------- 报错 -------------------------
+1 安装了router插件后，使用router报错：
+	You are using the runtime-only build of Vue where the template compiler is not available. Either pre-compile the templates into render functions, or use the compiler-included build
+
+ 解决方法：在vue.config.js中添加：
+
+	const path = require('path')
+
+	function resolve(dir) {
+	    return path.join(__dirname, dir)
+	}
+	module.exports = {
+	    configureWebpack: config => {
+	        config.resolve = {
+	            extensions: ['.js', '.vue', '.json', ".css"],
+	            alias: {
+	                'vue$': 'vue/dist/vue.esm.js',
+	                '@': resolve('src'),
+	            }
+	        }
+	    }
+	}
+
+
+------------------------- 动态路由需要怎么配置？ -------------------------
+	说明：在动态路由中配置了pageId和pageType两个参数
+
+	data(){
+		return {
+			pageType,
+			pageId,
+		}
+	},
+	watch:{
+		'$route'(){
+            console.log(`从${from}变成了${to}`,from);
+            this.pageType = to.params.pageType;
+            this.pageId = to.params.pageId;
+		},
+        'pageId'(to, from) {
+        	// 刷新数据
+        },
+        'pageType'(to, from) {
+        	// 刷新数据
+        }
+	},
+    mounted() {
+        this.pageType = this.$route.params.pageType;
+        this.pageId = this.$route.params.pageId;
+    }

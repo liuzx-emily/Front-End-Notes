@@ -1,132 +1,28 @@
-﻿
---------------------
-	*文本流和文档流*
-1 文档流：normal flow，"正常流"
-  脱离正常流：
-	1 将元素从普通的布局排版中拿走,其他盒子在定位的时候,会当做它不存在。
-	2 元素不再有原先的inline、block的限制,反而比较像inline-block。可以设置w h p b m,不设置w h时,由内容撑开。
-
-2 文本流：相对于文字
-	float之后,元素会脱离正常流,但是不脱离文本流。所以会有"文字环绕图片"效果。
-	绝对定位(absolute fixed)后,元素不仅会脱离正常流,也会脱离文本流。
+﻿--------------------IE8支持--------------------
 
 
+-----------------IE8兼容media-----------------
+ @media是CSS3中的，IE8-不支持，需要额外引入response.js。
+ response.js原理：
+    第一步，将head中所有外部引入的CSS文件路径取出来存储到一个数组当中
+    第二步，遍历数组，并一个个发送AJAX请求
+    第三步，AJAX回调后，分析response中的media query的min-width和max-width语法(该js仅支持这两种),分析出viewport变化区间对应相应的css块； 第四步，页面初始化时和resize时，根据当前viewport使用相应的css块。 
+ 核心结论：
+    1、需要服务器环境，不能使用本地地址（file://开头）
+    2、需要link外部引入CSS文件，写在style中是无效的
+    3、respond文件一定要放在CSS文件的后面
+    4、另外，虽然把respond放置在head里还是在body后面都能够实现，但是建议放置在head中（具体原因在下面的文档提示中有提到）
+ 官方文档的提示：
+    1、越早的引入respond.js文件，也就越可能避免IE下出现的闪屏
+    2、不支持嵌套的媒体查询
+    3、utf-8的字符编码对respond.js文件的运行有影响 官方API原文：if CSS files are encoded in UTF-8 with Byte-Order-Mark, they will not work with Respond.js in IE7 or IE8。但是在我使用IE6-8进行测试的时候，都能够正常显示（无论是在css文件中增加charset设置还是在link标签中增加charset设置）。因此，并不是太清楚这个bug的含义
+    4、跨域可能会出现闪屏（还没有测试，具体情况不详） 
+ 其他：
+    真正的@media是算上滚动条的宽度的。但IE8-模拟出来的假media不包含滚动条。所以要使用response.js兼容IE8-，最好减去滚动条的宽度：
+        @media (min-width:1890px) // 1920的屏
 
 
-
----------------图片下方间隙问题---------------
-vertical-align:top
-
-
-
-
---------------------空白符--------------------
-
-inline和inline-block元素存在空白符问题： 
-	"空白符"包括空格、tab、换行符。
-	在浏览器中，空白符是不会被忽略的，多个连续的空白符会自动合并成一个。
-	空白符归根结底是个字符，可以通过设置font-size:0 控制
-
-
-
-
---------------------float总结--------------------
-1 float的本职：文字环绕图片[float不是用来布局的]
-
-2 float会脱离"正常流"，但是不脱离"文本流"。所以会有"文字环绕图片"效果
-
-3 作用可形容为：带有方位的display:inline-block
-  解释：元素不再有原先的inline、block的限制，反而比较像inline-block。可以设置w h p b m，不设置w h时，由内容撑开。
-  float:right从右向左排，但极少使用
-
-4 float的问题：
-    1 因为脱离文档流，所以父元素有“高度塌陷问题”，要“清除浮动”
-    2 用float布局，元素必须要限高
-
-5 因为float是JavaScript中的一个关键字，所以不能直接用float
-    IE：  obj.style.styleFloat = "left";
-    其他：obj.style.cssFloat = "left";
-
-6 清除浮动的完美方法：全兼容
-    .fix{zoom:1;}
-    .fix:after{display:block; content:''; clear:both; height:0; visibility:hidden;}
-
-7 任何元素，只要设置了float，那么display属性一律变为block    
-    .box{
-        float:left;
-        display:inline-block;
-    }
-    .box最终的display是block
-
-
-
-
------------------竖直方向的margin叠加-----------------
-只有 正常流 中 block级元素 的垂直margin才会发生叠加。
-不在正常流中的元素（浮动、绝对定位），和非block元素(inline inline-block)，不会发生margin叠加。
-
-建议：在写的时候尽量用同一方向的margin，比如都设置为top或者bottom
-
-情况一：元素的顶margin与前面元素的底margin叠加
-情况二：元素的顶margin与父元素的顶margin叠加（底margin要求height:auto）
-情况三:元素自身叠加
-    当元素没有内容、padding、border时，它的上下margin相遇、叠加。
-    所以一连串空元素占用空间很小，因为它们的margin都叠加到一起，形成了一个很小的margin。
-
-
-
-
------------为什么inline的img元素可以设置宽高？-----------
-因为img是替换元素replaced element
-
-
-
-
---------------------文字溢出显示省略号--------------------
-    .ellipsis{
-        width: 200px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-
-
---------------------reset 默认样式重置--------------------
-    body, ul, li, p, input {
-        margin: 0;
-        padding: 0;
-    }
-    li {
-        list-style: none;
-    }
-    a {
-        cursor: pointer;
-        text-decoration: none;
-        color: black;
-    }
-    img {
-        border: none;
-    }
-    a, span, i {
-        display: inline-block;
-    }
-    input[type="button"] {
-        cursor: pointer;
-        outline: none;
-    }
-
-
-
---------------------pre自动换行--------------------
-    pre{
-        white-space: pre-wrap;
-        word-wrap: break-word;
-    }
-
-
-
---------------------定高容器 多行文本 垂直居中--------------------
+------定高容器，多行文本，怎么实现垂直居中------
     #outer{
         display: table;
     }
@@ -136,8 +32,7 @@ inline和inline-block元素存在空白符问题：
     }
 
 
-
---------------------absolute实现水平垂直居中--------------------
+------子元素宽高确定，父容器不定，怎么实现水平垂直居中------
     #outer {
        position: relative;
     }        
@@ -153,49 +48,94 @@ inline和inline-block元素存在空白符问题：
     }
 
 
-
-
---------------------IE8兼容media--------------------
-@media是CSS3中的，IE8-不支持，需要额外引入response.js。
-response.js原理：
-    第一步，将head中所有外部引入的CSS文件路径取出来存储到一个数组当中
-    第二步，遍历数组，并一个个发送AJAX请求
-    第三步，AJAX回调后，分析response中的media query的min-width和max-width语法(该js仅支持这两种),分析出viewport变化区间对应相应的css块； 第四步，页面初始化时和resize时，根据当前viewport使用相应的css块。 
-核心结论：
-    1、需要服务器环境，不能使用本地地址（file://开头）
-    2、需要link外部引入CSS文件，写在style中是无效的
-    3、respond文件一定要放在CSS文件的后面
-    4、另外，虽然把respond放置在head里还是在body后面都能够实现，但是建议放置在head中（具体原因在下面的文档提示中有提到）
-官方文档的提示：
-    1、越早的引入respond.js文件，也就越可能避免IE下出现的闪屏
-    2、不支持嵌套的媒体查询
-    3、utf-8的字符编码对respond.js文件的运行有影响 官方API原文：if CSS files are encoded in UTF-8 with Byte-Order-Mark, they will not work with Respond.js in IE7 or IE8。但是在我使用IE6-8进行测试的时候，都能够正常显示（无论是在css文件中增加charset设置还是在link标签中增加charset设置）。因此，并不是太清楚这个bug的含义
-    4、跨域可能会出现闪屏（还没有测试，具体情况不详） 
-其他：
-    真正的@media是算上滚动条的宽度的。但IE8-模拟出来的假media不包含滚动条。所以要使用response.js兼容IE8-，最好减去滚动条的宽度：
-        @media (min-width:1890px) // 1920的屏
-
-
-
---------------------
-outline是在border外面，不占地
-
-
---------------------
-设定了宽度的block级元素：
+------------------巧用margin------------------
+ 设定了宽度的block级元素：
     在最右 maring-left:auto
     在最左 maring-right:auto
     在中间 margin:0 auto
 
 
+----------------文本流和文档流----------------
+ 1 文档流：normal flow，"正常流"
+  脱离正常流：
+	1 将元素从普通的布局排版中拿走,其他盒子在定位的时候,会当做它不存在。
+	2 元素不再有原先的inline、block的限制,反而比较像inline-block。可以设置w h p b m,不设置w h时,由内容撑开。
+ 2 文本流：相对于文字
+	float之后,元素会脱离正常流,但是不脱离文本流。所以会有"文字环绕图片"效果。
 
--------------IE8支持：
+ 脱离正常流流+文本流：
+    postion:absolute、fixed
+ 脱离正常流流：
+    float:left、right
 
-1 :focus
 
-2 div+p，选中p
+---------------图片下方出现间隙---------------
+    <li>
+        <img src="1.jpg">
+        <img src="2.jpg">
+    </li>
 
-3 box-sizing
+ 原因：
+    vertical-align默认值是:baseline;
+    但是撑开高度的是整体高度
+ 解决方法：
+    1 vertical-align改成别的值：top、middle、bottom等
+    2 font-size:0; // 不推荐
 
-4 input的maxlength属性
-  【textarea的maxlength属性IE8不支持】
+
+--------------------空白符-------------------
+ inline和inline-block元素存在空白符问题： 
+	"空白符"包括空格、tab、换行符。
+	在浏览器中，空白符是不会被忽略的，多个连续的空白符会自动合并成一个。
+	空白符归根结底是个字符，可以通过设置font-size:0 控制
+
+
+------------------float总结------------------
+ 1 float的本职：文字环绕图片[float不是用来布局的]
+
+ 2 float会脱离"正常流"，但是不脱离"文本流"。所以会有"文字环绕图片"效果
+
+ 3 作用可形容为：带有方位的display:inline-block
+  解释：元素不再有原先的inline、block的限制，反而比较像inline-block。可以设置w h p b m，不设置w h时，由内容撑开。
+  float:right从右向左排，但极少使用
+
+ 4 float的问题：
+    1 因为脱离文档流，所以父元素有"高度塌陷问题"，要"清除浮动"
+    2 用float布局，一行中的元素必须要限高
+
+ 5 因为float是JavaScript中的一个关键字(单精度浮点数)，所以不能直接用float
+    IE：  obj.style.styleFloat = "left";
+    其他：obj.style.cssFloat = "left";
+
+ 6 任何元素，只要设置了float，那么display属性一律变为block    
+    .box{
+        float:left;
+        display:inline-block;
+    }
+    .box最终的display是block
+
+ 7 清除浮动的完美方法：全兼容
+    .fix{zoom:1;}
+    .fix:after{display:block; content:''; clear:both; height:0; visibility:hidden;}
+
+
+-------------竖直方向的margin叠加-------------
+ 只有 【正常流】中【block级】元素的【垂直margin】才会发生叠加。
+ 不在正常流中的元素（浮动、绝对定位），和非block元素(inline inline-block)，不会发生margin叠加。
+ 
+ 建议：在写的时候尽量用同一方向的margin，比如都设置为top或者bottom
+ 
+ 情况一：元素的顶margin与前面元素的底margin叠加
+ 情况二：元素的顶margin与父元素的顶margin叠加（底margin要求height:auto）
+ 情况三:元素自身叠加
+    当元素没有内容、padding、border时，它的上下margin相遇、叠加。
+    所以一连串空元素占用空间很小，因为它们的margin都叠加到一起，形成了一个很小的margin。
+
+
+-------为什么inline的img元素可以设置宽高-------
+ 因为img是替换元素
+ replaced element
+
+
+
+
