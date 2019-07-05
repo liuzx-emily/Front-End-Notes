@@ -1,21 +1,11 @@
-HTML5<canvas> 标签用于绘制图像。不过canvas本身并没有绘制能力，它仅仅是图形的容器。必须使用js来完成实际的绘图任务。
+## canvas的宽高必须在行间属性中设置，不能在style中设置。
+```html
+<canvas :id="elementId" width="500" height="500"></canvas>
+```
 
+在style中设置宽高，画画的时候定位会不准。
 
-1 IE8-不支持canvas标签，会显示canvas标签里面的内容。
-	(标准浏览器不会显示canvas里面的内容。)
-	<canvas>~不支持canvas的IE8-中会显示这行文字~</canvas>
-
-2 canvas元素的宽高
-	默认为宽300px,高150px。
-	不要在<style>里设置宽高。在行间属性里设置width和height，单位是px
-	<canvas id="myCanvas" width="400" height="200"></canvas>
-
-3 getContext()方法；
-  返回一个对象，该对象提供了用于在画布上绘图的方法和属性。
-  	var oCanvas = document.getElementById('myCanvas');  	
-  	var ctx = oCanvas.getContext('2d');
-  之后利用ctx来画画，而不是oCanvas
-
+canvas是异步绘制的？
 
 ----------------
 	*颜色、样式和阴影
