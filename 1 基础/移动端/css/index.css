@@ -1,0 +1,103 @@
+/*顶部搜索*/
+#top-search{
+	position: absolute;
+	z-index: 99;
+	width: 100%;
+    top: 0;
+    left: 0;
+}
+#top-search form.search{
+    display: block;
+    width: 9rem;
+    margin: 0.3rem auto 0;
+    height: 1rem;
+    line-height: 1rem;
+    position: relative;
+}
+input#search_input{
+    display: block;
+    width: 100%;
+    padding-left: 0.5rem;
+    height: 100%;
+    background: rgba(255,255,255,0.6);
+    border-radius: 0.3rem;
+    border: none;
+    height: 1rem;
+    line-height: 1rem;
+    font-size: 0.4rem;
+}
+#top-search form.search>img{
+    position: absolute;
+    top: 0.2rem;
+    right: 0.3rem;
+    width: 0.6rem;
+    height: 0.6rem;
+}
+/*图片轮播*/
+#swiper-container1{
+	width: 100%;
+	height: 5.5rem;
+}
+#swiper-container1 .swiper-slide>a{
+	display: block;
+}
+#swiper-container1 .swiper-slide>a>img{
+	display: block;
+	width: 100%;
+	height: 5.5rem;
+}
+#swiper-container1 .swiper-pagination{
+	bottom: 0;
+}
+#swiper-container1 .swiper-pagination-bullet{
+	width: 0.5rem;
+	height: 0.15rem;
+	background:white;
+	border-radius: 20%;
+}
+#swiper-container1 .swiper-pagination-bullet-active{
+	background: #03a9f4;
+}
+/*导航上面的部分，用div包一下*/
+#navUpper{
+	height: 5.5rem;
+}
+/*导航*/
+#nav-container{
+    height: 2.7rem;
+    padding-top: 0.1rem;
+}
+#nav {
+    font-size: 0;
+    background: white;
+    height: 2.7rem;
+}
+#nav.navfixed{
+	position: fixed;
+    left: 0;
+    top: 5.7rem;
+    box-shadow: 0px 0px 10px #737373;
+    top: 0;
+    width: 100%;
+}
+#nav li {
+    display: inline-block;
+    text-align: center;
+    width: 24.9%;
+}
+#nav li a img {
+    display: block;
+    width: 2rem;
+    height: 2rem;
+    margin: 0 auto;
+}
+#nav li a p {
+    text-align: center;
+    font-size: 0.39rem;
+    height: 0.5rem;
+    line-height: 0.5rem;
+}
+/*#nav和"底部"中间的部分，用div包起来*/
+#index-content{
+	padding-bottom: 1.5rem;
+}
