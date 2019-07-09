@@ -472,6 +472,23 @@ console.log(arr1+arr2);
    
 4. 返回一个只包含数字类型的数组。例如`js123ldka78sdasdasdfad653 -> [123,78,653]`
 
+5. 实现函数 `check(str,word)`：判断str中是否包含单词word  
+	`check("hello world","hello")` => `true`  
+	`check("helloworld","hello")` => `false`  
+	`check("hello","hello")` => `true`  
+
+6. 把html格式的内容转为纯文本  
+	```js
+	var str = `<div class='red' id='title'>
+			<p>这是段落1</p>
+			<p>这是段落2</p>
+		</div>`;
+	```  
+	转为：`"这是段落1这是段落2"`
+7. 实现函数： `sensitiveWordFiltering(str,wordArr)`：敏感词过滤  
+   `sensitiveWordFiltering('中国五星红旗美利坚星条旗英国米字旗',["中国","美利坚","英国"]);`  
+   转为：`**五星红旗***星条旗**米字旗`
+
 <details>
 <summary>答案</summary>
 
@@ -482,7 +499,7 @@ console.log(arr1+arr2);
 	var str2=str.replace(re,function(match,p1){
 		return p1.toUpperCase();
 	});
-	alert(str2);	//backgroundColorHa
+	console.log(str2);	//backgroundColorHa
 	```
 
 2. 查找字符串中出现最多的字符和个数
@@ -524,6 +541,41 @@ console.log(arr1+arr2);
 	var arr=str.match(re);	//[ '123', '78', '653' ]
 	```
 
+
+5. 实现函数 `check(str,word)`：判断str中是否包含单词word  
+   ```js
+   check("hello emily","hello");
+   function check(str,word){
+	   let re=new RegExp(`\b${word}\b`);
+	   return re.test(str);
+   }
+   ```
+   两个要点：
+   1. 当正则需要传参的时候，一定要用new RegExp的写法来定义
+   2. new RegExp('\\b'+sClass+'\\b')中的\b要写成\\b
+
+
+6. 把html格式的内容转为纯文本
+   ```js
+	let str = 
+	`<div class='red' id='title'>
+		<p>这是段落1</p>
+		<p>这是段落2</p>
+	</div>`;
+	let str2=  str.replace(/<[^>]*>|\s+/g,"");
+	```
+7. 敏感词过滤
+   ```js
+   	let res=sensitiveWordFiltering('中国五星红旗美利坚星条旗英国米字旗', ["中国", "美利坚", "英国"]);
+	console.log(res);
+	function sensitiveWordFiltering(str, wordArr) {
+		let reStr = new RegExp(wordArr.join("|"), "g");
+		let newStr = str.replace(reStr, (match => {
+			return new Array(match.length).fill("*").join("");
+		}));
+		return newStr;
+	}
+   ```
 
 
 
@@ -890,7 +942,10 @@ console.log(quChong(arr)); //[ 1, 7, 5, 9, 4, 2 ]
 ```js
 console.log("NaN == undefined", NaN == undefined);
 console.log("NaN == NaN", NaN == NaN);
-console.log("undefined ==false",undefined ==false);
+
+console.log("undefined == false",undefined == false);
+console.log("null == false",null == false);
+console.log("0 == false",0 == false);
 ```
 <details>
 <summary>答案</summary>
@@ -898,7 +953,9 @@ console.log("undefined ==false",undefined ==false);
 ```js
 NaN == undefined false
 NaN == NaN false
-undefined ==false false
+undefined == false false
+null == false false
+0 == false true
 ```
 </details>
 
@@ -1049,7 +1106,7 @@ for(; i < 10, j < 6; i++, j++){
 
 ```js
 fn1();
-var fn1 = function(a){ alert(a); }
+var fn1 = function(a){ console.log(a); }
 ```
 <details>
 <summary>答案</summary>
@@ -1110,13 +1167,13 @@ NaN
 
 
 
-## 42 第一次弹（ ？ ），第二次弹（ ？ ），第三次弹（ ？ ）
+## 42 第一次输出（），第二次输出（），第三次输出（）
 ```js
 function fn1() {
    var a = 0;
    function fn2() {
       ++a;
-      alert(a);
+      console.log(a);
    }
    return fn2;
 }
@@ -1128,7 +1185,7 @@ newFn();
 
 <details>
 <summary>答案</summary>
-第一次弹（ 1 ），第二次弹（ 1 ），第三次弹（ 2 ）
+第一次输出（ 1 ），第二次输出（ 1 ），第三次输出（ 2 ）
 </details>
 
 
@@ -1203,5 +1260,375 @@ str.replace(/(^\s+)|(\s+$)/g,match=>"");
 ---
 
 
+
+
+## 46 把str颠倒
+<details>
+<summary>答案</summary>
+
+```js
+let str2=str.split("").reverse().join("");
+```
+
+</details>
+
+
+
+
+---
+
+
+
+
+## 47 操作数组元素
+```js
+let arr=[1,2,3,4,5,6,7];
+```
+1. 将最后一个元素塞到第一个
+2. 将第一个元素塞到最后一个
+3. 把第三个元素放到第六个位置
+<details>
+<summary>答案</summary>
+
+
+1. `arr.unshift(arr.pop());`
+2. `arr.push(arr.shift())`
+3. `arr.splice(5,0,arr.splice(2,1)[0])`
+
+要点：
+- pop和shift每次只能删除一个，并且返回被删除的元素。
+- splice会修改原始数组，返回被删除元素组成的数组。
+
+</details>
+
+
+
+
+---
+
+
+
+
+## 48 判断obj是不是数组
+<details>
+<summary>答案</summary>
+
+```js
+obj.constructor==Array;
+obj instanceof Array;
+Array.isArray(obj);
+```
+</details>
+
+
+
+
+---
+
+
+
+
+## 49 输出？
+```js
+let str1 = "emily";
+let str2 = new String("emily");
+console.log("typeof str1:", typeof str1);
+console.log("typeof str2:", typeof str2);
+
+console.log("str1.constructor == String", str1.constructor == String);
+console.log("str1 instanceof String", str1 instanceof String);
+
+str1.age = 12;
+str2.age = 13;
+console.log("str1.age", str1.age);
+console.log("str2.age", str2.age);
+```
+<details>
+<summary>答案</summary>
+
+```js
+typeof str1: string
+typeof str2: object
+str1.constructor == String true
+str1 instanceof String false
+str1.age undefined
+str2.age 13
+```
+</details>
+
+
+
+
+---
+
+
+
+
+## 51 按照拼音排序
+
+```js
+var arr=["颠倒","啊","存储","明","版本"];
+```
+
+<details>
+<summary>答案</summary>
+
+```js
+arr.sort(function(a,b){
+	return a.localeCompare(b);
+});
+```
+`localCompare` 按照当地规则来排序。中文按拼音
+</details>
+
+
+
+
+---
+
+
+
+
+
+## 52 第一次输出（），第二次输出（）
+
+```js
+function t(x,y) {
+  function x() {} 
+  var y = 99;	  
+  console.log(x);
+  console.log(y);
+} 
+t(3,4); 
+```
+
+<details>
+<summary>答案</summary>
+
+第一次输出（`ƒ x() {}`），第二次输出（`99`）
+</details>
+
+
+
+
+---
+
+
+
+
+## 53 输出？
+
+```js
+var a = 6;
+setTimeout(function(a) {
+	console.log(a);
+	a = 666;
+}, 1000, a);
+a = 66;
+```
+
+<details>
+<summary>答案</summary>
+
+`6`
+</details>
+
+
+
+
+---
+
+
+
+
+## 54 第一次输出（），第二次输出（）
+
+```js
+var a=1;
+function f(a){
+	console.log(a);
+	a=2;
+}
+f();
+console.log(a);
+```
+
+<details>
+<summary>答案</summary>
+
+第一次输出（`undefined`），第二次输出（`1`）
+</details>
+
+
+
+
+---
+
+
+
+
+## 55 a1变为（），a2变为（）
+
+```js
+var a1 = [1,2,3];
+var a2 = [1,2,3];
+function f1(a){	
+	a = [1,2,3,4]; 
+}
+function f2(a){	
+	a.push(4);
+}
+f1(a1);
+f2(a2);
+```
+
+<details>
+<summary>答案</summary>
+
+a1变为（`[1,2,3]`），a2变为（`[1,2,3,4]`）
+</details>
+
+
+
+
+---
+
+
+
+
+## 56 输出？
+
+```js
+var a =[1,2];
+setTimeout(function(a) {
+	console.log(a);
+	a = 666;
+}, 1000, a);
+a.push(3);
+```
+
+<details>
+<summary>答案</summary>
+
+```[1,2,3]```
+</details>
+
+
+
+
+---
+
+
+
+
+## 57 输出
+
+```js
+function f(){
+  a = 10;
+}
+console.log(a);
+```
+
+<details>
+<summary>答案</summary>
+
+```Uncaught ReferenceError: a is not defined```
+</details>
+
+
+
+
+---
+
+
+
+
+## 58 第一次输出（），第二次输出（）  
+
+```js
+function f(){
+	var a = b = 10;
+}
+f();
+console.log(b);
+console.log(a);
+```
+
+<details>
+<summary>答案</summary>
+
+第一次输出（`10`），第二次输出（`test.html:19 Uncaught ReferenceError: a is not defined`）
+</details>
+
+
+
+
+---
+
+
+
+
+## 59 第一次输出（），第二次输出（），第3次输出（），第4次输出（）
+
+```js
+console.log(a);	
+console.log(fn1);
+if (true) {
+	var a = 1;	
+	function fn1() {}
+}
+console.log(a);
+console.log(fn1);
+```
+
+<details>
+<summary>答案</summary>
+
+第一次输出（`undefined`）  
+第二次输出（`undefined`）  
+block内部的function，在高级浏览器中提升为undefined，低级IE中提升为具体函数  
+第3次输出（`1`）  
+第4次输出（`function fn1() {}`）
+</details>
+
+
+
+
+---
+
+
+
+
+## 60 分别输出（）、（）
+
+```js
+var a = 10;
+function fn_inner() {
+	console.log(a);
+}
+function fn_outer() {
+	var a = 20;
+	fn_inner();
+}
+fn_outer();
+```
+```js
+var a = 10;
+function fn_outer() {
+	var a = 20;
+	aaa();
+	function aaa() {
+		console.log(a);
+	}
+}
+fn_outer();
+```
+
+<details>
+<summary>答案</summary>
+
+分别输出（`10`）、（`20`）
+</details>
 
 
