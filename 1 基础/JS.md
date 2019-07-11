@@ -1,3 +1,28 @@
+## 零散知识点
+
+- 很多问题都是因为文档声明不对：`<!DOCTYPE html>`(以前帮后端查jsp报错时发现的)
+- 锚点`#`可以横向定位（做移动端的时候发现的）
+- `obj.select()` 选中元素中的内容，只对部分元素生效
+- switch使用`===`来比较
+- 页面中的多个`<script>`标签：从上到下依次处理。处理完一个,才去处理下一个。
+	```js
+	<script> 
+		alert(a);	//ReferenceError: a is not defined
+	</script>	
+	<script>
+		var a=33;
+	</script>
+	```
+- 定时器可以传参数，IE11+ `setInterval( 函数, 毫秒，参数)`
+- 操作自定义属性 `el.getAttribute` , `setAttribute` , `removeAttribute`
+
+
+
+---
+
+
+
+
 ## Array
 
 - 数组的长度可读可写。string的长度可读不可写。
@@ -30,9 +55,7 @@
 
  
 
-
 ---
-
 
 
 
@@ -55,7 +78,6 @@
 
 
 ---
-
 
 
 
@@ -162,6 +184,30 @@ ES6新加了块级作用域(`let` `const`)
 
 
 
+#### this指向
+1. 作为函数调用：this -> `window`
+   ```js
+	sayHi();
+	oDiv.onclick = function() {sayHi();};
+	<div onclick="sayHi();"></div>
+   ```
+2. 作为对象的方法调用：this -> 对象本身
+	```js
+	var Person = {
+	    sayHi: function(){}
+	}
+	Person.sayHi();		//this指向Person对象
+	oDiv.onclick = fn1;	//this指向oDiv
+	```
+3. `new 构造函数()`：`this指向创建的元素`
+   ```js
+   function People(name) {
+	    this.name = name;
+	}
+	var x = new People("John");	
+	```
+4. 函数的方法`call apply bind`可以修改this指向
+
 
 
 
@@ -173,6 +219,434 @@ ES6新加了块级作用域(`let` `const`)
 
 
 
-## 文档声明
-(以前在先特帮后端查jsp报错时)
-很多问题都是因为文档声明不对：`<!DOCTYPE html>`
+## 事件
+
+W3C规范：先进入捕获阶段，直到达到目标元素，再进入冒泡阶段
+
+
+#### 默认事件
+举例：
+- 点击一个a链接：跳转到对应页面
+- 点击form内的submit：向后端提交数据
+- 在一段文字上点击并移动鼠标：选中文字
+- js中运行到oBtn.focus()：光标移到oBtn中
+- 右键单击：弹出右键菜单
+- 按空格：页面下滚
+- 鼠标滚轮：页面滚动
+
+怎么阻止？
+- 确定当前这个行为是什么事件触发的，然后在这个事件的处理函数中阻止它
+
+	阻止右键菜单
+	```js
+	document.oncontextmenu = function() {
+		return false;
+	};
+	document.attachEvent('oncontextmenu', function() {
+		return false;
+	});
+	document.addEventListener('contextmenu', function(ev) {
+		ev.preventDefault();
+	});
+	```
+
+#### 绑定事件的多种方式
+
+- `obj.onclick=f1;`  
+  - 一个事件只能绑定一个函数，绑定多个会覆盖。
+  - 没有捕获，只能冒泡。阻止冒泡用：
+	```js
+	ev.cancelBubble = true;
+	ev.stopPropagation&&ev.stopPropagation();
+	```
+  - 阻止默认事件：`return false`
+  - 取消绑定：`obj.onclick = null;`
+		
+- `obj.attachEvent('onclick', fn1)`  
+  - 一个事件可以绑定多个函数
+  - 只在IE10-中可用(经测试IE edge中不可用)
+  - 没有捕获，只能冒泡，阻止冒泡：`ev.cancelBubble=true;`
+  - this指向window，解决：
+	```js
+	obj.attachEvent('onclick', function() {
+		fn1.call(obj);
+	});
+	```
+  - 阻止默认事件：`return false`
+  - 取消绑定：`obj.detachEvent('onclick', fn1);`
+
+- `obj.addEventListener('click', fn1, false);`
+  - 一个事件可以绑定多个函数
+  - 标准浏览器可用(IE8-不支持)
+  -  参数：true捕获 false冒泡。默认为false
+  -  阻止默认事件：`preventDefault()`
+  -  取消绑定：`obj.removeEventListener('click', fn1, false);`
+
+翻译`oDiv1.onclick = fn1; `  
+"给oDiv1的click事件的冒泡阶段添加事件处理函数fn1"：告诉div1,如果它接收到了一个点击事件,那么它在冒泡阶段就去执行fn1
+
+
+#### 事件委托
+什么时候用事件委托？
+1. 元素是动态添加的。绑定事件的时候元素还没有添加到DOM结构中。
+2. 场景：`ul>li*1000000`，需要给所有li绑定点击事件。如果循环给每个li绑定事件，那么会有1000000个函数存在内存当中，性能不好。
+
+#### 鼠标滑入滑出时，子级影响父级了怎么办？用`onmouseenter onmouseleave`
+```html
+<style>
+#div1 {width: 200px;height: 200px;background: red;}
+#div2 {width: 100px;height: 100px;background: yellow;}
+</style> 
+<body>
+  <div id="div1">
+      <div id="div2"></div>
+  </div>
+</body>
+ <script>
+var oDiv = document.getElementById('div1');
+oDiv.onmouseover = function() {document.title += '1';};
+oDiv.onmouseout = function() {document.title += '2';};
+ </script>
+```
+1. 鼠标从"oDiv外界空白"移到"内层div2"时：title加上"1"（冒泡）
+2. 鼠标从"内层div2"移到"oDiv外界空白"时：title加上"2"（冒泡）
+3. 鼠标从"外层oDiv"移到"内层div2"时：title加上'21'  
+	1. 鼠标离开外层oDiv了，所以title加"2"  
+	2. 内层div2的"鼠标进入事件"冒泡到外层oDiv，所以title加"1"  
+
+所以纯“阻止冒泡”不能解决问题  
+	给内层div2的mouseover和mouseout都阻止冒泡  
+	对情况3：title不会加1了，但还是会加2  
+
+用`onmouseenter onmouseleave`的话，子级不会影响到父级
+
+
+
+
+
+---
+
+
+
+
+
+
+## 数据类型
+- 根据typeof 5+1  
+  `number string boolean function object + undefined`
+- 根据所存内容 值类型+引用类型
+  - 值类型：`number string boolean null undefined`  
+  	其中`number string boolean`有对应的包装对象，所以可以调用方法和属性
+  - 引用类型：共用地址，要小心
+
+
+
+
+
+
+---
+
+
+
+
+
+
+## 浮点数使用注意
+JS中的所有数据都是以 64 位浮点型数据(float) 来存储。  
+所有的编程语言,包括 JS,对浮点型数据的精确度都很难确定：
+```js
+console.log(0.07 * 100 === 7);	//false
+console.log(0.1 + 0.2 === 0.3);	//false
+```
+
+
+
+
+
+---
+
+
+
+
+
+
+## 用js操作css样式
+
+#### 读取css
+- `getComputedStyle(obj).width`
+    1. IE8-不能用
+    2. 可以获取伪类`getComputedStyle(元素, 伪类)`;
+    3. 得到计算后的值,比如2em经过计算会得到对应的px
+- `obj.currentStyle.width`
+    1. 只有IE能用
+    2. 不能获取伪类
+    3. 不会计算,2em还是2em
+
+兼容写法：
+1. `var oStyle = oSpan.currentStyle? oSpan.currentStyle:getComputedStyle(oSpan);	`
+2. `var oStyle = window.getComputedStyle ? getComputedStyle(oSpan) : oSpan.currentStyle;`  
+	判断条件必须写成window.getComputedStyle，如果省略window.那么在IE8-会报错
+3. 上面两个方法虽然能解决兼容问题，但是返回的值有可能不同。例：  
+   设置`width: 20%`，用`getComputedStyle`得到`270px`，用`currentStyle`得到`20%` 
+
+注意：
+1. 两种方法都是只读
+2. -改成驼峰：读取background-color需要写成backgroundColor
+3. 不要获取复合样式,各浏览器返回不同。  
+	如background: chrome会返回一长串,FF和IE9+会返回空,IE8-返回undefined
+4. 不要用返回的color做判断，各浏览器返回不同。`black rgb(0,0,0) #000000`
+5. 不要获取没有显式设置的值  
+   比如一个div没有设置margin：chrome返回0px,FF和IE9+返回空,IE8-返回auto
+
+
+#### 设置css
+`obj.style.width='100px';`  
+样式会添加到行间。  
+不要用这种方法去读，因为只能读到行间的样式，css文件和`<style>`中的样式都读不到。
+
+
+
+
+
+---
+
+
+
+
+
+
+## 用js操作DOM结构
+- 创建：`document.createElement(标签名称)`
+- 添加：`父级.appendChild(要添加的元素)` `父级.insertBefore(新元素,指定元素)`
+- 替换：`父级.replaceChild(新节点,被替换节点)`
+- 克隆 `var cElement=元素.cloneNode(true);` 参数：是否克隆子孙，默认false。不克隆事件。
+- 删除 `父级.removeChild(要删除的元素);`
+
+注意：
+如果`appendChild insertBefore replaceChild`操作的是页面中已有的节点。那么是剪切，而不是复制。
+
+- 找儿子：`元素.children`
+- 找爹：`元素.parentNode`
+- 找定位爹：`元素.offsetParent` 如果没有定位父级,默认是body
+- 找兄弟：`子.nextSibling` , `子.previousSibling`
+
+
+
+
+
+---
+
+
+
+
+
+## 涉及位置、定位的
+
+#### 获取元素位置
+- `元素.offsetLeft`：只读。当前元素外边框到定位父级的内边框的距离
+- `oDiv.getBoundingClientRect().left` 只读。元素的外边框到当前窗口边框的距离
+
+#### 可视区尺寸
+- `document.documentElement.clientWidth` 只读。
+
+#### 滚动条滚动距离
+`document.body.scrollTop/scrollLeft`
+`document.documentElement.scrollTop/scrollLeft`  
+有兼容问题：chrome中body写法ok，documentElement写法恒为0。其他浏览器正好相反。  
+兼容：
+```js
+var doc = document[document.body.scrollTop ? 'body' : 'documentElement'];
+console.log(doc.scrollTop);
+doc.scrollTop = 500;
+```
+
+#### 文档高度
+- `document.body.offsetHeight` 
+
+#### 鼠标到viewport的偏移
+- `ev.clientX`
+
+
+
+
+
+---
+
+
+
+
+
+## 获取元素大小
+
+|               |       | 单位 |                            |
+| ------------- | ----- | ---- | -------------------------- |
+| `style.width` | w     | 有   | 只能操作行间，读写都行     |
+| `clientWidth` | w+p   | 无   | 能读取任意位置的结果，只读 |
+| `offsetWidth` | w+p+b | 无   | 能读取任意位置的结果，只读 |
+
+
+
+
+---
+
+
+
+
+## JS的组成
+JS组成：`ECMAScript` + `DOM` + `BOM`
+- ECMAScript 	
+- DOM 遵从W3C标准，顶级对象是document
+- BOM 各浏览器有自己的标准，顶级对象是window
+
+window对象的双重身份
+1. window是BOM的顶层对象，特指【当前】窗口
+2. window不是JS对象。但是在ECMAScript中将window设定为Global对象，所以用var function声明的都成为了window的属性和方法  
+```js
+window.open()		//BOM中定义的open方法
+window.document 	//因为ECMAScript将window定为全局变量
+```
+
+
+
+
+---
+
+
+
+
+
+## 运动
+参考：https://www.cnblogs.com/bokebi520/p/5057380.html
+
+拖拽：
+1. 小问题：拖拽的时候，如果有文字被选中，会产生问题。  
+   原始：有文字被选中时，拖拽会触发浏览器的拖拽文字的效果  
+   解决方法：阻止默认事件
+
+
+
+---
+
+
+
+
+## 面向对象
+
+#### 构造函数 + prototype  
+私有的放在构造函数中，公共的放在prototype中。
+```js
+function Person(name){ 
+	this.name = name;
+}
+Person.prototype.showName = function(){ 
+	console.log(this.name);
+}
+const p1 = new Person("emily");
+p1.showName();
+```
+
+
+#### constructor
+创建函数`f`时，`f.prototype.constructor`会指向`f`。  
+给原型对象添加方法时，如果图方便整体赋值，constructor就丢了：
+```js
+function Person(){}
+Person.prototype = {
+	sayHi:function(){},
+} 
+```
+要修正constructor：
+```js
+function Person(){}
+Person.prototype = {
+	// 修正
+	constructor:Person,
+	sayHi:function(){},
+} 
+```
+
+
+#### 原型链
+每个实例化对象都有一个`_proto_`属性，指向构造函数的原型对象。   
+原型链：通过`__proto__`属性串联起来的，原型链的终点都是 `Object.prototype` => `null`  
+每个实例化对象都可以访问到原型链上方的所有方法、属性。规则：从下往上一级一级找。
+
+
+```js
+function Person() {}
+var p1 = new Person();
+
+p1.__proto__ === Person.prototype
+Person.__proto__ === Function.prototype
+```
+
+
+#### 为什么 `p1.constructor===Person`
+p1本身没有constructor属性。顺着原型链向上找，Person.prototype有constructor属性
+
+#### `obj.hasOwnProperty("name")`  
+判断obj是否有"name"这个属性/方法。原型链上找到不算，必须要是它自己的。
+
+#### ES6中的class是语法糖
+
+
+
+
+---
+
+
+
+
+
+## canvas
+
+- 绘图样式 fillStyle strokeStyle
+  
+- 常用绘图方法 fill() stroke() beginPath() moveTo(x,y) lineTo(x,y) closePath() arc() arcTo()
+
+- 剪切 clip() 一旦剪切了某个区域，则之后所有的绘图都会被限制在此区域内。
+
+- save() restore()
+
+- 写字样式 font textAlign textBaseline 
+  
+- 写字方法 fillText strokeText measureText
+
+- 矩形 rect fillRect strokeRect clearRect
+
+- 变换 scale rotate translate
+
+- 添加图片/视频 drawImage 图片需要用onload预加载
+
+- 保存为图片 `canvas对象.toDataURL()`
+
+- isPointInPath(x,y) 判断特定点是否在当前路径中，只能测试最新的路径。用个空心的长方形，长方形内部也返回true。
+
+
+1. rotate是绕(0,0)旋转。如果要按照某个中心旋转，就先translate移过去
+2. 剪切、变换时勤用save()， restore()
+
+#### Q：画多个长方形。鼠标点一下，判断是不是点中了某个长方形
+用 `isPointInPath`。因为它只能测试最新的路径，所有要把画过的所有长方形绘画方法存下来。  
+每次点击时，所有长方形重新画一遍，画一个测一个画一个测一个。
+   
+
+#### 小tips
+- canvas的宽高必须在行间属性中设置，不能在css中设置。不然画画的时候定位会出错。
+  ```html
+	<canvas width="500" height="500"></canvas>
+  ```
+
+- （不确定）canvas不阻塞进程？
+  
+- 问题：边框1px变2px  
+  因为边框需要向两边延申。  
+  如果在(10,10)画边框，那么边框宽2px  
+  如果在(10.5,10.5)画边框，那么边框宽1px
+
+------
+
+
+
+
+## canvas之ImageData

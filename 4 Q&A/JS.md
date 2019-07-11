@@ -1632,3 +1632,116 @@ fn_outer();
 </details>
 
 
+
+
+---
+
+
+
+
+
+
+## 61 弹出（），输出（）
+```js
+var a=[1,2,3];
+Array.prototype.toString=function(){
+	return "改了";
+}
+alert(a);
+console.log(a);
+```
+<details>
+<summary>答案</summary>
+
+弹出（`"改了"`），输出（`[1,2,3]`）
+</details>
+
+
+
+
+---
+
+
+
+
+## 62 a是（）
+```js
+var a=2;
+function a(){};
+```
+<details>
+<summary>答案</summary>
+
+a是（`2`）
+`function a(){}`是声明语句，不会修改变量的值。
+</details>
+
+
+
+
+---
+
+
+
+
+
+## 63 在if条件中，[]是（），""是（）
+```js
+if([]){}
+if(""){}
+```
+<details>
+<summary>答案</summary>
+
+在if条件中，[]是（`true`），""是（`false`）
+</details>
+
+
+
+---
+
+
+
+
+## 64 输出b1会显示（），输出b2会显示（）
+```js
+function f1(){
+	let a1=1,b1=1;
+}
+function f2(){
+	let a2=b2=1;
+}
+f1();
+f2();
+```
+<details>
+<summary>答案</summary>
+
+输出b1会显示（`报错`），输出b2会显示（`1`）
+
+`let a1=1,b1=1;`声明a1 b1
+`let a2=b2=1;`只声明a2
+</details>
+
+
+
+---
+
+
+
+
+## 65 输出？
+```js
+function f() {
+  return
+  10;
+}
+console.log(f());
+```
+<details>
+<summary>答案</summary>
+
+输出(`undefined`)  
+
+在JS中,分号是可选的。如果是一个不完整的语句,JS 将尝试读取第二行的语句。如果读到一个完整的语句,JS 将自动关闭语句。
+</details>
