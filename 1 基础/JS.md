@@ -533,7 +533,7 @@ window.document 	//因为ECMAScript将window定为全局变量
 ## 面向对象
 
 #### 构造函数 + prototype  
-私有的放在构造函数中，公共的放在prototype中。
+私有的放在构造函数中，公共的放在prototype中。 
 ```js
 function Person(name){ 
 	this.name = name;
@@ -616,7 +616,15 @@ p1本身没有constructor属性。顺着原型链向上找，Person.prototype有
 
 - 变换 scale rotate translate
 
-- 添加图片/视频 drawImage 图片需要用onload预加载
+- 添加图片/视频 drawImage
+  ```js
+	// 把图片添加到画布上，缩放为400*250尺寸
+	let img = new Image();
+	img.onload = () => {
+		ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, 400, 250);
+	};
+	img.src = "./4.jpg";
+  ```
 
 - 保存为图片 `canvas对象.toDataURL()`
 
@@ -650,3 +658,44 @@ p1本身没有constructor属性。顺着原型链向上找，Person.prototype有
 
 
 ## canvas之ImageData
+
+ImageData属性： 
+- `width` `height`
+- `data`(数组形式，存储RGBA)
+  ```js
+	function getColor(imageData, x, y) {
+		let index = 4 * (y * imageData.width + x);
+		return [imageData.data[index], 
+			imageData.data[index + 1], 
+			imageData.data[index + 2], 
+			imageData.data[index + 3]];
+	}
+
+	function setColor(imageData, x, y, color) {
+		let index = 4 * (y * imageData.width + x);
+		imageData.data[index] = color[0];
+		imageData.data[index + 1] = color[1];
+		imageData.data[index + 2] = color[2];
+		imageData.data[index + 3] = color[3];
+	}
+	```
+
+ImageData方法：
+- 创建新对象：
+  - `ctx.createImageData(w,h)`
+  - `ctx.createImageData(imageData2)` 创建与ImageData2对象尺寸相同的新对象（图像数据不会复制）
+
+- `ctx.getImageData(x,y,w,h)`
+- `ctx.putImageData(imgData,x,y)`
+
+注意事项：只设置一个像素点的颜色是看不出来的
+#### 好玩的效果：
+- “沫沫”效果
+- 图片变黑白色
+- 图片颠倒
+- 马赛克
+
+思路：
+1. 先画一张正常的图片，取到imageData1后存起来，把图片立刻清除掉。
+2. 新建同尺寸的imageData2，把imageData1改一改赋给imageData2
+3. 改完之后，再画上去
