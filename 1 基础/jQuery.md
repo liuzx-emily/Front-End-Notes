@@ -21,6 +21,44 @@
 
 
 
+
+
+## iframe
+- 父页面中取子页面元素：用contents()
+    ```js
+	// 根据子页面的高，改变iframe的高度。父页面中的js：
+	$(function() {
+		// document ready之后调用（dom结构加载完成后），保证能取到iframe元素
+		changeIframeHeight();
+	});
+	function changeIframeHeight(){
+		var obj_Iframe = $("#main_iframe");
+		// iframe元素load完成之后，取子页面的高（load是在所有图片等外部文件都加载完毕后，这样就保证图片的高度已经撑起来了）
+		obj_Iframe.load(function() {
+			var h = parseInt(obj_Iframe.contents().find("body").css("height")) + 10;
+			obj_Iframe.css("height", h + "px");
+		});
+	}
+	```
+
+- 子页面取父页面元素
+  ```js
+    // 为了保证高度正确，不能用ready，要用load
+    // $(document)没有load，要用$(window).load
+    $(window).load(function() {
+        var h=parseInt($(document).height())+10;
+        var parentIframe=$('#main_iframe', parent.document);
+        parentIframe.css('height', h+"px");
+	});
+	```
+
+
+
+---
+
+
+
+
 ## 文档就绪事件
 在dom文档树加载完之后执行：	`$(document).ready(function(){});`  
 简写为：`$(function(){});`
@@ -293,11 +331,14 @@ $('#h').index();
 	$("body").off("click", "p", fn1); 
 	```
 - `trigger` `triggerHandler`
-  
+  	共同点：
+    1. 能触发通过 jquery 绑定的事件处理函数，on() bind() click()等
+    2. 都能触发原生元素对象上的on{eventType}绑定的事件处理函数；
 	区别：
 	1. trigger引起事件的浏览器默认行为（比如表单提交）；后者不引起
 	2. trigger会操作所有元素；后者只影响第一个元素。
 	3. trigger触发的事件会冒泡；后者不冒泡。
+	4. trigger返回jQuery对象，所以可以链式调用；后者返回undefined
 
 - 事件对象
 	```js

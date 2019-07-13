@@ -123,7 +123,7 @@
 	// 不等价re = /\d\d/，只会匹配到22 33这种
 	re = /(\d)\1/;
   ```
-#### 量词
+#### 量词 
 - `{4,7}` 最少4次，最多7次
 - `{4,}`  最少4次,最多不限
 - `{,7}`  最少不限，最多7次
@@ -699,3 +699,377 @@ ImageData方法：
 1. 先画一张正常的图片，取到imageData1后存起来，把图片立刻清除掉。
 2. 新建同尺寸的imageData2，把imageData1改一改赋给imageData2
 3. 改完之后，再画上去
+
+
+
+
+
+---
+
+
+
+
+## 拖拽 drag & drop
+IE8-不支持拖放
+
+设置属性 `draggable`
+
+事件
+- 被拖的元素 `dragstart` `drag` `dragend`
+- 拖入的元素 `dragenter` `dragover` `dragleave` `drop`
+- 执行顺序
+  `dragstart` => `drag` => `dragenter` => `dragover` => 可以drop?`drop`:`dragleave` => `dragend` 
+- 默认元素不能被drop。想要drop必须在dragover事件中阻止默认事件。不能释放、能释放的光标不一样。
+
+
+火狐：默认只能拖拽图片。想要拖拽非图片，需要在该元素的dragstart中设置dataTransfer对象
+
+
+#### dataTransfer
+方法
+- `setData(key,value)` key和value都必须是string类型
+- `getData(key)`
+
+属性
+- `files` 获取外部拖拽的文件，返回一个filesList列表 是类数组对象（ajax实现无刷新上传文件，用的也是files对象）
+
+#### 拖拽外部文件
+- 拖拽外部文件，鼠标抬起时，浏览器会默认打开该文件。所以需要在drop中阻止默认事件。
+  
+
+
+
+---
+
+
+
+
+## FileReader对象
+
+想要获取File对象，可以：
+- 放一个 `<input type="file">`，用户自己选择文件后获得
+- 放一个拖拽box，用户自己拖拽本地文件后获得File
+
+想要不经用户操作，浏览器自己从本地读取文件是不可能的！！！  
+因为这属于严重侵犯隐私的行为，是浏览器坚决不允许的。
+
+- readAsDataURL()
+- load事件：当读取文件成功完成的时候触发此事件  this.result 获取读取的文件数据
+	```js
+	var fr = new FileReader();
+	fr.readAsDataURL(File对象);
+	fr.onload = function() {
+		// this.result
+	};
+	```
+
+
+
+---
+
+
+
+
+## 视频、音频
+
+`audio` `video`
+
+属性
+- controls  :   显示或隐藏用户控制界面 默认隐藏
+	【不写controls,音视频就藏起来了。可以这样“添加背景音乐 autoplay loop”】
+- autoplay  :  媒体是否自动播放
+- loop  : 媒体是否循环播放
+- currentTime  :  开始到播放现在所用的时间(s) 可写
+- duration  :  媒体总时间(s)(只读)
+- volume  :   0.0-1.0的音量相对值
+- muted  :   是否静音
+- autobuffer  :   开始的时候是否缓冲加载，autoplay的时候，忽略此属性
+- paused  :   媒体是否暂停(只读)
+- ended   :   媒体是否播放完毕(只读)
+- error   :  媒体发生错误的时候，返回错误代码 (只读)
+- currentSrc  :   以字符串的形式返回媒体地址(只读)
+
+video的独有属性：
+- poster  :   视频播放前的预览图片
+- width、height  :   设置视频的尺寸
+- videoWidth、 videoHeight  :   视频的实际尺寸(只读)
+
+方法
+- play()
+- pause()
+- load() 重新加载 用途：修改src后，只有load()一下才会生效
+
+- 事件  
+  loadstart progress suspend emptied stalled play pause loadedmetadata loadeddata waiting playing canplay canplaythrough seeking seeked timeupdate ended ratechange durationchange volumechange
+
+例子
+- 网页带背景音乐：隐藏video标签，自动循环播放
+- canvas可以做变色 颠倒 沫沫
+- 自制播放器：为了在不同浏览器下，统一外观。
+  1. 注意  
+  	音量为0 !==静音  
+  	oninput：在内容修改后立即被触发，onchange：在内容修改，并且失去焦点后才触发
+  2. 连播：ended事件 换当前视频的src，然后load()
+
+
+
+---
+
+
+
+
+
+## localStorage
+cookie使用麻烦，存储容量小（例：农设项目地图对接出错，就是因为cookie满了存不进去了）。  
+
+storage:
+- 兼容IE8+
+- 存储容量大，每个域名下能存5M
+- 浏览器隐私模式下，storage不可用
+
+1. localStorage 
+   1. 永久存储
+   2. 同域名下，窗口间数据共享
+2. sessionStorage
+   1. 当前tab的临时存储。tab关闭时，数据消失
+   2. 不同的tab之间，数据不共享
+   
+
+API： `setItem` , `getItem` , `removeItem` , `clear`  
+注意：storage中的key和value都是string类型，所以存取对象时需要：`JSON.stringify` `JSON.parse`
+
+
+`window.onstorage`  
+当数据有变动(修改或删除)时触发，在变动数据的窗口中不会触发。
+用处：localStorage多个窗口间同步购物车信息（sessionStorage的数据在不同的tab之间不共享。所以这个storage事件只有tab和它的iframe之间能用。）
+
+
+
+
+---
+
+
+
+
+
+
+
+## 窗口之间通信
+
+define窗口之间：
+1. iframe之间
+2. 用window.open打开的窗口
+
+#### 同域时，父子之间可以通信。
+
+1. iframe
+	```js
+	// 父 => 子
+	const sonWindow = document.querySelector("#iframe1").contentWindow;
+	// 子 => 父
+	const fatherWindow=parent;
+	// 子 => 祖宗
+	const topWindow=top;
+	```
+
+2. 用window.open打开的窗口
+
+   ```js
+	// 父=>子
+	const sonWindow = window.open('./a.html', '_blank');	
+    // 子=>父
+	const fatherWindow=window.opener;
+	```
+
+#### 跨域时，用`postMessage`
+说明：跨域时还是可以获得新窗口的window对象，但是没有权限操作它。
+
+页面 www.a.com/a.html 中通过iframe嵌套了 www.b.com/b.html
+```js
+// 页面a
+const sonWindow = document.querySelector("#iframe1").contentWindow;
+newWindow.postMessage("hello","http://www.b.com");
+// 页面b
+window.addEventListener('message', e =>{
+	//console.log(e.data);
+	//console.log(e.origin);
+},false);
+```
+
+
+
+---
+
+
+
+
+## websocket
+基于TCP的双向、全双工的数据连接。  
+- 双向：客户端、服务器端都能发
+- 全双工：数据的发送与接受，两者同步进行。
+
+```javascript
+var ws = new WebSocket('ws://localhost:8888');
+ws.onopen = function (evt) {
+	console.log("连接已开启！");
+	// ws.send("给服务器发信息");
+};
+
+ws.onmessage = function (evt) {
+	console.log("收到服务器的信息啦: " + evt.data);
+	// ws.close();
+};
+
+ws.onclose = function (evt) {
+	console.log("连接关闭！");
+};
+```
+
+
+
+
+---
+
+
+
+
+
+## web worker
+兼容性IE10+
+
+限制：无法访问window、document等。  
+所以worker不能操作DOM，不能alert和console。
+我们一般用worker来做大量的计算
+
+需要服务器环境。
+
+
+```javascript
+// -------------- 主页面 --------------
+// 新建worker
+const worker = new Worker("./worker1.js");
+// 给worker下发任务
+worker.postMessage(100000);
+// worker传数据回来了！
+worker.onmessage = e => {
+	console.log("求和结果: "+e.data);
+};
+
+// -------------- worker1.js --------------
+// 需要在worker文件中引用其他文件：importScripts("其他js文件")
+self.onmessage = function (ev) {
+	const count = ev.data;
+	let sum = 0;
+	console.time(1);
+	for (let i = 0; i < count; i++) {
+		sum += i;
+	}
+	console.timeEnd(1);
+	self.postMessage(sum);
+};
+```
+
+
+
+---
+
+
+
+
+## 自定义属性dataset
+
+```html
+<address data-author-name="liuzx" data-author-age="13">Author:liuzx-emily</address>
+```
+
+```js
+
+const el = document.querySelector('address');
+// liuzx
+console.log(el.dataset.authorName);
+// 13
+console.log(el.dataset.authorAge);
+// 删除自定义属性
+delete el.dataset.authorAge
+```
+
+
+
+---
+
+
+
+
+
+
+## JS加载顺序控制 `defer` `async`
+
+1. `<script src="a.js"></script>`  
+	浏览器暂停渲染，立刻加载并执行a.js。  
+	在a.js加载和执行都完成之后，浏览器才继续渲染后续元素。
+
+2. `<script async src="b.js"></script>`  
+	浏览器一边渲染后续元素，一边加载并执行b.js。
+
+3. `<script defer src="c.js"></script>`  
+	浏览器一边渲染后续元素，一边加载c.js。  
+	等所有元素的解析都完成之后，才会执行c.js。
+
+
+
+
+---
+
+
+
+
+
+## 历史管理
+触发历史管理 : 
+1. 跳转页面
+2. `hashchange`
+3. `history.pushState()`和`history.replaceState()`:在浏览历史中添加、修改记录
+
+
+
+---
+
+
+## H5的一些新特性
+- ```classList```  
+  `add()` , `remove()` , `length` class数量,  
+  `toggle()` 切换class。添加操作返回true，删除操作返回false
+- `querySelector` `querySelectorAll`
+-  `contenteditable="true"`
+- ```<input 新属性>```：placeholder  autocomplete autofocus
+- ```<input type="新类型">```
+  1. email 有验证，验证很弱，1@1也能通过。移动端的键盘会有变化  
+  2. tel 无验证。移动端会变成数字键盘  
+  3. range 数值选择器 
+  4. number 会验证，数字之外的根本输入不进去。  
+  5. color 
+  6. datetime：显示完整日期  
+     datetime-local：显示完整日期，不含时区  
+     time：显示时间，不含时区  
+     date：显示日期  
+     week：显示周  
+     month：显示月
+- 地理位置 `navigator.geolocation`：因为关乎隐私，所以浏览器不允许未经用户同意使用
+- 应用程序缓存 cache manifest
+- ajax跨域 需要被访问的服务器设置：`Access-Control-Allow-Origin`
+- ajax上传文件进度
+	```js
+	var xhr = new XMLHttpRequest();
+	var oUp = xhr.upload;
+	oUp.onprogress = function(ev) {
+		// ev.loaded
+		// ev.total
+	};
+	```
+
+
+
+---
+
+
+

@@ -231,4 +231,51 @@ respond.js原理：
 虽然img是inline元素，但它是replaced element。
 
 
+---
+
+
+## transition
+
+1. 显示、隐藏效果想要处理成渐变的  
+	transition属性对display不生效，对opacity生效。  
+	如果display和opcaity同时变化，transition也不生效，所以只能使用opacity，不能用display
+
+	```js
+	.show{            		
+		opacity:0;
+		transition:1s;
+	}
+	.hide{            		
+		opacity:1;
+		transition:1s;
+	}
+	```
+2. 高度从0到max渐变
+	transition属性对height不生效，对max-height生效
+
+
+
+---
+
+
+
+## :before的content属性可以读取行间属性
+
+:after也同理。
+
+可以做一些小效果，比如：鼠标悬浮时显示自制的tooltip
+
+```html
+<style>
+section:before{
+	content:attr(tips);
+}
+</style>
+<section tips="嘿嘿嘿~">你好呀</section>
+```
+
+
+---
+
+
 
