@@ -15,7 +15,8 @@ shape.perimeter();
 
 <details>
 <summary>答案</summary>
-<p>`undefined` and `ReferenceError`</p>
+
+`undefined` and `ReferenceError`
 </details>
 
 

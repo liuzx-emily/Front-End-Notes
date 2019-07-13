@@ -8,72 +8,21 @@
 3. loaders：加载非JS文件（CSS LESS 图片 commonJS ES6 .vue .jsx等）  
 	webpack只支持js类型，其他所有类型都需要loader来处理。  
 	loader需要先安装，再指定
-
+4. 源文件中引入其他文件：用commonJS的require语法，或者ES6的import语法都行。最终都会转成webpack自己的打包命令
 ---
+ 
 
 
 
-
-## 基础 
+## 初始化
 ```js
-mkdir webpack-test
-cd webpack-test
 npm init -y
-npm install webpack --save-dev
+npm install webpack webpack-cli
 ```
 
-cmd打包：webpack 源rr文件 目标文件
-例子：webpack hello.js bundle.js
-(注意：webpack必须先全局安装，才能在cmd中使用)
+在根目录下新建index.html，其中引入 <script src="bundle.js"></script>
+在根目录下新建配置文件webpack.config.js
 
---watch:监听文件，一有变化自动打包
---progress：打包过程中可以看到打包进度 
--h:查看更多关于webpack的参数
-
-在源文件hello.js中引入其他文件：
-用commonJS的require语法，或者ES6的import语法都行。最终都会转成webpack自己的打包命令
-    const world = require('./world.js');
-    require('./style.css'); //需要loader处理
-
-
-
-
-
-
----
-
-
-
-
-## 项目中使用 
-见webpack-demo文件夹
-mkdir webpack-demo
-cd webpack-demo
-npm init -y
-npm install webpack --save-dev
-mkdir src
-mkdir dist
-
-src文件夹：存放源代码，其中再创建script style文件夹
-dist文件夹：存放打包好的文件
-在demo根目录下新建index.html，其中引入 <script src="bundle.js"></script>
-在demo根目录下建立配置文件：
-
-配置文件：
-  写了配置文件之后，可以直接cmd：webpack，会按照配置文件中的内容去打包。
-  webpack.config.js是默认的名字。也可以换名字比如config1.js，然后打包时需用--config参数来指明：webpack --config config1.js
-
-
----
-
-
-
-
-## 利用npm
-webpack加上参数运行，每次要打一长串很麻烦，可以使用npm中的命令。
-写在package.json中的script里：
-  "demo1": "webpack --config config1.js --progress"
-  这样在cmd中可以：npm run demo1
 
 
 ---
@@ -82,272 +31,69 @@ webpack加上参数运行，每次要打一长串很麻烦，可以使用npm中�
 
 
 ## 配置文件
-中文官网说明：https://doc.webpack-china.org/configuration/
-
-注意整个配置中我们使用Node内置的path模块，可以防止不同操作系统之间的文件路径问题
-比如：
-  【path: __dirname + '/dist'】改为【path: path.resolve(__dirname, "dist")】
-
-1 entry：webpack打包的入口。
-  所有的文件都要在这个"入口文件"中引入。
+- entry：webpack打包的入口，所有的文件都要在这个"入口文件"中引入。  
   entry可以是：string | array | object
-    单入口：string或者array 输出可以直接用给定名字
-            注意：array是单入口，会打包成一个bundle.js。用途：array中的文件互相依赖
-    多入口：object 多入口就要多输出,输出用占位符
+	- 单入口：string array 输出可以直接用给定名字  
+    	注意：array是单入口，会打包成一个bundle.js。用途：array中的文件互相依赖
+    - 多入口：object 多入口就要多输出,输出用占位符
 
-2 output：输出
-  单入口时，单输出：filename直接指定名字
-  多入口时，多输出：filename要用替换方式，来自动给每个bundle一个唯一的名称：
-      入口名称：[name]
-        filename: "[name].bundle.js"
-      内部 chunk id：[id]
-        filename: "[id].bundle.js"
-      每次打包的hash值：[hash]
-        filename: "[name].[hash].bundle.js"
-      基于每个 chunk 内容的 hash：[chunkhash]
-        filename: "[chunkhash].bundle.js"
-        只有当chunk中内容改变时，chunkhash才会变。在项目中，对静态资源的版本号的管理非常有用
+- output：输出
+  单入口时，单输出：filename直接指定名字  
+  多入口时，多输出：filename要用替换方式，来自动给每个bundle一个唯一的名称： 
+    - 入口名称：[name] 
+    - 每次打包的hash值：[hash]
+    - 基于chunk内容的 hash：[chunkhash]
 
 
-config1.js：单输入
-config2.js：多输入
 
-都在package.json的script中配置过了。可以直接在cmd中：
-  npm run demo1
-  npm run demo2等
+---
 
 
----------------------
-  自动化生成html文件
-如果用[chunkhash]或者[hash]，每次打包出来文件名称都不确定，在html中引入bundle的时候，不能每次都手动改吧？
-这时候可以用插件：html-webpack-plugin来自动化生成html文件
+ 
+## html-webpack-plugin
+如果用`[chunkhash]`或者`[hash]`，每次打包出来文件名称都不确定。在html中引入bundle的时候，不能每次都手动改吧？
 
-https://www.npmjs.com/package/html-webpack-plugin
+这时候可以用插件：`html-webpack-plugin`。效果：自动生成一个html文件，并且引入打包好的bundle文件。
 
-1 安装：npm install --save-dev html-webpack-plugin
+配置项：title filename template minify等，具体看官方API
+https://github.com/jantimon/html-webpack-plugin#options
 
-2 使用插件
-  在config文件中修改，见config3.js
-  先引入插件，然后在plugins中添加
-  const htmlWebpackPlugin=require('html-webpack-plugin');
 
- 插件效果：会自动生成一个html文件，并且引入了打包好的bundle文件。
-这个自动生成的html文件的路径，也是ouput中的path
+#### 多页面
+每一个htmlWebpackPlugin对象自动生成一个html文件。  
+所以new多个HtmlWebpackPlugin对象。如果不显式指定，那么每一个htmlWebpackPlugin对象中都默认包含entry中的所有chunk。可以用chunks和excludeChunks来指定
 
- 插件中可以设置参数，在template中使用'ejs模版语法'来取到参数
-  参数是：htmlWebpackPlugin.options.参数名
 
- 其实整个htmlWebpackPlugin对象，都可以在模版文件中使用'ejs模版语法'取到。
- 具体见：'html插件使用的template.html'
-
-3 不同的bundle放到不同位置：config4.js
-  注意：inject要false
-  通过htmlWebpackPlugin.files.chunks.[名字].entry拿到chunk，使用ejs模版语法插到template中。
-  而且是已经带上了publicPath的地址(如果设置了publibPath的话)
 
 
 ---
 
 
 
+## loader
+webpack只支持js类型，其他所有类型都需要loader来处理。  
+loader需要先安装，再指定
 
--------## html插件项目上线*
-见config5.js，还是使用htmlWebpackPlugin插件：
-1 output中要加上publicPath
-  效果：生成的html文件中引入bundle时，会在前面自动加上publicPath
-2 plugin - htmlWebpackPlugin -minify中设置
+#### 处理js：ECMA6转5
+babel
+
+#### 处理css
+
+- `css-loader` 让webpack能处理.css文件。此时只在打包文件bundle.js中有。但对于引入了bundle.js的html文件，css不会自动加入到html中。
+- `style-loader` 把css-loader处理完的内容添加到html>head>style标签中
+- `postcss-loader`
+- `less-loader less`
+在配置文件中设置
+- loader的处理顺序是数组中从右到左
+
+#### 资源处理：图片等
+file-loader url-loader
+
 
 
 ---
 
 
 
-
--------## html插件多页面*
-首先，要注意理清思路：
-  多入口，多出口：是指生成多个bundle。
-  使用htmlWebpackPlugin插件：自动生成一个html文件，文件可以自动引入生成的多个bundle。
-
-如果是多页面，那就需要多个htmlWebpackPlugin对象。每一个htmlWebpackPlugin对象自动生成一个html文件。
-
-如果不显式指定，那么每一个htmlWebpackPlugin对象中都默认包含entry中的所有chunk。
-  可以用chunks和excludeChunks来指定
-
-
----
-
-
-
-
--------## html插件优化性能*
-之前做的，都是把bundle自动在script标签中引用。
-如果想要通过'把js文件变成inline，以减少http请求次数'来提高性能：
-    可以使用html插件的第三方插件：html-webpack-inline-source-plugin    
-具体见https://github.com/DustinJackson/html-webpack-inline-source-plugin
-
-    inline：inlineSource: '.js$'，匹配语法是正则
-
-见config7.js
-
-
----
-
-
-
-
--------## loader处理js css less/sass
-
-本部分内容放在webpack-loader文件夹中
-https://doc.webpack-china.org/loaders/
-1 处理js：ECMA6转5
-  处理css：sass转css
-  资源处理：图片等
-
-2 loader安装方法：
-  npm install --save-dev css.loader style.loader
-  css-loader：让webpack能处理.css文件。此时只在打包文件bundle.js中有。但对于引入了bundle.js的html文件，css不会自动加入到html中。
-  style-loader：把css-loader处理完的内容添加到html>head>style标签中
-
-3 loader使用方法：3种
-    (1)文件中引用时直接写：
-      require('style-loader!css-loader!./style.css');
-    (2)命令行每次打包时加上参数
-      require('./style.css');   //hello中引入css文件时不指明loader
-      webpack hello.js bundle.js --module-bind "css=style-loader!css-loade"
-      注：单引号会报错 必须是双引号
-    (3)在config文件中设置:module中设置
-
-https://doc.webpack-china.org/configuration/
-  查看test include exclude use loader等的具体说明
-
----------------------
-  处理js：babel
-https://doc.webpack-china.org/loaders/babel-loader/
-
-npm install --save-dev babel-loader babel-core babel-preset-env
-
----------------------
-  处理css：
-style-loader  css-loader  postcss-loader(插件：autoprefixer)
-备注：loader的处理顺序是数组中从右到左
-
-如果在css中通过@import引入另一个文件css2，那么css2不经过postcss，只经过css和style。解决：postcss的插件postcss-import
-    npm i postcss-import --save-dev
-
-    {
-      loader:"postcss-loader",
-      options:{
-        plugins:[
-          require('postcss-import')(),
-          require('autoprefixer')()
-        ]
-      }
-    }
-
-https://www.npmjs.com/package/postcss-loader
-
-
----------------------
-  处理less：
-  npm i install less less-loader --save-dev
-  {
-    test: /\.less$/,
-    use:["style-loader","css-loader",{
-      loader:"postcss-loader",
-      options:{
-        plugins:[
-          //require('postcss-import')(),
-          require('autoprefixer')()
-        ]
-      }
-    },"less-loader"]
-  }
-  less-loader会自动处理import的文件，所以不用加上postcss-import。
-  如果只有css-loader，那么必须要postcss-import
-
-
----------------------
-  处理sass
-  npm i sass sass-loader node-sass --save-dev
-  sass-loader依赖node-sass
-
-
----
-
-
-
-
--------## 处理模版文件只说两种处理方法：
-  1 让webpack把其当作string
-  2 webpack处理后返回一个函数，函数的参数是模版中用到的数据
-
-当作string：
-  npm i html-loader --save-dev
-当作函数：
-  npm i ejs-loader --save-dev
-
-jsx语法(react vue用的??)，现在babel中有jsx插件，不需要额外的jsx loader，只要简单设置一下babel就可以
-
-
----
-
-
-
-
--------## 处理图片图片来源：3种
-  1 css中的背景图片
-  2 root下的模版文件index.html引入图片
-  3 模版tpl中直接引入图片
-这三种情况下，图片是绝对地址时，不用经过任何处理。
-只有图片是相对地址时，才需要loader处理
-
-一、file-loader
-  Instructs webpack to emit the required object as file and to return its public url.
-  安装：npm i file-loader --save-dev
-  1 css中引用的和根目录html中引入的：直接用file-loader
-  3 模版tpl中引入图片：
-      1 用绝对地址，不需要loader处理
-      2 非要用相对路径的话：
-          <img src="${require('../../assets/11.jpg')}">
-          这样才能用file-loader
-
-二、url-loader
-  The url loader works like the file loader, but can return a Data Url if the file is smaller than a byte limit.
-  The limit can be specified with a query parameter. (Defaults to no limit)
-  当一个文件很小的时候，就不用url，直接把它的编码放在生成的bundle中（减少http请求时间）。
-  当文件超出限制的limit时，自动调用file-loader去处理（所以如果用url-loader的话，就不用写file-loader）
-  安装：npm i url-loader --save-dev
-
-三、image-webpack-loader减少图片大小，和file-loader url-loader搭配最佳
-  npm install image-webpack-loader --save-dev
-
-http请求载入图片：
-  优势：浏览器缓存，之后访问会更快
-base64载入图片：
-  增大打包后文件的大小，让代码变得冗杂。
-  优势：图片很小时，省去http请求时间
-
-
----
-
-
-
-
--------## 热更新
-https://segmentfault.com/a/1190000006964335
-安装：yarn add --dev webpack-dev-server
-webpack-dev-server简记wds
-1 基本目录
-  wds默认会以当前目录为基本目录，除非你指定它。
-  wds --content-base build 将build目录作为基本目录
-  注意：webpack-dev-server生成的bundle文件没有放在真实目录中，而是放在了内存中
-  在基本目录下新建一个index.html文件，在浏览器中输入http://localhost:8080访问。
-2 自动刷新
-  wds支持两种模式来自动刷新页面
-    iframe模式(页面放在iframe中,当发生改变时重载)
-    inline模式(将wds的客户端入口添加到包(bundle)中)
-  两种模式都支持热模块替换(Hot Module Replacement):只替换更新的部分,而不是整个页面重载.
-  2.1 iframe模式
-  2.2 inline模式
-3 热模块替换
-  --hot
+## 热更新
+webpack-dev-server
