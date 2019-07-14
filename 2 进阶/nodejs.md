@@ -1,128 +1,26 @@
----------------安装---------------
- 去官网下载安装
- 测试是否安装成功，打开cmd输入node，不报错证明安装成功
-
- 退出node：两次ctrl+c
-
-
-
----------------npm---------------
- 换下载源：
-	npm config set registry "https://registry.npm.taobao.org"
-	npm config list
-
- 查看已安装插件：
-	npm list 或 npm ls
-	npm list -g
-
- 删除包:
-	npm uninstall 包名 或 npm rm 包名
-
- --save-dev 是你开发时候依赖的东西：babel
- --save是你发布之后还依赖的东西：jQuery
-
- fsevent是mac osx系统的，在win下使用会有警告，忽略即可
-
- 用npm初始化来创建package.json：npm init
-
-
-
----------------yarn---------------
- 代码通过叫做"包"(有时称为"模块")的东西来共享
- 包里包含所有要共享的代码, package.json文件描述这个包。
- 
- yarn可以和npm共存，很多命令和npm类似。安装前，必须先安装node.js
- 
- 使用说明：https://yarnpkg.com/zh-Hans/docs/usage
- 
- 设置国内淘宝镜像源：
-   yarn config set registry 'https://registry.npm.taobao.org'
- 
- 初始化
-   yarn init  (创建package.json文件)
- 安装
-   yarn add webpack
- 升级
-   yarn upgrade webpack
- 删除
-   yarn remove webpack
- 安装所有依赖
-   yarn或yarn install
- 本地缓存（离线管理时用）
-   yarn cache ls|dir|clean
- 配置
-   yarn config set|get|delete|list
- 显示一个包的信息（不需要安装到本地）
-   yarn info webpack
- 
- yarn不推荐在全局下安装包，因为会让依赖不清晰。如果一定要全局安装，可以 用：yarn global add webpack
- 
- 显示一个包为何被安装
-   yarn why webpack
- 运行一个定义好的包脚本。你可以在你的 package.json 文件中定义 scripts。
-  yarn run [script] [-- <args>]
+node中的顶层对象：global（根本没有window）
 
 
 
 
----------------服务器---------------
- 使用php等后端语言时时，需要Apache或者Nginx的HTTP服务器，并配上一些模块。整个"接收 HTTP 请求并提供Web页面"的需求根本不需要php来处理。
- 不过使用Node.js时，我们要自己编写整个服务器。
-
-
-
-
----------------Node.js的组成---------------
- 1 引入模块：
-	我们可以使用 require 指令来载入 Node.js 模块。
- 2 创建服务器：
-	服务器可以监听客户端的请求，类似于 Apache 、Nginx 等 HTTP 服务器。
- 3 接收请求与响应请求:
-	客户端可以使用浏览器或终端发送HTTP请求，服务器接收请求后返回响应数据。
-
-
-
-
----------------顶层对象---------------
- 在ECMAScript部分node和js是一样的，区别：DOM BOM
- js中的顶层对象：window
- node中的顶层对象：global（根本没有window）
-
-
-
-
----------------模块---------------
- 一个文件就是一个模块，每个模块都有自己的作用域。
+## 模块
+ 一个文件就是一个模块
  每个模块中声明的变量，只属于当前模块，并不是全局的。
-	let a = 15;
-	console.log(global.a);	//undefined
-
-	let b = 100;
-	global.b = 200;
-	console.log(b);			//100
-	console.log(global.b);	//200
-
- nodejs中很多看起来是全局的变量，都不是全局的。
- 举例：__filename 当前文件被解析过后的绝对路径
-	console.log( __filename );	//D:\hello.js
-	__filename变量不是全局的，每个模块都有自己的__filename
-
 
 
 ---------------模块加载---------------
  CommonJS规范加载模块是同步的，也就是说，只有加载完成，才能执行后面的操作。由于Node.js主要用于服务器编程，模块文件一般都已经存在于本地硬盘，所以加载起来比较快，不用考虑异步加载
 
- require命令的基本功能是，读入并执行一个JavaScript文件，然后返回该模块的exports对象。如果没有发现指定模块，会报错。
+ require：读入并执行一个JavaScript文件，然后返回该模块的exports对象。如果没有发现指定模块，会报错。
 
- 1 路径
+- 路径
   require('./hello.js');	相对地址，以./开头
   require('/hello.js');   绝对地址，以/开头
   require('hello.js'); 		不以“./“或”/“开头，则表示加载的是一个默认提供的核心模块（位于Node的系统安装目录中），或者一个位于各级node_modules目录的已安装模块（全局安装或局部安装）。
 
- 2 查找机制
-  文件名称 -> .js -> .json -> .node
-  举例：require('./hello')
-  	查找顺序hello -> hello.js -> hello.json -> hello.node
+- 查找机制
+	require('./hello')
+	查找顺序hello -> hello.js -> hello.json -> hello.node
 
  3 在一个模块中定义的变量，其作用域范围是当前模块，外部不能够直接的访问。想要访问需要：
   1 把变量作为global对象的一个属性【不推荐】
