@@ -3,309 +3,126 @@ node中的顶层对象：global（根本没有window）
 
 
 
-## 模块
- 一个文件就是一个模块
- 每个模块中声明的变量，只属于当前模块，并不是全局的。
+---
 
 
----------------模块加载---------------
- CommonJS规范加载模块是同步的，也就是说，只有加载完成，才能执行后面的操作。由于Node.js主要用于服务器编程，模块文件一般都已经存在于本地硬盘，所以加载起来比较快，不用考虑异步加载
 
- require：读入并执行一个JavaScript文件，然后返回该模块的exports对象。如果没有发现指定模块，会报错。
+## 模块加载
+ CommonJS规范：加载模块是同步的（因为Node.js主要用于服务器编程，模块文件一般都已经存在于本地硬盘，所以加载起来比较快，不用考虑异步加载）
+
+ `require` ：读入并执行一个JavaScript文件，然后返回该模块的exports对象。如果没有发现指定模块，会报错。
 
 - 路径
-  require('./hello.js');	相对地址，以./开头
-  require('/hello.js');   绝对地址，以/开头
-  require('hello.js'); 		不以“./“或”/“开头，则表示加载的是一个默认提供的核心模块（位于Node的系统安装目录中），或者一个位于各级node_modules目录的已安装模块（全局安装或局部安装）。
+  ```js
+  require('./hello.js');// 相对地址
+  require('/hello.js');	// 绝对地址
+  require('hello.js');	// 加载核心模块（位于Node的系统安装目录中）或者node_modules目录下的模块
+  ```
 
-- 查找机制
-	require('./hello')
-	查找顺序hello -> hello.js -> hello.json -> hello.node
+- 查找顺序
+	`require('./hello')`
+	查找顺序 ： hello -> hello.js -> hello.json -> hello.node
 
- 3 在一个模块中定义的变量，其作用域范围是当前模块，外部不能够直接的访问。想要访问需要：
-  1 把变量作为global对象的一个属性【不推荐】
-	//world.js
-	global.PI = 3.14;
-
-	//hello.js
-	require('./world.js');
-	console.log(PI); 		//3.14
-	console.log(global.PI); //3.14
-
-  2 使用模块对象 module
-    module对象：当前模块的一些信息。有exports属性。require()返回引入模块的module.exports。
-    在每个模块的作用域下，还有一个内置的对象叫做exports，它和module.exports指向一个地址。
-	//world.js
-	const PI = 3.14;
-	const name = 'emily';
-	exports.PI = PI;
-	module.exports.name = name;
-
-	//hello.js
-	const world = require('./world.js');
-	console.log(world); 	//{ PI: 3.14, name: 'emily' }
-
-    注意：下面修改了引用关系，exports和module.exports不再指向一个地址。所以用exports无效了。
-  	module.exports={name,PI};
-  	下面也是改了引用，这样根本exports不出去。
-  	exports={name,PI};
+- 在一个模块中定义的变量，其作用域范围是当前模块。
 
 
 
----------------process---------------
- process.stdout && process.stdin:
-	let name;
-	process.stdout.write('请输入name：');
-	process.stdin.on('readable', () => {
-	    const chunk = process.stdin.read();
-	    if (chunk != null) {
-	        console.log(`输入了${chunk}`); //自动调用了toString()
-	        name = chunk.toString().slice(0, -2);//回车占2个字符
-	        process.stdin.emit('end');
-	    }
-	});
-	process.stdin.on('end', () => {
-	    process.stdout.write(`It s'over now.\nname=${name}`);
-	});
+---
 
 
 
----------------Buffer类---------------
- 用于操作二进制数据流。大小在被创建时确定，且无法调整。
- Buffer类在Node.js中是一个全局变量，因此无需使用require('buffer').Buffer。
- new Buffer() 构造函数已被废弃，并由from alloc allocUnsafe方法替代
- 	const bf1 = Buffer.alloc(2, 0);
- 	bf1[0] = 15;
- 	bf1[2] = 0;
- 	console.log(bf1); 	//<Buffer 0f 00> 16进制
 
- 	const bf2 = Buffer.from([3, 4, 255]);
- 	console.log(bf2); 	//<Buffer 03 04 ff>
+## module.exports
+module对象 : 当前模块的一些信息，有exports属性。require()返回引入模块的module.exports。  
+在每个模块的作用域下，还有一个内置的对象叫做exports，它和module.exports指向一个地址。
+```js
+//world.js
+const PI = 3.14;
+const name = 'emily';
+exports.PI = PI;
+module.exports.name = name;
 
- 	const str1 = 'emily';
- 	const bf3 = Buffer.from(str1);
- 	console.log(`str1长度为${str1.length}`);	//5
- 	console.log(`bf3长度为${bf3.length}`);		//5
+//hello.js
+const world = require('./world.js');
+console.log(world); 	//{ PI: 3.14, name: 'emily' }
+```
 
- 	const str2 = '艾米丽';						//中文占3字节
- 	const bf4 = Buffer.from(str2);
- 	console.log(`str2长度为${str2.length}`);	//3 字符串个数
- 	console.log(`bf4长度为${bf4.length}`);		//9 字节长度
-
- 	const bf5 = Buffer.alloc(10, 1);
- 	console.log(bf5);	// <Buffer 01 01 01 01 01 01 01 01 01 01>
- 	bf5.write('心\u0000\u000a', 1);
- 	console.log(bf5);	// <Buffer 01 e5 bf 83 00 0a 01 01 01 01>
+注意：下面修改了引用关系，exports和module.exports不再指向一个地址。所以用exports无效了。
+```js
+module.exports={name,PI};
+```
+下面也是改了引用，这样根本exports不出去。
+```js
+exports={name,PI};
+```
 
 
 
----------------fs文件系统 1---------------
- 是核心模块，需要require引入。所有的方法都有异步和同步的形式。
-	文件的编码记得改为utf-8
- 1 open 异步 回调函数
-   err：存放错误信息，打开成功则err为null。
-   fs：被打开文件的标识，和定时器的返回值类似
- 	const fs = require('fs');
- 	fs.open('world.js', 'r', (err, fd) => {
- 	    if (err) {
- 	        console.log(err);
- 	    } else {
- 	        console.log(fd);
- 	    }
- 	});
- 	console.log('Ding~');
-
- 2 openSync 同步 返回值
- 	const fs = require('fs');
- 	const fd = fs.openSync('world.js', 'r');
- 	console.log(fd);
-
- 3 read 异步
- 	const fs = require('fs');
- 	const bf = Buffer.alloc(10);
- 	fs.open('world.js', 'r', (err, fd) => {
- 	    if (err) {
- 	        console.log(`出错啦：${err}`);
- 	    } else {
- 	        console.log(bf);
- 	        console.log(bf.toString());
- 	        fs.read(fd, bf, 0, 10, null, (err, bytesRead, buffer) => {
- 	            if (err) {
- 	                console.log(`出错啦：${err}`);
- 	            } {
- 	                console.log(bf);
- 	                console.log(bf.toString());
- 	            }
- 	        })
- 	    }
- 	});
-
- 4 write
-	const fs = require('fs');
-	const bf = Buffer.from('emily');
-	fs.open('world.txt', 'r+', (err, fd) => {
-	   if (err) {
-	       console.log(`open出错啦：${err}`);
-	   } else {
-	       fs.write(fd, bf, 0, 5, null);
-	       fs.write(fd, "hey girl~", null);
-	       fs.close(fd);
-	   }
-	});
-
- 5 close
+---
 
 
 
----------------fs文件系统 2---------------
- 上面的open read write close等，是底层方法，使用起来麻烦。
- fs提供更方便的方法，当然内部实现还是用的open等。??不确定
- 1 fs.writeFile(file, data[, options], callback)
-   异步地"写入"数据到文件，如果文件已经存在，则替代文件。
-   data可以是string或buffer
-   	const fs = require('fs');
-   	const bf = Buffer.from('hello girl')
-   	fs.writeFile('lzx.js', bf, (err) = {});
+## 控制台中的输入、输出
+```js
+let name;
+process.stdout.write('请输入name：');
+process.stdin.on('readable', () => {
+   const chunk = process.stdin.read();
+   if (chunk != null) {
+       console.log(`输入了${chunk}`); //自动调用了toString()
+       name = chunk.toString().slice(0, -2);//回车占2个字符
+       process.stdin.emit('end');
+   }
+});
+process.stdin.on('end', () => {
+   process.stdout.write(`It s'over now.\nname=${name}`);
+});
+```
 
- 2 fs.appendFile(file, data[, options], callback)
-   异步地"追加"数据到一个文件，如果文件不存在则创建文件。
-   data可以是string或buffer
-   	fs.appendFile('lzx.js', bf, (err) = {});
 
- 3 fs.readFile(path[, options], callback)
-   异步地读取一个文件的全部内容
-   	const fs = require('fs');
-   	fs.readFile('lzx.js', (err, data) => {
-   	    console.log(data);
-   	    console.log(data.toString());
-   	});
 
- 4 fs.unlink(path, callback)
-   异步地delete a name and possibly the file it refers to
-  	const fs = require('fs');
-  	fs.unlink('lzx.js', (err) => {});
+---
 
- 5 fs.rename(oldPath, newPath, callback)
-   异步地改名
- 	const fs = require('fs');
- 	const bf = Buffer.from('OMG')
- 	fs.rename('world.js', 'lzx2.js', (err) => {});
 
- 6 fs.stat(path, callback)
-   异步地get file status
-   	const fs = require('fs');
-   	fs.stat('lzx2.js', (err, stats) => {
-   	    console.log(stats);
-   	});
+
+## Buffer类
+
+用于操作二进制数据流。大小在被创建时确定，且无法调整。  
+Buffer类在Node.js中是一个全局变量，因此无需require  
+new Buffer() 构造函数已被废弃，并由from alloc allocUnsafe方法替代
+
+
+
+
+---
+
+
+
+
+## fs文件系统
+是核心模块，需要require引入。所有的方法都有异步和同步的形式。
+文件的编码记得改为utf-8
+
+ - `fs.writeFile` 异步 "写入"数据到文件，如果文件已经存在，则替代文件
+
+ - `fs.appendFile` 异步 "追加"数据到一个文件，如果文件不存在则创建文件。
+
+ - `fs.readFile` 异步 读取一个文件的全部内容
+
+ - `fs.unlink` 异步 delete a name and possibly the file it refers to
+
+ - `fs.rename` 异步 改名
+
+ - `fs.stat` 异步 get file status
  
- 7 fs.watch(filename[, options][, listener])
-   监听器回调有两个参数 (eventType, filename)
-   eventType 可以是 'rename' 或 'change'
-   filename 是触发事件的文件的名称
-   在大多数平台，当一个文件出现或消失在一个目录里时，'rename' 会被触发
-	const fs = require('fs');
-	fs.watch('lzx2.js', (ev, fn) => {
-	   console.log(`${fn}被${ev}了`);
-	});
+ - `fs.watch` 异步 监听 'rename' 或 'change'。在大多数平台，当一个文件出现或消失在一个目录里时，'rename' 会被触发
 
- 8 fs.mkdir(path[, mode], callback)
-   异步地创建文件夹
-   	const fs = require('fs');
-   	fs.mkdir('img', (err) => {
-   	    console.log('成功新建文件夹img');
-   	});
- 9 fs.readdir(path[, options], callback)
-   异步地读取目录的内容.回调有两个参数 (err, files)
-   	const fs = require('fs');
-   	fs.readdir('./', (err, files) => {
-   	    console.log(files);
-   	    files.forEach(f => {F
-   	        fs.stat(f, (err, stats) => {
-   	            switch (stats.mode) {
-   	                case 16822:
-   	                    console.log(`folder： ${f}`);
-   	                    break;
-   	                case 33206:
-   	                    console.log(`file： ${f}`);
-   	                    break;
-   	                default:
-   	                    console.log(`other types： ${f}`);
-   	                    break;
-   	            }
-   	        });
-   	    });
-   	});
+ - `fs.mkdir` 异步 创建文件夹
+ - `fs.readdir` 异步 读取目录的内容   	
 
- 10 fs.rmdir(path, callback)
-    异步地删除文件夹
+ - `fs.rmdir` 异步 删除文件夹
 
 
 
----------------fs文件系统 实例---------------
- 前端项目中，自动生成目录
- 见init.js
- 效果：自动生成demo文件夹和下面的结构
 
 
-
----------------fs文件系统 实例---------------
- 前端项目中，自动合并文件，并监听变化
- 见init2-auto.js
- 难点：操作多个文件，用异步很麻烦，这里用的同步。
- 效果：监控src文件夹下的所有变动，自动把文件合并输出到dist/main.txt中（src下只能再监控一层，如果js中再嵌套一个文件夹js1，那么js1中内容监控不到）
-
-
-
----------------后端服务器---------------
- 启动服务器，在cmd中：node server server.js
- 1 http模块 - require('http')
-    const http = require('http');
-    // 创建并返回一个HTTP服务器对象
-    //    requestListener : 监听到客户端连接的回调函数
-    const server = http.createServer([requestListener])
-
-    // 监听客户端连接请求，只有当调用了listen方法以后，服务器才开始工作
-    //    port : 监听的端口
-    //    hostname : 主机名（IP/域名)
-    //    backlog : 连接等待队列的最大长度
-    //    callback : 调用listen方法并成功开启监听以后，会触发一个listening事件，callback将作为该事件的执行函数
-    server.listen(port, [hostname], [backlog], [callback])
-
-    // listening事件：当server调用listen方法并成功开始监听以后触发
-    server.on('listening',()=>{
-      console.log(`listening port:${server.address().port}`);
-    });
-
-    // error事件 : 当服务开启失败时触发（比如端口已经被占用）
-    //    err : 具体的错误对象
-    server.on('error',(err)=>{
-      console.log()
-    })
-
-    // request事件 : 每次接收到一个请求时触发。每个连接可能有多个请求(在HTTP keep-alive连接的情况下)
-    //    request : http.IncomingMessage的一个实例，通过他我们可以获取到这次请求的一些信息，比如头信息，数据等
-    //    response : http.ServerResponse的一个实例，通过他我们可以向该次请求的客户端输出返回响应
-    server.on('request',(req,res)=>{});
-    1 参数request
-      headers : 请求头信息中的数据
-      url : 请求的地址
-      method : 请求方式
-    2 参数response
-      writeHead(statusCode, [reasonPhrase], [headers])：只能使用一次
-      write(chunk, [encoding]): 发送一个数据块到响应正文中
-      end([chunk], [encoding]): 当所有的正文和头信息发送完成以后, 调用该方法告诉服务器数据已经全部发送完成了, 这个方法在每次完成信息发送以后必须调用
-      statusCode : 设置返回的状态码
-    
- 2 url模块 - require('url')
-  用于 URL 处理与解析
-  parse(request.url) : 对url格式的字符串进行解析，返回一个对象
-
- 3 querystring模块 - require('querystring')
-  用于解析与格式化 URL 查询字符串
-  parse(): 把一个 URL 查询字符串（str）解析成一个键值对的集合
-
- 4 处理get post请求
-   request.method
-   post发送的数据会被写入缓冲区中，需要通过resquest的data事件和end事件来进行数据拼接处理
-   data事件：Emitted when data is received.  The argument data will be a Buffer or String.
-   end事件：Emitted when the other end of the socket sends a FIN packet, thus ending the readable side of the socket.
