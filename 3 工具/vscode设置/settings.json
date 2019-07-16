@@ -1,0 +1,73 @@
+{
+    "editor.formatOnPaste": true,
+    "editor.multiCursorModifier": "ctrlCmd",
+    "editor.snippetSuggestions": "top",
+    "git.ignoreMissingGitWarning": true,
+    "window.zoomLevel": 0,
+    "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\cmd.exe",
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": false,
+    "vetur.format.options.tabSize": 4,
+    "vetur.format.options.useTabs": true,
+    "emmet.triggerExpansionOnTab": true,
+    "workbench.sideBar.location": "left",
+    // 格式化设置
+    "vetur.format.defaultFormatter.html": "js-beautify-html",
+    "vetur.format.defaultFormatterOptions": {
+        "js-beautify-html": {
+            "wrap_attributes": "aligned-multiple"
+        },
+    },
+    "vetur.format.defaultFormatter.js": "vscode-typescript",
+    "[jsonc]": {
+        "editor.defaultFormatter": "HookyQR.beautify"
+    },
+    // 关闭对齐线
+    "editor.renderIndentGuides": false,
+    "workbench.tree.indent": 16,
+    "editor.dragAndDrop": false,
+    "editor.links": false,
+    "editor.mouseWheelZoom": true,
+    "editor.renderLineHighlight": "all",
+    "editor.mouseWheelScrollSensitivity": 2,
+    "editor.cursorSmoothCaretAnimation": true,
+    "editor.cursorWidth": 2,
+    "editor.minimap.renderCharacters": false,
+    "editor.minimap.enabled": false,
+    "workbench.statusBar.visible": false,
+    "breadcrumbs.filePath": "off",
+    "breadcrumbs.enabled": true,
+    "workbench.editor.tabSizing": "shrink",
+    "workbench.settings.openDefaultKeybindings": true,
+    "workbench.settings.openDefaultSettings": true,
+    "terminal.integrated.confirmOnExit": true,
+    "terminal.integrated.cursorStyle": "line",
+    "[javascript]": {
+        "editor.defaultFormatter": "HookyQR.beautify"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "HookyQR.beautify"
+    },
+    "workbench.startupEditor": "newUntitledFile",
+    "material-icon-theme.folders.color": "#7cb342",
+    "markdown.preview.fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serifFutura,Consolas, 'Courier New', monospace",
+    "editor.fontFamily": "Consolas",
+    "powermode.enabled": true,
+    "powermode.enableShake": false,
+    "search.useGlobalIgnoreFiles": true,
+    "git.confirmForcePush": false,
+    "[html]": {
+        "editor.defaultFormatter": "HookyQR.beautify"
+    },
+    "workbench.colorTheme": "Visual Studio Dark",
+    "search.exclude": {
+        "**/dist": true,
+        "**/bower_components": true
+    },
+    "beautify.config": {
+		"indent-with-tabs":true,
+		"brace-style": "collapse-preserve-inline",
+		"selector-separator-newline": false,
+		"newline-between-rules":false,
+    }
+}
