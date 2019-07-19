@@ -59,7 +59,7 @@
     "[html]": {
         "editor.defaultFormatter": "HookyQR.beautify"
     },
-    "workbench.colorTheme": "Visual Studio Dark",
+    "workbench.colorTheme": "Visual Studio Light",
     "search.exclude": {
         "**/dist": true,
         "**/bower_components": true

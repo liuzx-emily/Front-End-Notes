@@ -100,27 +100,31 @@ new Buffer() 构造函数已被废弃，并由from alloc allocUnsafe方法替代
 
 
 ## fs文件系统
-是核心模块，需要require引入。所有的方法都有异步和同步的形式。
+是核心模块，需要require引入。
 文件的编码记得改为utf-8
 
- - `fs.writeFile` 异步 "写入"数据到文件，如果文件已经存在，则替代文件
+***注意：如果是相对路径，是相对于当前进程所在的路径（process.cwd()），而不是相对于当前脚本所在的路径。***
 
- - `fs.appendFile` 异步 "追加"数据到一个文件，如果文件不存在则创建文件。
+所有的方法都有异步和同步的形式，下面列出的都是异步
 
- - `fs.readFile` 异步 读取一个文件的全部内容
+ - `fs.writeFile` "写入"数据到文件，如果文件已经存在，则替代文件
 
- - `fs.unlink` 异步 delete a name and possibly the file it refers to
+ - `fs.appendFile` "追加"数据到一个文件，如果文件不存在则创建文件。
 
- - `fs.rename` 异步 改名
+ - `fs.readFile` 读取一个文件的全部内容
 
- - `fs.stat` 异步 get file status
+ - `fs.unlink` delete a name and possibly the file it refers to
+
+ - `fs.rename` 改名
+
+ - `fs.stat` get file status
  
- - `fs.watch` 异步 监听 'rename' 或 'change'。在大多数平台，当一个文件出现或消失在一个目录里时，'rename' 会被触发
+ - `fs.watch` 监听 'rename' 或 'change'。在大多数平台，当一个文件出现或消失在一个目录里时，'rename' 会被触发
 
- - `fs.mkdir` 异步 创建文件夹
- - `fs.readdir` 异步 读取目录的内容   	
+ - `fs.mkdir` 创建文件夹
+ - `fs.readdir` 读取目录的内容   	
 
- - `fs.rmdir` 异步 删除文件夹
+ - `fs.rmdir` 删除文件夹
 
 
 
