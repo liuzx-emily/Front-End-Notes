@@ -29,4 +29,30 @@ module.exports = {
 
 
 
-## 
+## 引用本地图片，但是图片的地址是变量
+```html
+<img :src="imgUrl">
+```
+
+写法一：
+```js
+import img from '~/images/bg.jpg'
+export default {
+	data() {
+		return {
+			imgUrl: img,
+		}
+	},
+};
+```
+
+写法二：
+```js
+export default {
+	data() {
+		return {
+			imgUrl:require("~/images/bg.jpg"),
+		}
+	},
+};
+```

@@ -1,9 +1,13 @@
 ## 零散知识点
 
 - 很多问题都是因为文档声明不对：`<!DOCTYPE html>`(以前帮后端查jsp报错时发现的)
+
 - 锚点`#`可以横向定位（做移动端的时候发现的）
+
 - `obj.select()` 选中元素中的内容，只对部分元素生效
+
 - switch使用`===`来比较
+
 - 页面中的多个`<script>`标签：从上到下依次处理。处理完一个,才去处理下一个。
 	```js
 	<script> 
@@ -14,7 +18,25 @@
 	</script>
 	```
 - 定时器可以传参数，IE11+ `setInterval( 函数, 毫秒，参数)`
+
 - 操作自定义属性 `el.getAttribute` , `setAttribute` , `removeAttribute`
+
+- 用了`vue-router`的项目不能用锚点来实现滚动定位。所以使用 `scrollIntoView` 来完成滚动定位（兼容性好，IE8开始支持基本功能）
+
+- `null >= null `是 `true`，所以下面这样写不行
+  ```js
+  if (this.searchparam.startTime >= this.searchparam.endTime) {
+		alert("起始时间不能晚于结束时间");
+		return;
+	}
+  ```
+
+- 数字取整 `~~-9.05` => `-9` （截断，不是四舍五入）
+
+- string转数字 `+"-59.65"`
+
+- 浮点数 `0.333*100` => `33.300000000000004`
+
 
 
 

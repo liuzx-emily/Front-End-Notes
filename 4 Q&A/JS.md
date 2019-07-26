@@ -1746,3 +1746,44 @@ console.log(f());
 
 在JS中,分号是可选的。如果是一个不完整的语句,JS 将尝试读取第二行的语句。如果读到一个完整的语句,JS 将自动关闭语句。
 </details>
+
+
+
+
+---
+
+
+
+
+## 66 jQuery中，ready和load谁先执行？
+
+
+<details>
+<summary>答案</summary>
+
+DOM文档加载步骤：
+1. 解析HTML结构
+2. 加载外部js和css 
+3. 解析并执行js 
+4. 构造HTML DOM模型(`ready`)
+5. 加载图片等外部文件页面加载完毕(`load`)
+
+---
+
+总结：
+- ready：在dom结构加载完成后执行，保证js一定可以找到元素（但是图片可能没加载完，图片高度可能是0）
+- load：在dom结构加载完成后，还要等待所有外部资源（图片、视频等）都加载完毕
+
+---
+
+页面加载时，触发顺序
+  1. `$(document).ready()`
+  2. `$(window).ready()`
+  3. `$(window).load()`
+
+	说明：
+	- 以上三个都是在页面中可以有多个，并且都会执行（已实测）
+	- 没有 $(document).load
+	- 原生JS中只有window.onload（已实测）
+
+</details>
