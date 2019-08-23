@@ -235,7 +235,8 @@
 
 <details><summary>答案</summary>
 
-```direction: rtl;```
+```direction: rtl;```  
+span的display不能是inline
 </details> 
 
 

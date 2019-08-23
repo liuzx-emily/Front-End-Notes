@@ -1,4 +1,4 @@
-# extensions
+## extensions
 - Beautify
 - Chinese (Simplified) Language Pack for Visual Studio Code
 - Element UI Snippets
@@ -12,11 +12,11 @@
 - Sublime Text Keymap and Settings Importer
 - Vetur
 
-# keybindings
+## keybindings
 1. ctrl+shift+p，搜索“快捷方式”
 2. 点击“打开键盘快捷方式(JSON)”
 
-# settings
+## settings
 1. ctrl+shift+p，搜索“设置”
 2. 点击“打开设置(JSON)”
 
@@ -36,3 +36,8 @@ const defaultVariables = {
 	charset: 'UTF-8'
 };
 ```
+
+
+## 设置字体 FiraCode
+https://github.com/tonsky/FiraCode
+下载安装完成之后，在settings中设置。如果没有生效，尝试重启vscode。
