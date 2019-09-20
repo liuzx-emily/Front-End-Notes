@@ -97,3 +97,72 @@ export default {
 vue路由从a->b，销毁a和创建b哪个先执行？
 
 https://blog.csdn.net/tangran0526/article/details/99729768
+
+
+---
+
+
+  
+## 修改 webpack 配置
+
+#### 审查项目的webpack配置
+[具体看这里](https://cli.vuejs.org/zh/guide/webpack.html#%E5%AE%A1%E6%9F%A5%E9%A1%B9%E7%9B%AE%E7%9A%84-webpack-%E9%85%8D%E7%BD%AE)  
+
+将 production 模式下的配置，输出到文件production.config.js中
+
+`vue inspect --mode production > production.config.js`
+
+
+
+
+
+---
+
+
+
+
+## 引入前端单元测试 jest
+
+1. 在已创建的项目中安装 `vue add @vue/unit-jest`
+2. jest不支持ES6的import语法。查阅资料后发现：Since jest runs in node, we also don't have to transpile anything that uses modern ECMAScript features as Node >=8 already supports these features, so it's a sensible default. cli-plugin-jest also doesn't respect the transpileDependencies option in vue.config.js for the same reason.
+  1. Usage of ES6 import/export statements, which have to be compiled to commonjs module.exports
+  2. Single File Components (.vue files) which have to be run through vue-jest
+  3. Typescript code
+
+看 jest.config.js 文件：
+
+
+
+
+---
+
+
+
+
+## vue-cli的浏览器兼容性
+
+babel.config.js 文件：
+```js
+module.exports = {
+	presets: [
+		'@vue/app',
+	]
+}
+```
+其中的`@vue/app`是`@vue/babel-preset-app`提供的。这个包通过 `@babel/preset-env` 和 `browserslist` 配置来决定项目需要的 polyfill。
+
+
+
+#### 1.[@babel/preset-env](https://babeljs.io/docs/en/next/babel-preset-env.html) 是什么？
+
+`@babel/preset-env` is a smart preset that allows you to use the latest JavaScript without needing to micromanage which syntax transforms (and optionally, browser polyfills) are needed by your target environment(s). This both makes your life easier and JavaScript bundles smaller!
+
+
+
+#### 2.[browserslist](https://github.com/browserslist/browserslist) 是什么？
+
+package.json 文件里的 browserslist 字段，或一个单独的 .browserslistrc 文件，指定了项目的目标浏览器的范围。
+
+这个值会被 @babel/preset-env 和 Autoprefixer 用来确定需要转译的 JavaScript 特性和需要添加的 CSS 浏览器前缀。
+
+#### [@vue/babel-preset-app](https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/babel-preset-app)是什么？

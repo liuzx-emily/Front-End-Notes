@@ -19,10 +19,18 @@
 	</script>
 	```
 - 定时器可以传参数，IE11+ `setInterval( 函数, 毫秒，参数)`
+  ```js
+  var foo=1;
+  setTimeout(value=>{
+      alert(value);
+  },1000,foo);
+  foo=2;
+  // 一秒之后 弹出1
+  ```
 
-- 操作自定义属性 `el.getAttribute` , `setAttribute` , `removeAttribute`
+- 操作属性 `el.getAttribute` , `setAttribute` , `removeAttribute`
 
-- 用了`vue-router`的项目不能用锚点来实现滚动定位。所以使用 `scrollIntoView` 来完成滚动定位（兼容性好，IE8开始支持基本功能）
+- 使用#来实现路由跳转的SPA中，不能再用#来实现滚动定位。所以使用 `scrollIntoView` 来完成滚动定位（兼容性好，IE8开始支持基本功能）
 
 - `null >= null `是 `true`，所以下面这样写不行
   ```js
@@ -36,7 +44,6 @@
 
 - string转数字 `+"-59.65"`
 
-- 浮点数 `0.333*100` => `33.300000000000004`
 
 
 
@@ -57,8 +64,8 @@
 - splice：修改原数组，返回值：被删除的元素组成的数组  
   `splice(start, deleteCount, item1, item2, ...)`
 
-- slice：返回一个由 start 和 end（不包括end）决定的原数组的<mark>浅拷贝</mark>。不修改原数组
-  `slice(start[,end])`
+- slice：返回一个由 start 和 end（不包括end）决定的原数组的<mark>浅拷贝</mark>。不修改原数组  
+  `slice(start[,end])`  
   字符串也有slice方法
 
 - concat：合并多个数组，返回一个新数组。不修改原数组。
@@ -130,10 +137,8 @@
 - `\w` 字符 (字母 数字 下划线)，等价于[0-9a-zA-Z_]
 - `\b` 独立的部分 (起始 结束 空格)  \
   ```js
-	// true
-	/em/.test("emily");
-	// false
-	/em\b/.test("emily");
+	/em/.test("emily"); 	// true
+	/em\b/.test("emily"); 	// false
   ```
 - `\S` 非空白字符，`\D` 非数字，`\W` 非字符，`\B` 非独立的部分
 - `\\` 真正的\ (在str中真正的`\`也是`\\`，因为单个`\`在str里起换行的作用)
@@ -142,10 +147,7 @@
 - `\1` 重复的第一个子项（放在小括号里的。必须跟第一个子项的值一样）
 - `\2` 重复的第二个子项
   ```js
-	// 等价于re = /(a)(b)(c)b/
-	re = /(a)(b)(c)\2/;
-	// 不等价re = /\d\d/，只会匹配到22 33这种
-	re = /(\d)\1/;
+	/(\d)\1/.test("12")  	// false
   ```
 #### 量词 
 - `{4,7}` 最少4次，最多7次
@@ -185,6 +187,7 @@
 ES5只有两种：函数内部、全局作用域  
 ES6新加了块级作用域(`let` `const`)
 
+(通过var声明的变量，会被注册为window的属性。let和const不会)
 
 #### 变量提升：
 变量提升：`var`和`function`会被提升。var提升为undefined，function提升为声明的函数。  
@@ -195,13 +198,21 @@ ES6新加了块级作用域(`let` `const`)
 前者是赋值，发生在函数运行期。  
 后者是声明，发生在词法分析期。
 
-#### js函数执行
+#### 函数执行
+
+
+
 词法分析期
-1. 函数运行前会生成Active Object对象，下面简称为AO对象；
-2. 声明函数的参数会作为AO的属性，此时值全为undefined；
-3. 接收过来的实参作为对应的属性值
-4. 分析变量声明，如果AO上已有此属性，则跳过，没有则添加该属性，属性值为undefined；
-5. 分析函数声明，例如function aa(){}则把aa赋给AO属性，即：AO.aa=function（）{}，当然，如果此前的AO对象中已经有了aa属性，则会被function覆盖掉。
+1. 处理形参 值为undefined
+2. 处理实参
+3. 处理函数内部声明的var和function
+```js
+function test(a){
+  console.log(a);
+  function a(){}
+}
+test(1);  // Function: a
+```
 
 函数运行期
 - 从上到下，依次执行，变量从最近的函数体内开始找，扩散到外层函数，直到window对象中找，仍找不到即是undefined。
@@ -215,21 +226,23 @@ ES6新加了块级作用域(`let` `const`)
 	oDiv.onclick = function() {sayHi();};
 	<div onclick="sayHi();"></div>
    ```
-2. 作为对象的方法调用：this -> 对象本身
-	```js
-	var Person = {
-	    sayHi: function(){}
-	}
-	Person.sayHi();		//this指向Person对象
-	oDiv.onclick = fn1;	//this指向oDiv
-	```
-3. `new 构造函数()`：`this指向创建的元素`
-   ```js
-   function People(name) {
-	    this.name = name;
-	}
-	var x = new People("John");	
-	```
+2. **作为对象的方法调用：this -> 对象本身**
+    ```js
+    var Person = {
+      sayHi: function(){}
+    }
+    Person.sayHi();		//this指向Person对象
+    oDiv.onclick = fn1;	//this指向oDiv
+    ```
+
+3. 构造函数：`this指向创建的元素`  
+    ```js
+    function People(name) {
+      this.name = name;
+    }
+    var x = new People("John");	
+    ```
+
 4. 可以修改this指向：
    - `call(thisArg,参数1,参数2,参数3)` 直接执行函数
    - `apply(thisArg,[参数1,参数2,参数3])` 直接执行函数
@@ -317,48 +330,20 @@ W3C规范：先进入捕获阶段，直到达到目标元素，再进入冒泡�
 1. 元素是动态添加的。绑定事件的时候元素还没有添加到DOM结构中。
 2. 场景：`ul>li*1000000`，需要给所有li绑定点击事件。如果循环给每个li绑定事件，那么会有1000000个函数存在内存当中，性能不好。
 
-#### 鼠标滑动时，从父级进入子级时会触发父级的onmouseout怎么办？
-```html
-<style>
-#div1 {width: 200px;height: 200px;background: red;}
-#div2 {width: 100px;height: 100px;background: yellow;}
-</style> 
-<body>
-  <div id="div1">
-      <div id="div2"></div>
-  </div>
-</body>
- <script>
-var oDiv = document.getElementById('div1');
-oDiv.onmouseover = function() {document.title += '1';};
-oDiv.onmouseout = function() {document.title += '2';};
- </script>
-```
-1. 鼠标从"oDiv外界空白"移到"内层div2"时：title加上"1"（冒泡）
-2. 鼠标从"内层div2"移到"oDiv外界空白"时：title加上"2"（冒泡）
-3. 鼠标从"外层oDiv"移到"内层div2"时：title加上'21'  
-	1. 鼠标离开外层oDiv了，所以title加"2"  
-	2. 内层div2的"鼠标进入事件"冒泡到外层oDiv，所以title加"1"  
 
-所以纯“阻止冒泡”不能解决问题  
-	给内层div2的mouseover和mouseout都阻止冒泡  
-	对情况3：title不会加1了，但还是会加2  
-
-用`onmouseenter onmouseleave`的话，就不会有这个问题了
-
+#### 存在子元素时，mouseover 和 mouseenter 的触发机制有何不同
+这里不方便贴图，具体看[文章](https://blog.csdn.net/tangran0526/article/details/100765036 )  
 后续备注：这个问题和拖拽时的 dragleave 问题一样。只不过拖拽API没有提供这么方便事件，只能自己硬处理。
 
 
 #### 表单元素的onchange事件
 用户操作可以触发`onchange`，但是用js去修改的话不能触发`onchange`  
-具体看 https://blog.csdn.net/tangran0526/article/details/99686744
+具体看[文章](https://blog.csdn.net/tangran0526/article/details/99686744)
 
 
 
 
 ---
-
-
 
 
 
@@ -370,9 +355,6 @@ oDiv.onmouseout = function() {document.title += '2';};
   - 值类型：`number string boolean null undefined`  
   	其中`number string boolean`有对应的包装对象，所以可以调用方法和属性
   - 引用类型：共用地址，要小心
-
-
-
 
 
 
@@ -408,7 +390,7 @@ console.log(0.1 + 0.2 === 0.3);	//false
 - `getComputedStyle(obj).width`
     1. IE8-不能用
     2. 可以获取伪类`getComputedStyle(元素, 伪类)`;
-    3. 得到计算后的值,比如2em经过计算会得到对应的px
+    3. 得到计算后的值,2em 20% 都会计算 得到对应的px
 - `obj.currentStyle.width`
     1. 只有IE能用
     2. 不能获取伪类
@@ -482,7 +464,7 @@ console.log(0.1 + 0.2 === 0.3);	//false
 - `document.documentElement.clientWidth` 只读。
 
 #### 滚动条滚动距离
-`document.body.scrollTop/scrollLeft`
+`document.body.scrollTop/scrollLeft`  
 `document.documentElement.scrollTop/scrollLeft`  
 有兼容问题：chrome中body写法ok，documentElement写法恒为0。其他浏览器正好相反。  
 兼容：
@@ -508,7 +490,7 @@ doc.scrollTop = 500;
 
 
 
-## 获取元素大小
+## 获取元素尺寸
 
 |               |       | 单位 |                            |
 | ------------- | ----- | ---- | -------------------------- |
@@ -531,7 +513,7 @@ JS组成：`ECMAScript` + `DOM` + `BOM`
 - BOM 各浏览器有自己的标准，顶级对象是window
 
 window对象的双重身份
-1. window是BOM的顶层对象，特指【当前】窗口
+1. window是BOM的顶层对象，特指**当前**窗口
 2. window不是JS对象。但是在ECMAScript中将window设定为Global对象，所以用var function声明的都成为了window的属性和方法  
 ```js
 window.open()		//BOM中定义的open方法
@@ -548,7 +530,7 @@ window.document 	//因为ECMAScript将window定为全局变量
 
 
 ## 运动
-参考：https://www.cnblogs.com/bokebi520/p/5057380.html
+参考[文章](https://www.cnblogs.com/bokebi520/p/5057380.html)
 
 拖拽：
 1. 小问题：拖拽的时候，如果有文字被选中，会产生问题。  
@@ -751,7 +733,7 @@ IE8-不支持拖放
 - 拖入的元素 `dragenter` `dragover` `dragleave` `drop`
 - 执行顺序
   `dragstart` => `drag` => `dragenter` => `dragover` => 可以drop?`drop`:`dragleave` => `dragend` 
-- 默认元素不能被drop。想要drop必须在dragover事件中阻止默认事件。不能释放、能释放的光标不一样。
+- **默认元素不能被drop。想要drop必须在dragover事件中阻止默认事件。**不能释放、能释放的光标不一样。
 
 
 火狐：默认只能拖拽图片。想要拖拽非图片，需要在该元素的dragstart中设置dataTransfer对象
@@ -759,7 +741,7 @@ IE8-不支持拖放
 #### 从元素father进入子元素son时，会触发father的dragleave事件
 写“将文件从任意角度拖进页面时，全屏显示拖拽上传框A”时，出现了问题：“文件拖进来时，会显示框A。但是在拖来拖去的过程中，框A有时候会闪一下，有时候会消失”。
 
-具体看：https://blog.csdn.net/tangran0526/article/details/99633918
+具体看[这篇文章](https://blog.csdn.net/tangran0526/article/details/99633918)
 
 
 #### dataTransfer
@@ -813,7 +795,7 @@ IE8-不支持拖放
 
 属性
 - controls  :   显示或隐藏用户控制界面 默认隐藏
-	【不写controls,音视频就藏起来了。可以这样“添加背景音乐 autoplay loop”】
+	（不写controls,音视频就藏起来了。可以这样“添加背景音乐 autoplay loop”）
 - autoplay  :  媒体是否自动播放
 - loop  : 媒体是否循环播放
 - currentTime  :  开始到播放现在所用的时间(s) 可写
@@ -976,7 +958,8 @@ ws.onclose = function (evt) {
 
 限制：无法访问window、document等。  
 所以worker不能操作DOM，不能alert和console。
-我们一般用worker来做大量的计算
+我们一般用worker来做大量的计算  
+（上传文件前需要先计算md5，这就可以用worker来读取文件并计算）
 
 需要服务器环境。
 
@@ -1015,6 +998,8 @@ self.onmessage = function (ev) {
 
 ## 自定义属性dataset
 
+value都是字符串
+
 ```html
 <address data-author-name="liuzx" data-author-age="13">Author:liuzx-emily</address>
 ```
@@ -1031,9 +1016,7 @@ delete el.dataset.authorAge
 ```
 
 
-
 ---
-
 
 
 
@@ -1103,7 +1086,7 @@ history.pushState(stateObj, "page 2", "bar.html");
 
 
 #### popstate事件
-每当活动的历史记录项发生变化时， popstate 事件都会被传递给window对象。如果当前活动的历史记录项是被 pushState 创建的，或者是由 replaceState 改变的，那么 popstate 事件的状态属性 state 会包含一个当前历史记录状态对象的拷贝。
+每当活动的历史记录项发生变化时， 会触发window的popstate 事件。如果当前活动的历史记录项是被 pushState 创建的，或者是由 replaceState 改变的，那么 popstate 事件的状态属性 state 会包含一个当前历史记录状态对象的拷贝。
 
 
 
@@ -1148,7 +1131,200 @@ history.pushState(stateObj, "page 2", "bar.html");
 
 
 
+
 ---
+
+
+
+
+
+## modules
+
+#### 编译时加载
+ES6 模块的设计思想：尽量静态化，使得编译时就能确定模块的依赖关系，以及输入和输出的变量。
+
+```js
+// CommonJS模块
+let { stat, exists, readFile } = require('fs');
+
+// 等同于
+let _fs = require('fs');
+let stat = _fs.stat;
+let exists = _fs.exists;
+let readfile = _fs.readfile;
+```
+上面代码的实质是整体加载fs模块（即加载fs的所有方法），生成一个对象（_fs），然后再从这个对象上面读取 3 个方法。这种加载称为“运行时加载”，因为只有运行时才能得到这个对象，导致完全没办法在编译时做“静态优化”。
+
+```js
+// ES6模块
+import { stat, exists, readFile } from 'fs';
+```
+上面代码的实质是从fs模块加载 3 个方法，其他方法不加载。这种加载称为“编译时加载”或者静态加载，即 ES6 可以在编译时就完成模块加载，效率要比 CommonJS 模块的加载方式高。当然，这也导致了没法引用 ES6 模块本身，因为它不是对象。
+
+export 和import 命令必须在模块顶层。如果处于块级作用域内，就会报错。这是因为处于条件代码块之中，就没法做静态优化了，违背了 ES6 模块的设计初衷。
+
+
+#### export
+一个模块就是一个独立的文件。该文件内部的所有变量，外部无法获取。
+```js
+// profile.js
+export var firstName = 'Michael';
+export var lastName = 'Jackson';
+export var year = 1958;
+```
+等价于
+```js
+// profile.js
+var firstName = 'Michael';
+var lastName = 'Jackson';
+var year = 1958;
+
+export { firstName, lastName, year };
+```
+推荐使用第二种写法，因为这样就可以在脚本尾部，一眼看清楚输出了哪些变量。
+
+
+export语句输出的接口，与其对应的值是动态绑定关系，即通过该接口，可以取到模块内部实时的值。
+这一点与 CommonJS 规范完全不同。CommonJS 模块输出的是值的缓存，不存在动态更新
+```js
+export var foo = 'bar';
+setTimeout(() => foo = 'baz', 500);
+```
+上面代码输出变量foo，值为bar，500 毫秒之后变成baz。
+
+
+#### import
+import命令输入的变量都是只读的，因为它的本质是输入接口。
+
+```js
+import {a} from './xxx.js'
+a = {}; // Syntax Error : 'a' is read-only;
+```
+
+如果a是一个对象，改写a的属性是允许的。
+
+```js
+import {a} from './xxx.js'
+a.foo = 'hello'; // 合法操作
+```
+上面代码中，**a的属性可以成功改写，并且其他模块也可以读到改写后的值**。不过，这种写法很难查错，建议凡是输入的变量，都当作完全只读，轻易不要改变它的属性。
+
+注意，import命令具有提升效果，会提升到整个模块的头部，首先执行。
+```js
+foo();
+import { foo } from 'my_module';
+```
+上面的代码不会报错，因为import的执行早于foo的调用。这种行为的本质是，import命令是编译阶段执行的，在代码运行之前。
+
+由于import是静态执行，所以不能使用表达式和变量，这些只有在运行时才能得到结果的语法结构。
+```js
+// 报错
+import { 'f' + 'oo' } from 'my_module';
+
+// 报错
+let module = 'my_module';
+import { foo } from module;
+
+// 报错
+if (x === 1) {
+  import { foo } from 'module1';
+} else {
+  import { foo } from 'module2';
+}
+```
+
+最后，import语句会执行所加载的模块，因此可以有下面的写法。
+
+```js
+// 仅仅执行lodash模块，但是不输入任何值。
+import 'lodash';
+```
+
+如果多次重复执行同一句import语句，那么只会执行一次，而不会执行多次。
+```js
+// 代码加载了两次lodash，但是只会执行一次。
+import 'lodash';
+import 'lodash';
+```
+
+```js
+import { foo } from 'my_module';
+import { bar } from 'my_module';
+// 上面两行 等同于下面的一行
+import { foo, bar } from 'my_module';
+```
+
+#### 模块的整体加载
+除了指定加载某个输出值，还可以使用整体加载，即用星号（*）指定一个对象，所有输出值都加载在这个对象上面。
+
+下面是一个circle.js文件，它输出两个方法。
+```js
+// circle.js
+
+export function area(radius) {
+  return Math.PI * radius * radius;
+}
+
+export function circumference(radius) {
+  return 2 * Math.PI * radius;
+}
+```
+现在，加载这个模块。
+```js
+// main.js
+
+import { area, circumference } from './circle';
+
+console.log('圆面积：' + area(4));
+console.log('圆周长：' + circumference(14));
+```
+
+上面写法是逐一指定要加载的方法，整体加载的写法如下：
+
+```js
+import * as circle from './circle';
+
+console.log('圆面积：' + circle.area(4));
+console.log('圆周长：' + circle.circumference(14));
+```
+
+注意，模块整体加载所在的那个对象（上例是circle），应该是可以静态分析的，所以不允许运行时改变。下面的写法都是不允许的。
+
+```js
+import * as circle from './circle';
+
+// 下面两行都是不允许的
+circle.foo = 'hello';
+circle.area = function () {};
+```
+
+#### export default
+为模块指定默认输出。
+
+本质上，`export default`就是输出一个叫做default的变量或方法，然后系统允许你为它取任意名字。
+
+一个模块只能有一个默认输出，因此export default命令只能使用一次。
+
+import命令后面不用加大括号，因为只可能唯一对应export default命令。
+
+```js
+// a.js
+export default function () {
+  console.log('foo');
+}
+```
+
+```js
+// b.js
+import customName from './a';
+customName(); // 'foo'
+```
+
+
+
+---
+
+
 
 
 
