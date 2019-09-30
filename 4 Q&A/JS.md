@@ -1787,3 +1787,44 @@ DOM文档加载步骤：
 	- 原生JS中只有window.onload（已实测）
 
 </details>
+
+
+
+---
+
+
+
+
+## 67 输出？
+
+```js
+const a = {};
+const b = { key: "b" };
+const c = { key: "c" };
+
+a[b] = 123;
+a[c] = 456;
+
+console.log(a[b]);
+```
+
+
+- A: 123
+- B: 456
+- C: undefined
+- D: ReferenceError
+
+
+<details>
+<summary>答案</summary>
+
+B
+
+对象的键都是字符串。如果不是，会自动转换为字符串。
+
+将对象转化为字符串时，它会变成 "[object Object]"
+
+
+</details>
+
+

@@ -631,7 +631,116 @@ export default () => {
 
 
 
-进度：https://webpack.docschina.org/guides/caching/
+
+#### mini-css-extract-plugin
+
+[官网说明](https://webpack.docschina.org/plugins/mini-css-extract-plugin/)
+
+- 作用：在打包后的 bundle.js 中把 css 提取出来，放到独立的css文件中。默认每个包含css的 bundle.js 提取出一个 css文件。
+- 只适合 production 环境
+- 不能和 style-loader 一起用。
+
+**必须要配置publicPath**
+
+```js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+module.exports = {
+	mode: 'production',
+	output: {
+		filename: 'js/[name].[contenthash].js',
+		chunkFilename: 'js/[name].[contenthash].js',
+	},
+	module: {
+		rules: [{
+				test: /\.css$/,        
+				use: [ {
+						loader: MiniCssExtractPlugin.loader,
+						options: {
+							/* loader中必须要配置 publicPath，修正MiniCssExtractPlugin中设置的css层级
+              如果不配置的话， css文件中引用的字体、图片路径就错了！ */
+							publicPath: '../',
+						},
+					},, "css-loader", "postcss-loader"]
+			},
+			{
+				test: /\.less$/,
+				use: [ MiniCssExtractPlugin.loader, "css-loader", "postcss-loader", "less-loader"]
+			},
+		]
+	},
+	plugins: [
+		new MiniCssExtractPlugin({
+			filename: "css/[name].[contenthash].css",
+			chunkFilename: "css/[name].[contenthash].css"
+		}),
+	],
+};
+```
+
+
+
+
+
+---
+
+
+
+
+
+## production 下的缓存
+
+
+在 production 环境中，打包后的文件，我们希望：
+- 内容没有变化时，文件的名称也不变，这样浏览器就可以读缓存。减少请求，而且加载更快
+- 内容变化时，名称必须变化。
+
+
+#### output中的 [hash] [chunkhash] [contenthash] 有什么不同？
+
+场景：
+```js
+	entry: {
+		apple: "./src/apple.js",
+		banana: "./src/banana.js",
+	},
+```
+使用 mini-css-extract-plugin ，并且 app.js 和 banana.js 中都使用了 css 。
+
+所以最终会输出2个js文件和2个css文件。
+
+
+hash：
+- 跟整个项目的构建相关。
+- 只要项目里有文件更改，这个[hash]值就会更改，
+- 如果项目中所有文件都不变，那么[hash]值也不会变。
+- 打包后的所有文件，hash值是相同的
+
+
+chunkhash：
+- 根据不同的入口文件(Entry)进行依赖文件解析、构建对应的chunk，生成对应的哈希值。
+- apple.js 和 apple.css 的 chunkhash 相同，因为它们是一个入口。
+- apple 入口的所有模块，只要任一文件内容改变了，那么 apple 的 chunkhash 就会变。
+
+
+
+contenthash
+- 根据打包后的文件内容计算hash值
+- apple.js 和 apple.css 的 contenthash 是不同的，没有任何关系
+
+
+> 简单的说：
+> hash：根据整个项目计算
+> chunkhash：按照entry分成多个chunk，根据每个chunk计算
+> contenthash：根据打包后的文件，每个文件计算
+
+
+---
+
+
+
+
+
 
 ## 创建library
 
