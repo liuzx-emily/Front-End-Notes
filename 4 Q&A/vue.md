@@ -259,7 +259,15 @@ vm.userProfile = Object.assign({}, vm.userProfile, {
 <summary>答案</summary>
 
 无法保证父组件和子组件的生命周期钩子的调用顺序！
-[mounted 不会承诺所有的子组件也都一起被挂载。](https://cn.vuejs.org/v2/api/?#mounted)
+[mounted 不会承诺所有的子组件也都一起被挂载。](https://cn.vuejs.org/v2/api/?#mounted)。如果你希望等到整个视图都渲染完毕，需要在mounted中再使用 $nextTick
+```js
+mounted: function () {
+  this.$nextTick(function () {
+    // Code that will run only after the entire view has been rendered
+  });
+}
+```
+
 
 </details>
 

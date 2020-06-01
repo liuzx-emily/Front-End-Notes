@@ -86,7 +86,7 @@ webpack 会将代码进行 transpile(转译)，ES6、commonJS、AMD等模块语�
 
 webpack的这种动态打包，默认只支持js。但是通过相应的loader，其它类型的文件也可以这样处理！
 
-1. 配置多个loader时的处理顺序：数组中从右到左。
+配置多个loader时的处理顺序：数组中从右到左。
 
 
 #### 加载css
