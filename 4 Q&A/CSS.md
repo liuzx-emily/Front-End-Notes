@@ -263,3 +263,168 @@ p{
 
 ---
 
+
+## 11  calc, supports, media 分别是什么
+
+<details><summary>答案</summary>
+
+
+calc() 函数常用于动态计算长度值，比如 `width:calc(100% - 300px)`
+
+@supports 判断当前浏览器是否支持某属性
+
+```css
+@supports (display: flex) {
+  div {
+    display: flex;
+  }
+}
+@supports not (display: flex) {
+  div {
+    display:inline-block;
+  }
+}
+```
+
+@media 媒体查询，常用来判断当前窗口的大小或者类型
+
+```css
+@media screen and (min-width:900px){
+  div{}
+}
+```
+
+</details> 
+
+
+---
+
+## 12 水平居中、垂直居中的写法，分别写出5种
+
+<details><summary>答案</summary>
+
+水平居中：
+
+- 对于行内元素，给父级设置 `text-align:center;`
+- ```css
+  display:block;
+  width:10px;
+  margin:0 auto;
+  ```
+- 用 calc() 【注意：垂直的居中想用 `margin-top:calc(50% - ..)` 是不行的】
+  ```css
+  display: inline-block; /* block 也可以 */
+  width:100px;
+  margin-left: calc(50% - 50px);
+  ```
+- 用 flex，给父级设置
+  ```css
+  display: flex;
+  justify-content: center;
+  ```
+- ```css
+  position:absolute; /* 父级设置 relative */
+  left:50%;
+  width:100px;
+  margin-left:-50px; /* 也可以用 transform: translateX(-50px); */
+  ```
+
+垂直居中
+
+- 对行内元素，把父级的`line-height` 和 `height` 设置为相同数值
+- 
+  ```css
+  position: absolute;/* 父级设置 relative */
+  top: 50%;
+  height: 200px;
+  margin-top: -100px; /* 也可以用transform: translateY(-100px); */
+  ```
+- 用 flex，给父级设置
+  ```css
+  display: flex;
+  align-items: center;
+  ```
+
+- 用 table
+  
+  父级设置 `display:table` ，自身设置
+  ```css
+  display: table-cell;
+  vertical-align: middle;
+  ```
+
+</details> 
+
+
+---
+
+## 13 `1rem、1em、1vh、1px` 分别是什么意思？
+
+<details><summary>答案</summary>
+
+rem: 相对于根元素 html
+
+em：相对于父元素
+
+vh：1vh为窗口高度的1%
+
+px：像素，相对于屏幕分辨率  (1920*1024 ：屏幕横排有1920个像素，竖排为1024个像素)
+
+</details> 
+
+---
+
+## 14 画一条0.5px的直线？
+
+
+<details><summary>答案</summary>
+
+```css
+height: 1px;
+transform: scaleY(0.5);
+```
+</details> 
+
+---
+
+
+## 15 盒模型
+
+内容宽+padding+border+margin
+
+标准：width 就是内容宽，默认是这种（即 box-sizing: content-box;)
+怪异：width 是内容宽+p+b，可通过设置 box-sizing:border-box; 实现（老IE默认是这种）
+
+---
+
+
+## 16 画一个三角形
+```css
+width: 0;
+height: 0;
+border: 30px solid transparent;
+border-bottom-color: red;
+```
+
+---
+
+## 17 清除浮动是什么意思？怎么清？
+
+浮动元素不能撑起父元素的高度。（如果一个元素里只有浮动元素，那它的高度会是0；如果还有非浮动子元素，那么它的高度是由这些非浮动子元素决定的。）
+如果想要一个父元素自适应，即包含所有浮动元素，那么需要“清除浮动”
+
+方法：
+- 给父元素设置
+    ```css
+    div::after{
+      content:"";
+      display:block;
+      clear:both;
+    }
+    ```
+
+- 让父容器形成 BFC，而BFC可以包含浮动。BFC 触发方式：
+  - float 为 left / right
+  - ovevflow !== visible（常设置为 auto，hidden 也可）
+  - display 为 table / inline-block
+  - position 为 absolute / fixed

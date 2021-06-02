@@ -1,22 +1,66 @@
-## 1 输出？
+## 1 this 的指向
 
 ```js
-const shape = {
-    radius: 10,
-    diameter() {
-        return this.radius * 2;
-    },
-    perimeter: () => 2 * Math.PI * this.radius
+
+let num=20; 
+
+function fn_a(){console.log(num) }
+function fn_b(){console.log(this.num) }
+
+const test = {
+    num: 10,
+    fn1() { console.log(num)},
+    fn2() { console.log(this.num)},
+    fn3: () => { console.log(num); },
+    fn4: () => { console.log(this.num); },
+    fn5(){fn_a()},
+    fn6(){fn_b()},
+    fn7:()=>{fn_a()},
+    fn8:()=>{fn_b()},
 };
 
-shape.diameter();
-shape.perimeter();
+fn_a();
+fn_b();
+test.fn1();
+test.fn2();
+test.fn3();
+test.fn4();
+test.fn5();
+test.fn6();
+test.fn7();
+test.fn8();
+
+如果把第一行的声明由 const 改为 var 或者 let ，结果会有变化吗？
+
 ```
 
 <details>
 <summary>答案</summary>
 
-`undefined` and `ReferenceError`
+```js
+fn_a(); //  20
+fn_b(); //  undefined
+test.fn1(); // 20 【注意这里，易错，之前写成10了！！】
+test.fn2(); // 10
+test.fn3(); //  20
+test.fn4(); // undefined
+test.fn5(); //  20
+test.fn6(); //  undefined
+test.fn7(); //  20
+test.fn8(); // undefined
+```
+
+改为 var 后，结果变为：20 20 20 10 20 20 20 20 20 20
+
+改为 let 后，结果不变
+
+原理：
+- 在普通函数中，this 的指向取决于谁调用的。跟在哪里定义的无关
+- 箭头函数没有自己的 this
+- 事件绑定函数中的this，指向事件源
+- 构造函数中的 this 指向实例化对象
+- var 声明的变量会添加到 window下面作为属性；let 和 const 则不会（所以会出现全局作用域下，num有值，但window.num为 undefined 的情况）
+
 </details>
 
 
@@ -25,325 +69,65 @@ shape.perimeter();
 
 
 
-## 2 输出？
+## 2 杂七杂八
 
 ```js
+// q1
 +true;
 !"Lydia";
-```
-
-<details>
-<summary>答案</summary>
-<p>`1` and `false`</p>
-</details>
-
-
-
----
-
-
-
-## 3 输出？
-
-```js
-let a = 3;
-let b = new Number(3);
-let c = 3;
-
-console.log(a == b);
-console.log(a === b);
-console.log(b === c);
-```
-
-<details>
-<summary>答案</summary>
-<p>`true` `false` `false`</p>
-<p>
-```js
-typeof b==="object"
-```
-</p>
-</details>
-
----
-
-
-## 4 输出？
-
-```js
-class Chameleon {
-    static colorChange(newColor) {
-        this.newColor = newColor;
-        return this.newColor;
-    }
-
-    constructor({ newColor = "green" } = {}) {
-        this.newColor = newColor;
-    }
-}
-
-const freddie = new Chameleon({ newColor: "purple" });
-freddie.colorChange("orange");
-```
-
-<details>
-<summary>答案</summary>
-<p>`TypeError`</p>
-</details>
-
-
-
----
-
-
-
-
-## 5 输出？
-
-```js
-function sum(a, b) {
-    return a + b;
-}
-
-sum(1, "2");
-```
-
-<details>
-<summary>答案</summary>
-<p>`"12"`</p>
-</details>
-
-
----
-
-
-
-## 6 输出？
-
-```js
-function getPersonInfo(one, two, three) {
-    console.log(one);
-    console.log(two);
-    console.log(three);
-}
-
-const person = "Lydia";
-const age = 21;
-
-getPersonInfo`${person} is ${age} years old`;
-```
-
-<details>
-<summary>答案</summary>
-<p>`["", " is ", " years old"]` `"Lydia"` `21`</p>
-</details>
-
----
-
-
-
-
-## 7 输出？
-
-```js
++"2";
+1+"2"
+// q2
+let num1=3;
+let num2=new Number(3);
+num1==num2;
+num1===num2;
+typeof num2;
+// q3
 function getAge(...args) {
-    console.log(typeof args)
+    console.log(typeof args,args)
 }
-
-getAge(21)
-```
-
-<details>
-<summary>答案</summary>
-<p>`"object"`</p>
-</details>
-
----
-
-
-
-
-
-## 8 输出？
-
-```js
+getAge(21);
+// q4
 const sum = eval('10*10+5')
-```
-
-- A `105`
-- B `"105"`
-- C `TypeError`
-- D `"10*10+5"`
-
-<details>
-<summary>答案</summary>
-<p>A</p>
-<p>代码以字符串形式传递进来，eval 对其求值。如果它是一个表达式，就像本例中那样，它对表达式求值。表达式是 10 * 10 + 5。这将返回数字 105。</p>
-</details>
-
----
-
-
-
-
-
-
-## 9.cool_secret的有效期是多久？
-
-```js
-sessionStorage.setItem("cool_secret", 123);
-```
-
-- A Forever, the data doesn't get lost.
-- B When the user closes the tab.
-- C When the user closes the entire browser, not only the tab.
-- D When the user shuts off their computer.
-
-<details>
-<summary>答案</summary>
-<p>B</p>
-<p>`sessionStorage`中的数据在<b>关闭tab标签页后</b>删除，刷新页面不会删除</p>
-<p>`localStorage`中的数据永远存在</p>
-</details>
-
----
-
-
-
-
-## 10 输出？
-
-```js
-sessionStorage.setItem("cool_secret", 123);
-```
-
-- A Forever, the data doesn't get lost.
-- B When the user closes the tab.
-- C When the user closes the entire browser, not only the tab.
-- D When the user shuts off their computer.
-
-<details>
-<summary>答案</summary>
-<p>B</p>
-<p>`sessionStorage`中的数据在<b>关闭tab标签页后</b>删除，刷新页面不会删除</p>
-<p>`localStorage`中的数据永远存在</p>
-</details>
-
-
----
-
-
-
-
-## 11 输出？
-
-```js
-const obj = { 1: 'a', 2: 'b', 3: 'c' }
-const set = new Set([1, 2, 3, 4, 5])
-
-obj.hasOwnProperty('1')
-obj.hasOwnProperty(1)
-set.has('1')
-set.has(1)
-```
-
-<details>
-<summary>答案</summary>
-<p>`true` `true` `false` `true`</p>
-</details>
-
-
-
----
-
-
-
-
-
-## 12 输出？
-
-```js
+// q5
 const obj = { a: 'one', b: 'two', a: 'three' }
 console.log(obj)
-```
-
-- A `{ a: "one", b: "two" }`
-- B `{ b: "two", a: "three" }`
-- C `{ a: "three", b: "two" }`
-- D `SyntaxError`
-
-<details>
-<summary>答案</summary>
-<p>C</p>
-<p>如果有多个相同的key，那么位置是第一个key出现的位置，但是值是最后一个的值。</p>
-</details>
-
-
-
----
-
-
-
-
-
-## 13 输出？
-
-```js
+// q6
 for (let i = 1; i < 5; i++) {
     if (i === 3) continue
     console.log(i)
 }
-```
-
-<details>
-<summary>答案</summary>
-<p>`1` `2` `4`</p>
-<p>`continue`跳过每次迭代</p>
-</details>
-
-
-
----
-
-
-
-
-## 13 输出？
-
-```js
+// q7
 String.prototype.giveLydiaPizza = () => {
     return 'Just give Lydia pizza already!'
 }
-
 const name = 'Lydia'
-
 name.giveLydiaPizza()
-```
-
-<details>
-<summary>答案</summary>
-<p>`"Just give Lydia pizza already!"`</p>
-</details>
-
-
-
----
-
-
-
-
-
-## 14 输出？
-```js
+// q8
 console.log(1&&2);
 console.log(1||2);
+// q9 如何删除对象的属性
 ```
 
 <details>
 <summary>答案</summary>
-2  
-1
+
+- Q1  : 1  ,   false ,  2  ,  "12"
+- Q2  : true  ,  false  ,  "object"
+- Q3  : "object"   ,   [21]
+- Q4  : 105 【`eval(str)` 将字符串转化为代码执行】
+- Q5  : { a: 'three', b: 'two' }  【如果有多个相同的key，那么位置是第一个key出现的位置，但是值是最后一个的值。】
+- Q6  : 1 2 4
+- Q7  : 'Just give Lydia pizza already!'
+- Q8  : 2   ,   1
+- Q9  : `delete p1.name`【delete只能删除对象的属性，不能删除变量】
+- Q10  : 
+- Q11  : 
+- Q12  : 
+- Q13  : 
 </details>
+
 
 
 
@@ -351,7 +135,8 @@ console.log(1||2);
 
 
 
-## 15 不用第三个变量来切换两个变量的值
+
+## 3  不用第三个变量来切换两个变量的值
 ```js
 let a=1;
 let b=2;
@@ -359,17 +144,19 @@ let b=2;
 <details>
 <summary>答案</summary>
 
-1. `[a,b]=[b,a]`
-2. ```js
-   a=a+b;
-   b=a-b;
-   a=a-b;
-   ```
-3. ```js
-	a={a:a,b:b};
-	b=a.a;
-	a=a.b;
-   ```
+```js
+// 方法1
+[a,b]=[b,a]
+// 方法2
+a=a+b;
+b=a-b;
+a=a-b;
+//  方法3
+a={a:a,b:b};
+b=a.a;
+a=a.b;
+```
+
 </details>
 
 
@@ -380,16 +167,21 @@ let b=2;
 
 
 
-## 16 找出数组中的最大值
+## 4 找出数组中的最大值 ⭐
 ```js
 let arr=[3,2,17,5];
 ```
 <details>
 <summary>答案</summary>
 
-- `Math.max(...arr)`
-- `Math.max.apply(null,arr)`
-
+```js
+// 方法1
+Math.max(...arr)
+// 方法2
+Math.max.apply(null,arr)
+// 方法3
+arr.sort((a,b)=>a-b)[0] // 必须写排序函数，因为默认是按照字符编码顺序排的，结果是 [17,2,3,5]
+```
 </details>
 
 
@@ -400,7 +192,7 @@ let arr=[3,2,17,5];
 
 
 
-## 17 将多维数组转化成1维：
+## 5 将多维数组转化成1维 ⭐
 ```js
 let arr=[1,2,[[5,9],6],[1,4,8]];
 ```
@@ -408,59 +200,15 @@ let arr=[1,2,[[5,9],6],[1,4,8]];
 <details>
 <summary>答案</summary>
 
-`arr.join(",").split(",").map(i=>+i)`
-
-</details>
-
-
----
-
-
-
-
-## 18 输出？
 ```js
-let arr1=[1,2,3];
-let arr2=[4,5,6];
-console.log(arr1+arr2);
+// 方法1
+arr.join(",").split(",").map(i=>+i)
+// 方法2
 ```
-
-<details>
-<summary>答案</summary>
-
-`"1,2,34,5,6"`
-
 </details>
 
 
 ---
-
-
-
-
-## 19 jQuery：获得ul>li*4中所有li的内容
-
-<details>
-<summary>答案</summary>
-
-1. 用text()取值和别的函数不同。它不是返回第一个匹配元素的内容，而是返回所有匹配元素的内容
-	```js
-	$("ul>li").text();
-	```
-2. html text val attr prop都可以用function(){}
-	```js
-	var str="";
-	$("ul>li").html(function(index,val){
-		str+=val;
-		return val;
-	});
-	```
-
-</details>
-
-
----
-
 
 
 
@@ -587,8 +335,6 @@ console.log(arr1+arr2);
 
 
 
-
-
 ## 21 输出？
 ```js
 var f = function g(){ return 23; };
@@ -609,34 +355,6 @@ D
 
 
 ---
-
-
-
-
-
-
-
-## 22 输出？
-```js
-(function(x){
-	delete x;
-	return x;
-})(1);
-```
-
-<details>
-<summary>答案</summary>
-
-`1`  
-delete只能删除对象的属性，删不掉x。
-
-</details>
-
-
----
-
-
-
 
 
 
@@ -1827,4 +1545,212 @@ B
 
 </details>
 
+---
 
+
+
+## 68 用原生 js 获取 id="a" 的节点的父节点下的所有子节点
+
+
+<details>
+<summary>答案</summary>
+
+```js
+const res=document.getElementById("a").parentNode.children; // 是 HTMLCollection，伪数组
+const arr=Array.from(res);  // 可以转成真数组
+```
+</details>
+
+---
+
+
+## 69 用js递归的方式写1到100求和？
+
+<details>
+<summary>答案</summary>
+```js
+		function sum(num) {
+			if (num === 1) {
+				return 1;
+			}
+			return num + sum(num - 1);
+		}
+```
+</details>
+
+--- 
+
+## 70 事件代理是什么？
+
+<details>
+<summary>答案</summary>
+将事件绑定到目标元素的父元素上，用冒泡机制触发事件 
+
+```js
+ulEl.addEventListener('click', function(e){
+    var target = event.target;  // 当前被点击的元素
+    if(!!target && target.nodeName.toUpperCase() === "LI"){
+        console.log(target.innerHTML);
+    }
+}, false);
+```
+</details>
+
+
+---
+
+## 71 
+```js
+function A() {
+  this.name = 'a'
+  this.color = ['green', 'yellow']
+}
+function B() {}
+B.prototype = new A()
+var b1 = new B()
+var b2 = new B()
+
+b1.name = 'change'
+b1.color.push('black')
+
+console.log(b1.name); 
+console.log(b2.name); 
+console.log(b1.color); 
+console.log(b2.color); 
+```
+
+
+<details>
+<summary>答案</summary>
+
+```js
+console.log(b1.name); // change
+console.log(b2.name); // a
+console.log(b1.color); // ['green', 'yellow', 'black']
+console.log(b2.color); // ['green', 'yellow', 'black']
+```
+</details>
+
+
+---
+
+
+## 72 继承的几种方式？优缺点？
+
+<details>
+<summary>答案</summary>
+### 原型链继承（将子对象的原型，指向父对象的一个实例）
+
+```js
+const Dog = function() {};
+Dog.prototype = new Animal();
+const d1 = new Dog();
+const d2 = new Dog();
+```
+缺点：
+- 1 创建子类实例时，不能向父类传参
+- 2 子类实例继承的引用类型的属性是共享的
+- 3 子类实例继承的值类型的属性，修改的话会中断继承关系（相当于给子类实例本身添加了一个同名属性）
+  ```js
+  d1.names.push("大黄");  // 引用类型的属性是共享的。d2.names 也会变
+  d1.age=12;  // age是值类型的属性，相当于给 d1本身添加了一个属性 age，中断了 d1.age的继承关系。不会影响 d2
+  ```
+
+### 借用构造函数继承
+使用 call 或者 apply，把父对象的构造函数绑定在子对象上
+
+```js
+function Animal(msg) {
+  this.type = "动物";
+  this.arr = ["小狗"];
+  this.msg = msg || "";
+}
+const Dog = function(msg) {
+  Animal.call(this, msg);
+  // Animal.apply(this, [msg]);
+};
+
+const p1 = new Dog("汪汪");
+const p2 = new Dog();
+```
+优点：
+- 可以向父类传参
+- 子类继承的引用属性不会被共享
+缺点：
+- 每次创建一个子类实例时，都会调用一遍父方法。
+- 只是子类的实例，不是父类的实例。不算是真正的继承。`p1 instanceof Animal` 为 false
+
+### 组合式继承
+
+（原型链继承：继承方法） + （借用构造函数：继承属性）
+优点：融合两种继承方式的优点：在原型上定义方法实现了函数复用，又保证每个实例都有它自己的属性
+缺点：无论什么情况下，都会调用两次超类型构造函数：一次是在创建子类型原型的时候，另一次是在子类型构造函数内部
+```js
+// 父类
+		function Animal(msg, type) {
+			this.msg = msg || "";
+			this.type = type || "";
+		}
+		Animal.prototype.say = function() { console.log(this.msg) };
+		//  子类
+		const Dog = function(msg, age) {
+			// Animal.call(this, msg, "狗");
+			Animal.apply(this, [msg,"狗"]);
+			this.age = age || 10;
+		};
+		Dog.prototype = new Animal();
+		//  子类实例
+		const d1 = new Dog("汪汪", 5);
+		const d2 = new Dog("咻", 2);
+		console.log(d1);
+		console.log(d2);
+```
+</details>
+
+
+---
+
+
+
+## 74 document.write() 、 innerHTML、outerHTML、innerText、outerText 的区别
+
+document.write() 是整个页面替换（之前的内容全部没了），后四个都是局部替换
+
+innerHTML：获取、设置时包含标签
+innerText：获取、设置时只有文本（`oDiv.innerText="<p>哈哈</p>"`设置了，也会进行转义处理成文本，而不是p标签）
+
+outerHTML 和 outerText 就是包含节点本身，上面两个 inner 都不包含本身
+
+
+
+
+---
+
+
+
+
+## 3. 永久cookie ， 临时cookie  ， localStorage，  sessionStorage
+
+<details>
+<summary>答案</summary>
+
+cookie：一般为 4KB；有个数限制，一般不超过20个；服务器能设置，会传送到服务器；前端设置不方便
+- 永久 cookie：设置了过期时间
+- 临时 cookie：也称会话cookie。没有设置过期时间，则默认为 cookie 的生命周期为浏览器会话期间。关闭窗口，cookie消失
+ 
+storage：一般为 5M；仅在浏览器中保存，不参与和服务器通信；只能存 str；设置方便
+- localStorage：数据永远存在
+- sessionStorage：关闭tab标签页后删除，刷新页面不会删除
+
+</details>
+
+---
+## 73 闭包 【未完成】
+
+for(var i = 0; i < 10; i ++) {
+	bt[i].onclick = function(){
+		console.log(i);
+	}
+}
+
+---
